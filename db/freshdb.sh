@@ -1,4 +1,7 @@
 #!/bin/bash
 
-rm drafts.sqlite
+if [ -e drafts.sqlite ] 
+then
+  rm drafts.sqlite
+fi
 sqlite3 drafts.sqlite < db.schema
