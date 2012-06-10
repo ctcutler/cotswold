@@ -1,4 +1,4 @@
-cotswold
+Cotswold
 ========
 
-Bi-directional Artifact Analysis
+Tool to perform Bi-directional Artifact Analysis.
