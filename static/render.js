@@ -47,7 +47,7 @@ function renderBlocks() {
     var parts = this.text.split(/\n/);
     /*
      * How to convert various numbers of newlines into HTML (&nbsp;'s 
-     * compensate for missing newlines in text):
+     * compensate for missing newlines in text offset values):
      * 
      * one newline -> &nbsp;<br/> (next part appends to this p)
      * two newlines -> &nbsp;&nbsp;</p> 
@@ -127,10 +127,31 @@ function renderBlocks() {
         range.surroundContents(span);
       } else {
         styleApplier.applyToRange(range);
+        // should be the newly added span element
+        var styleSpan = range.commonAncestorContainer.parentElement
+        $(styleSpan).click(
+          {rangeId: this.id},
+          rangeClicked
+        );
       }
       ranges[this.id] = range;
     });
   });
+}
+
+function rangeClicked(event) {
+  $.each(
+    connections,
+    function () {
+      if (this.left == event.data.rangeId 
+          || this.right == event.data.rangeId) {
+        this.highlight = true;
+      } else {
+        this.highlight = false;
+      }
+    }
+  );
+  renderConnections();
 }
 
 function getNthSpanInRange(n, range) {
