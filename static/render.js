@@ -81,14 +81,17 @@ function renderBlocks() {
 
       switch (newlineCount) {
         case 1:
-          p.html(p.html()+"&nbsp;<br/>");
+          //p.html(p.html()+"&nbsp;<br/>");
+          p.html(p.html()+"<br/>");
           break;
         case 2:
-          p.html(p.html()+"&nbsp;&nbsp;");
+          //p.html(p.html()+"&nbsp;&nbsp;");
           break;
         default:
-          var newBrs = "<br/>&nbsp;".repeat(newlineCount-3);
-          p.html(p.html()+"&nbsp;&nbsp;<p>&nbsp;"+newBrs+"</p>");
+          //var newBrs = "<br/>&nbsp;".repeat(newlineCount-3);
+          //p.html(p.html()+"&nbsp;&nbsp;<p>&nbsp;"+newBrs+"</p>");
+          var newBrs = "<br/>".repeat(newlineCount-3);
+          p.html(p.html()+"<p>"+newBrs+"</p>");
           break;
       }
 
@@ -106,9 +109,12 @@ function renderBlocks() {
     }
     
     $.each(this.rangeDefs, function() {
-      var range = makeRange(div, this.offset1, this.offset2);
+      //var range = makeRange(div, this.offset1, this.offset2);
+      var range = rangy.createRange();
       var styleApplier;
       var className;
+
+      range.selectCharacters(div, this.offset1, this.offset2);
 
       if (this.type == "ADDITION") {
         styleApplier = addStyleApplier;
@@ -137,21 +143,6 @@ function renderBlocks() {
       ranges[this.id] = range;
     });
   });
-}
-
-function rangeClicked(event) {
-  $.each(
-    connections,
-    function () {
-      if (this.left == event.data.rangeId 
-          || this.right == event.data.rangeId) {
-        this.highlight = true;
-      } else {
-        this.highlight = false;
-      }
-    }
-  );
-  renderConnections();
 }
 
 function getNthSpanInRange(n, range) {
@@ -202,3 +193,79 @@ function load() {
   renderConnections();
 }
 
+function rangeClicked(event) {
+  $.each(
+    connections,
+    function () {
+      if (this.left == event.data.rangeId 
+          || this.right == event.data.rangeId) {
+        this.highlight = true;
+      } else {
+        this.highlight = false;
+      }
+    }
+  );
+  renderConnections();
+}
+
+function getBlockByElementId(elementId) {
+  var match = null;
+  $.each(
+    blocks,
+    function () {
+      if (this.element == elementId) {
+        match = this;
+        return;
+      }
+    }
+  );
+  return match;
+}
+
+function connectButtonClicked() {
+  var selectedConnection = null;
+  $.each(
+    connections,
+    function () {
+      if (this.highlight) {
+        selectedConnection = this;
+        return;
+      }
+    }
+  );
+  var selection = rangy.getSelection();
+  var offset1 = -1;
+  var offset2 = -1;
+  $.each(
+    feedbackIds,
+    function () {
+      var block = getBlockByElementId(this);
+      var characterRanges = selection.saveCharacterRanges(
+        document.getElementById(this)
+      );
+      var start = characterRanges[0].range.start;
+      var end = characterRanges[0].range.end;
+      // the problem is that these offsets appear to assume
+      // a string in which all of the rendered newlines have been 
+      // removed. . . i.e. based on selection.toString rather than
+      // selection.nativeSelection.toString. . . so maybe what we
+      // do is hack the rangy code to use nativeSelection instead
+
+      // actually, looking at the code, my problem may be trailing
+      // spaces, not newlines
+      if (block != null 
+          && start >= 0 
+          && end >= 0 
+          && start < block.text.length
+          && end < block.text.length) {
+        offset1 = start;
+        offset2 = end;
+        alert("'"+block.text.substring(offset1, offset2)+"' count: "+(offset2-offset1));
+      }
+    }
+  );
+  if (selectedConnection != null && offset1 != -1 && offset2 != -1) {
+    alert("selected connection left:" +selectedConnection.left+
+      " text: '"+selection.nativeSelection.toString()+"' count: "+selection.nativeSelection.toString().length);
+  }
+}

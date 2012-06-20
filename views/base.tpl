@@ -30,6 +30,7 @@
 
     <script type="text/javascript" src="/static/rangy-core-1.2.3.js"></script>
     <script type="text/javascript" src="/static/rangy-cssclassapplier-1.2.3.js"></script>
+    <script type="text/javascript" src="/static/rangy-textrange-1.3alpha.650.js"></script>
     <script type="text/javascript" src="/static/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="/static/jquery.svg-1.4.4.js"></script>
     <script type="text/javascript" src="/static/lines.js"></script>

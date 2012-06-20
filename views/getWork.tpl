@@ -1,5 +1,6 @@
 % from view_helper import escJS
 <p>Name: {{work.name}}</p>
+<button type="button" id="connectButton">Connect Feedback</button>
 <table valign="top" border="1">
 %for draftPair in draftPairs:
   <tr valign="top">
@@ -70,6 +71,13 @@
 %end
   ];
 
+  var feedbackIds = [
+%for draftPair in draftPairs:
+    "feedback-{{draftPair["left"].id}}",
+%end
+  ];
+
+  $('#connectButton').click(connectButtonClicked);
   $(document).ready(load);
   $(window).resize(renderConnections);
 </script>
