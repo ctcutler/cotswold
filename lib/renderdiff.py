@@ -1,15 +1,36 @@
 from constants import COLORS, NAME_FORMAT, FEEDBACK_NAME_FORMAT, SPAN_ID_FORMAT
 
-def makeLines(changes, leftId, rightId):
+def makeLine(id1, id2, color):
+  return {
+    "id1": id1,
+    "id2": id2,
+    "color": color,
+  }
+
+def makeLines(changes, feedbackChunks, leftId, rightId):
   lines = []
   for change in changes:
-    leftName = NAME_FORMAT % (leftId, change.id)
-    rightName = NAME_FORMAT % (rightId, change.id)
-    lines.append({
-      "id1": leftName,
-      "id2": rightName,
-      "color": COLORS[change.type]
-    })
+    associatedFeedback = None
+    for fc in feedbackChunks:
+      if fc["changeId"] == change.id:
+        associatedFeedback = fc
+        break
+
+    color = COLORS[change.type]
+    if associatedFeedback:
+      leftName = NAME_FORMAT % (leftId, change.id)
+      rightName = associatedFeedback["name"]
+      lines.append(makeLine(leftName, rightName, color))
+
+      leftName = associatedFeedback["name"]
+      rightName = NAME_FORMAT % (rightId, change.id)
+      lines.append(makeLine(leftName, rightName, color))
+
+    else:
+      leftName = NAME_FORMAT % (leftId, change.id)
+      rightName = NAME_FORMAT % (rightId, change.id)
+      lines.append(makeLine(leftName, rightName, color))
+
   return lines
 
 def makeFeedbackChunks(feedbackedChanges):
@@ -23,6 +44,7 @@ def makeFeedbackChunks(feedbackedChanges):
         "offset2": feedbackedChange.feedback_offset2,
         "name": FEEDBACK_NAME_FORMAT % (feedbackedChange.feedback.id, feedbackedChange.id),
         "changeType": feedbackedChange.change.type,
+        "changeId": feedbackedChange.change.id,
       }
     )
   chunks.sort(lambda x, y: cmp(x["offset1"], y["offset1"]))

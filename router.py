@@ -56,7 +56,7 @@ def getWork(store, workId):
       "left": left,
       "right": right,
       "feedback": feedback,
-      "lines": makeLines(draftPairChanges, left.id, right.id),
+      "lines": makeLines(draftPairChanges, feedbackChunks, left.id, right.id),
       "leftChunks": makeDraftChunks(draftPairChanges, left.id, True),
       "rightChunks": makeDraftChunks(draftPairChanges, right.id, False),
       "feedbackChunks": feedbackChunks
