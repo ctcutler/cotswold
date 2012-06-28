@@ -86,12 +86,15 @@ function renderBlocks() {
           break;
         case 2:
           //p.html(p.html()+"&nbsp;&nbsp;");
+          p.html(p.html()+"&nbsp;");
           break;
         default:
           //var newBrs = "<br/>&nbsp;".repeat(newlineCount-3);
           //p.html(p.html()+"&nbsp;&nbsp;<p>&nbsp;"+newBrs+"</p>");
-          var newBrs = "<br/>".repeat(newlineCount-3);
-          p.html(p.html()+"<p>"+newBrs+"</p>");
+          //var newBrs = "<br/>".repeat(newlineCount-3);
+          //p.html(p.html()+"<p>"+newBrs+"</p>");
+          var newBrs = "<br/>".repeat(newlineCount);
+          p.html(p.html()+newBrs);
           break;
       }
 
