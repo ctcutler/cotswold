@@ -301,12 +301,13 @@ function connectButtonClicked() {
   );
   if (selectedConnection != null && offset1 != -1 && offset2 != -1) {
     //alert("selected connection left:" +selectedConnection.left+ " text: '"+selection.nativeSelection.toString()+"' count: "+selection.nativeSelection.toString().length);
-    var connectionIdParts = selectedConnection.left.split(/\./);
-    var draftId = connectionIdParts[0];
+    var leftRangeIdParts = selectedConnection.left.split(/\./);
+    var leftDraftId = leftRangeIdParts[0];
+    var changeId = leftRangeIdParts[1];
 
     // create new block
     var rangeDef = {
-      id: "feedback-"+draftId+"."+tmpConnectionId+"-tmp",
+      id: "feedback-"+leftDraftId+"."+tmpConnectionId+"-tmp",
       offset1: offset1,
       offset2: offset2,
       type: selectedConnection.type
@@ -331,6 +332,20 @@ function connectButtonClicked() {
     }
     connections.push(connection);
 
+    feedbackIdParts = feedbackBlock.element.split(/-/);
     reload();
+
+    $.post(
+      "/feedbackedChanges", 
+      {
+        "changeId": changeId,
+        feedbackId: feedbackIdParts[1],
+        feedbackStart: offset1,
+        feedbackEnd: offset2,
+      },
+      function(data) {
+        alert(data);
+      }
+    );
   }
 }
