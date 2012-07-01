@@ -39,10 +39,7 @@ String.prototype.repeat = function(num) {
     return new Array( num + 1 ).join( this );
 }
 
-function renderBlocks() {
-  var addStyleApplier = rangy.createCssClassApplier("add");
-  var updateStyleApplier = rangy.createCssClassApplier("update");
-  var removeStyleApplier = rangy.createCssClassApplier("remove");
+function renderText() {
   $.each(blocks, function() {
     var parts = this.text.split(/\n/);
     /*
@@ -103,7 +100,14 @@ function renderBlocks() {
         p = null;
       }
     }
+  });
+}
 
+function renderRanges() {
+  var addStyleApplier = rangy.createCssClassApplier("add");
+  var updateStyleApplier = rangy.createCssClassApplier("update");
+  var removeStyleApplier = rangy.createCssClassApplier("remove");
+  $.each(blocks, function() {
     var div = document.getElementById(this.element);
     if (div.childNodes.length > 0 && div.childNodes[0].nodeType == 3) {
       // for some reason this node is showing up with a text node
@@ -202,7 +206,13 @@ function renderConnections() {
 }
 
 function load() {
-  renderBlocks();
+  renderText();
+  renderRanges();
+  renderConnections();
+}
+
+function reload() {
+  renderRanges();
   renderConnections();
 }
 
@@ -321,6 +331,6 @@ function connectButtonClicked() {
     }
     connections.push(connection);
 
-    load();
+    reload();
   }
 }
