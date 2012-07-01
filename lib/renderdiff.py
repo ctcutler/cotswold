@@ -1,10 +1,10 @@
 from constants import COLORS, NAME_FORMAT, FEEDBACK_NAME_FORMAT, SPAN_ID_FORMAT
 
-def makeLine(id1, id2, color):
+def makeLine(id1, id2, t):
   return {
     "id1": id1,
     "id2": id2,
-    "color": color,
+    "type": t,
   }
 
 def makeLines(changes, feedbackChunks, leftId, rightId):
@@ -16,20 +16,19 @@ def makeLines(changes, feedbackChunks, leftId, rightId):
         associatedFeedback = fc
         break
 
-    color = COLORS[change.type]
     if associatedFeedback:
       leftName = NAME_FORMAT % (leftId, change.id)
       rightName = associatedFeedback["name"]
-      lines.append(makeLine(leftName, rightName, color))
+      lines.append(makeLine(leftName, rightName, change.type))
 
       leftName = associatedFeedback["name"]
       rightName = NAME_FORMAT % (rightId, change.id)
-      lines.append(makeLine(leftName, rightName, color))
+      lines.append(makeLine(leftName, rightName, change.type))
 
     else:
       leftName = NAME_FORMAT % (leftId, change.id)
       rightName = NAME_FORMAT % (rightId, change.id)
-      lines.append(makeLine(leftName, rightName, color))
+      lines.append(makeLine(leftName, rightName, change.type))
 
   return lines
 

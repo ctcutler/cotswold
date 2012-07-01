@@ -187,7 +187,17 @@ function renderConnections() {
   $.each(connections, function() {
     var leftSpan = getNthSpanInRange(-1, ranges[this.left]);
     var rightSpan = getNthSpanInRange(0, ranges[this.right]);
-    drawLine(svg, leftSpan, rightSpan, this.color, this.highlight);
+    var color;
+
+    if (this.type == "ADDITION") {
+      color = "green";
+    } else if (this.type == "UPDATE") {
+      color = "yellow";
+    } else if (this.type == "DELETION") {
+      color = "red";
+    }
+
+    drawLine(svg, leftSpan, rightSpan, color, this.highlight);
   });
 }
 
@@ -225,6 +235,8 @@ function getBlockByElementId(elementId) {
   return match;
 }
 
+var tmpConnectionId = 1;
+
 function connectButtonClicked() {
   var selectedConnection = null;
   $.each(
@@ -239,10 +251,12 @@ function connectButtonClicked() {
   var selection = rangy.getSelection();
   var offset1 = -1;
   var offset2 = -1;
+  var feedbackBlock;
   $.each(
     feedbackIds,
     function () {
-      var block = getBlockByElementId(this);
+      var feedbackId = this;
+      var block = getBlockByElementId(feedbackId);
       var characterRanges = selection.saveCharacterRanges(
         document.getElementById(this)
       );
@@ -263,12 +277,50 @@ function connectButtonClicked() {
           && end < block.text.length) {
         offset1 = start;
         offset2 = end;
-        alert("'"+block.text.substring(offset1, offset2)+"' count: "+(offset2-offset1));
+        //alert("'"+block.text.substring(offset1, offset2)+"' count: "+(offset2-offset1));
+        $.each(
+          blocks,
+          function () {
+            if (feedbackId == this.element) {
+              feedbackBlock = this;
+            }
+          }
+        );
       }
     }
   );
   if (selectedConnection != null && offset1 != -1 && offset2 != -1) {
-    alert("selected connection left:" +selectedConnection.left+
-      " text: '"+selection.nativeSelection.toString()+"' count: "+selection.nativeSelection.toString().length);
+    //alert("selected connection left:" +selectedConnection.left+ " text: '"+selection.nativeSelection.toString()+"' count: "+selection.nativeSelection.toString().length);
+    var connectionIdParts = selectedConnection.left.split(/\./);
+    var draftId = connectionIdParts[0];
+
+    // create new block
+    var rangeDef = {
+      id: "feedback-"+draftId+"."+tmpConnectionId+"-tmp",
+      offset1: offset1,
+      offset2: offset2,
+      type: selectedConnection.type
+    };
+    feedbackBlock.rangeDefs.push(rangeDef);
+    tmpConnectionId++;
+
+    // replace change connection with new connections
+    connections.splice(connections.indexOf(selectedConnection), 1);
+    var connection = {
+      left: selectedConnection.left,
+      right: rangeDef.id,
+      type: selectedConnection.type,
+      highlight: true
+    }
+    connections.push(connection);
+    connection = {
+      left: rangeDef.id,
+      right: selectedConnection.right,
+      type: selectedConnection.type,
+      highlight: true
+    }
+    connections.push(connection);
+
+    load();
   }
 }
