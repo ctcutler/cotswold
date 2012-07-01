@@ -342,9 +342,6 @@ function connectButtonClicked() {
         feedbackId: feedbackIdParts[1],
         feedbackStart: offset1,
         feedbackEnd: offset2,
-      },
-      function(data) {
-        alert(data);
       }
     );
   }
