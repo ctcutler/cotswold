@@ -64,7 +64,7 @@
     {
       left: "{{line["id1"]}}", 
       right: "{{line["id2"]}}", 
-      color: "{{line["color"]}}",
+      type: "{{line["type"]}}",
       hightlight: false
     },
   %end
