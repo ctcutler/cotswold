@@ -1,0 +1,27 @@
+<!doctype html>
+<html ng-app="cotswoldApp">
+  <head>
+    <!-- intentionally add http protocol to these since I want this to be run locally from a file 
+         consider having local versions of these files instead -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="cotswold.js"></script>
+  </head>
+  <body>
+    <timeline ng-controller="TimelineController" style="background-color: #999; position: absolute; left: 100px; top: 100px; height: 200px; width: 1000px;">
+      <a href="" ng-click="test()">test</a>
+      <div 
+        ng-repeat="timepoint in timepoints" 
+        style="border:2px solid red; position: absolute;" 
+        bind-width="timepoint.width"
+      >
+        <!--ng-style="{ 'backgroundColor':'#bbb', 'left': timepoint.left+'px', 'top': timepoint.top+'px'}"-->
+        <span>{{timepoint.name}}</span>
+        <div ng-repeat="artifact in timepoint.artifacts">
+          <span>{{artifact.name}}</span>
+        </div>
+      </div>
+    </timeline>
+  </body>
+</html>

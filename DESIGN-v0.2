@@ -1,0 +1,49 @@
+* time line: a series of time points
+* time point: associated with a time line and an (ordered?) set of artifacts,
+              has a comment associated with it
+* artifact: text, image, or video, associated with 0 or more connections,
+            each pointing to a specific location in the artifact, has 0
+            or more tags associated with it, has a comment associated with it
+* connection: relates two artifacts, specifying particular locations in each,
+              has 0 or more tags associated with it, has a comment associated
+              with it
+* tag: a label and a color, associated with artifacts and connections
+
+
+Write a UI that renders a hardcoded set of data structures: a timeline, time points, artifacts and conections, with comments and tags if I have time.  
+
+Use directives to define an element for each of these domain objects.  The elements will be nested (time points within the time line, artifacts within a time point, connections within a time line, tags within a connection or artifact).  
+
+In the first version we won't worry about making the view flexible for different window sizes, zoom levels, etc.  But we wil be sure to hard code the size of the view only at the outermost level.  Inner levels will have the parent elements telling the children where and how big they should be.  
+
+I need to learn more about communicating information between directive defined elements so that I can do this sort of layout.  The answer is shared, hierarchical scopes.
+
+
+To start with I want to define a timeline tag and a series of time point tags.  The time line tag should space the time point tags evenly along it.  
+
+
+The timeline controller contains a list of timepoint objects in its scope (the model).  The view sets the dimensions of the timeline in the scope and the controller updates the timepoint locations based on these dimensions.  The view uses ng-repeat to create elements for each timepoint.  Each timepoint gets its current location from the model/scope.  
+
+I want to create something that will bind an element's size to its object on the model.  
+
+I want to create something that sets a property on the model to be the sum of several other 
+properties on the model.  
+
+
+Try again.  I have three time points within a time line.  The ng-iterate creates the elements.  Each time point should render its size as needed and report that to the time line.  The time line should 
+size itself and tell the time points where to go within it.  
+
+* how to bind the size of each time point to a model (data flows from time point to time line)
+* how to notice whenever any of the time point sizes changes and recalculate the timeline size 
+  and time point locations
+* how to bind the location of each time point to a model (data flows from time line to time point)
+
+
+      <div 
+        ng-repeat="timepoint in timepoints" 
+        bind-left="timepoint.left"
+        bind-top="timepoint.top"
+        bind-width="timepoint.width"
+        bind-height="timepoint.height"
+      >
+
