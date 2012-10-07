@@ -3,32 +3,88 @@ var module = angular.module('cotswoldApp', [])
     return {
       restrict: 'E',
       link: function(scope, element, attrs) {
-        // broadcast a timelineresize event whenever there is a load or resize
-        // event on the window
-        angular.element(window).bind('resize', function() {
-          scope.$broadcast("timelineresize");
-        });
+        var PADDING = 10;
+        // broadcast a timelineresize event whenever the load event
+        // occurs on the window to tell children that they need to update the
+        // model with their new sizes
         angular.element(window).bind('load', function() {
           scope.$broadcast("timelineresize");
         });
+
+        scope.$on('timepointresize', function(event) {
+          var width = PADDING;
+          var height = 0;
+          var timepoints = scope.$eval(attrs.timepoints);
+
+          $.each(timepoints, function(index, timepoint) {
+            timepoint.left = width;
+            timepoint.top = PADDING;
+            width += timepoint.width + PADDING;
+            height = Math.max(timepoint.height, height);
+          });
+
+          height += PADDING * 2;
+
+          // set own width, height
+          element.css({ width: width+"px" });
+          element.css({ height: height+"px" });
+
+          scope.$digest();
+        });
       }
     };
-  }).directive('bindWidth', function() {
+  }).directive('timepoint', function() {
     return {
-      restrict: 'A',
+      restrict: 'E',
       link: function(scope, element, attrs) {
 
         // watch model and update element
-        scope.$watch(attrs.bindWidth, function(val) {
+        scope.$watch(attrs.width, function(val) {
           if (val != null) {
             element.css({ width: val+"px" });
+          }
+        });
+        scope.$watch(attrs.height, function(val) {
+          if (val != null) {
+            element.css({ height: val+"px" });
+          }
+        });
+        scope.$watch(attrs.left, function(val) {
+          if (val != null) {
+            element.css({ left: val+"px" });
+          }
+        });
+        scope.$watch(attrs.top, function(val) {
+          if (val != null) {
+            element.css({ top: val+"px" });
           }
         });
 
         // watch element and update model
         scope.$on('timelineresize', function(event) {
-          if (scope.$eval(attrs.bindWidth) != $(element).width()) {
-            scope.$eval(attrs.bindWidth+"="+$(element).width());
+          var emitResizeEvent = false;
+          var $element = $(element);
+          var position = $element.position();
+
+          if (scope.$eval(attrs.width) != $element.width()) {
+            scope.$eval(attrs.width+"="+$element.width());
+            emitResizeEvent = true;
+          }
+          if (scope.$eval(attrs.height) != $element.height()) {
+            scope.$eval(attrs.height+"="+$element.height());
+            emitResizeEvent = true;
+          }
+          if (scope.$eval(attrs.left) != position.left) {
+            scope.$eval(attrs.left+"="+position.left);
+            emitResizeEvent = true;
+          }
+          if (scope.$eval(attrs.top) != position.top) {
+            scope.$eval(attrs.top+"="+position.top);
+            emitResizeEvent = true;
+          }
+          
+          if (emitResizeEvent) {
+            scope.$emit("timepointresize");
           }
         });
       }

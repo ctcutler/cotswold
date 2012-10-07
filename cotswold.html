@@ -9,19 +9,25 @@
     <script src="cotswold.js"></script>
   </head>
   <body>
-    <timeline ng-controller="TimelineController" style="background-color: #999; position: absolute; left: 100px; top: 100px; height: 200px; width: 1000px;">
-      <a href="" ng-click="test()">test</a>
-      <div 
+    <timeline 
+        ng-controller="TimelineController" 
+        timepoints="timepoints"
+        style="background-color: #999; position: absolute; left: 100px; top: 100px; height: 200px; width: 1000px;">
+      <!--a href="" ng-click="test()">test</a-->
+      <timepoint 
         ng-repeat="timepoint in timepoints" 
         style="border:2px solid red; position: absolute;" 
-        bind-width="timepoint.width"
+        width="timepoint.width"
+        height="timepoint.height"
+        top="timepoint.top"
+        left="timepoint.left"
       >
         <!--ng-style="{ 'backgroundColor':'#bbb', 'left': timepoint.left+'px', 'top': timepoint.top+'px'}"-->
         <span>{{timepoint.name}}</span>
         <div ng-repeat="artifact in timepoint.artifacts">
           <span>{{artifact.name}}</span>
         </div>
-      </div>
+      </timepoint>
     </timeline>
   </body>
 </html>
