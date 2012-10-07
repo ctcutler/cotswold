@@ -1,0 +1,13 @@
+.timeline {
+  background-color: #aaa;
+}
+
+.timepoint {
+  background-color: #ccc;
+  position: absolute;
+}
+
+.artifact {
+  background-color: #eee;
+  position: absolute;
+}
