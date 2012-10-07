@@ -75,14 +75,20 @@ function positionChildrenAndResize(scope, element, attrs, children, vertical) {
     height += PADDING * 2;
   }
 
+  // FIXME: this does not appear to be taking effect, or if it is,
+  // something is reversing it.  Is it getting properly set in the css?
+  // is it getting properly set in the scope?
+
+  // FIXME: would this work better if I set the height in the model?
+
   // set own width, height
-  console.log("setting width to "+width);
   element.css({ width: width+"px" });
   element.css({ height: height+"px" });
+  console.log(element[0].className+" width 1: "+width);
+  console.log(element[0].className+" height 1: "+height);
 
   // tell the watchers to update
-  // FIXME: if I use apply rather than eval maybe I don't need to do this
-  scope.$digest();
+  if (!scope.$$phase) scope.$digest();
 }
 
 function bindLocationAndSize(scope, element, attrs) {
@@ -90,11 +96,13 @@ function bindLocationAndSize(scope, element, attrs) {
   scope.$watch(attrs.width, function(val) {
     if (val != null) {
       element.css({ width: val+"px" });
+      console.log(element[0].className+" width 2: "+val);
     }
   });
   scope.$watch(attrs.height, function(val) {
     if (val != null) {
       element.css({ height: val+"px" });
+      console.log(element[0].className+" height 2: "+val);
     }
   });
   scope.$watch(attrs.left, function(val) {
@@ -155,15 +163,15 @@ function TimelineController($scope) {
       name: "timepoint 1",
       left: null,
       top: null,
-      width: 100,
-      height: 100,
+      width: null,
+      height: null,
       artifacts: [
         { 
           name: "artifact 1.1",
           left: null,
           top: null,
-          width: 75,
-          height: 25
+          width: 175,
+          height: 15
         },
         { 
           name: "artifact 1.2",
@@ -185,8 +193,8 @@ function TimelineController($scope) {
       name: "timepoint 2",
       left: null,
       top: null,
-      width: 100,
-      height: 100,
+      width: null,
+      height: null,
       artifacts: [
         { 
           name: "artifact 2.1",
@@ -209,14 +217,35 @@ function TimelineController($scope) {
           width: 75,
           height: 25
         },
+        { 
+          name: "artifact 2.4",
+          left: null,
+          top: null,
+          width: 75,
+          height: 25
+        },
+        { 
+          name: "artifact 2.5",
+          left: null,
+          top: null,
+          width: 75,
+          height: 25
+        },
+        { 
+          name: "artifact 2.6",
+          left: null,
+          top: null,
+          width: 75,
+          height: 25
+        },
       ]
     },
     { 
       name: "timepoint 3",
       left: null,
       top: null,
-      width: 100,
-      height: 100,
+      width: null,
+      height: null,
       artifacts: [
         { 
           name: "artifact 3.1",
