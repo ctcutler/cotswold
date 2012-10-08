@@ -6,18 +6,7 @@ var module = angular.module('cotswoldApp', [])
 
         element.addClass("timeline");
 
-        // broadcast a timelineresize event whenever the load event
-        // occurs on the window to tell children that they need to update the
-        // model with their new sizes
-        angular.element(window).bind('load', function() {
-          scope.$broadcast("timelineresize");
-        });
-
-        // FIXME: rename this event to "resize" and get rid of the timelineresize event
-        // entirely, just have the children set their sizes in the model and
-        // emit the resize event when they first initialize (maybe not even then
-        // if initial sizes are set in the model)
-        scope.$on('timepointresize', function(event) {
+        scope.$on('resize', function(event) {
           positionChildrenAndResize(scope, element, attrs, attrs.timepoints, false);
         });
       }
@@ -29,12 +18,7 @@ var module = angular.module('cotswoldApp', [])
 
         element.addClass("timepoint");
         bindLocationAndSize(scope, element, attrs);
-
-        // FIXME: rename this event to "resize" and get rid of the timelineresize event
-        // entirely, just have the children set their sizes in the model and
-        // emit the resize event when they first initialize (maybe not even then
-        // if initial sizes are set in the model)
-        scope.$on('timepointresize', function(event) {
+        scope.$on('resize', function(event) {
           positionChildrenAndResize(scope, element, attrs, attrs.artifacts, true);
         });
       }
@@ -45,7 +29,7 @@ var module = angular.module('cotswoldApp', [])
       link: function(scope, element, attrs) {
         element.addClass("artifact");
         bindLocationAndSize(scope, element, attrs);
-        scope.$emit("timepointresize");
+        scope.$emit("resize");
       }
     };
   });
@@ -75,17 +59,9 @@ function positionChildrenAndResize(scope, element, attrs, children, vertical) {
     height += PADDING * 2;
   }
 
-  // FIXME: this does not appear to be taking effect, or if it is,
-  // something is reversing it.  Is it getting properly set in the css?
-  // is it getting properly set in the scope?
-
-  // FIXME: would this work better if I set the height in the model?
-
   // set own width, height
   element.css({ width: width+"px" });
   element.css({ height: height+"px" });
-  console.log(element[0].className+" width 1: "+width);
-  console.log(element[0].className+" height 1: "+height);
 
   // tell the watchers to update
   if (!scope.$$phase) scope.$digest();
@@ -96,13 +72,11 @@ function bindLocationAndSize(scope, element, attrs) {
   scope.$watch(attrs.width, function(val) {
     if (val != null) {
       element.css({ width: val+"px" });
-      console.log(element[0].className+" width 2: "+val);
     }
   });
   scope.$watch(attrs.height, function(val) {
     if (val != null) {
       element.css({ height: val+"px" });
-      console.log(element[0].className+" height 2: "+val);
     }
   });
   scope.$watch(attrs.left, function(val) {
@@ -116,8 +90,8 @@ function bindLocationAndSize(scope, element, attrs) {
     }
   });
 
-  // watch element and update model
-  scope.$on('timelineresize', function(event) {
+  angular.element(window).bind('load', function() {
+    scope.$broadcast("timelineresize");
     var emitResizeEvent = false;
     var $element = $(element);
     var position = $element.position();
@@ -140,7 +114,7 @@ function bindLocationAndSize(scope, element, attrs) {
     }
     
     if (emitResizeEvent) {
-      scope.$emit("timepointresize");
+      scope.$emit("resize");
     }
   });
 }
