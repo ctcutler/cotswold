@@ -7,7 +7,7 @@ var module = angular.module('cotswoldApp', [])
         element.addClass("timeline");
 
         scope.$on('resize', function(event) {
-          positionChildrenAndResize(scope, element, attrs, attrs.timepoints, false);
+          positionChildrenAndResize(scope, element, attrs, attrs.timepoints, false, "bottom");
         });
       }
     };
@@ -19,7 +19,7 @@ var module = angular.module('cotswoldApp', [])
         element.addClass("timepoint");
         bindLocationAndSize(scope, element, attrs);
         scope.$on('resize', function(event) {
-          positionChildrenAndResize(scope, element, attrs, attrs.artifacts, true);
+          positionChildrenAndResize(scope, element, attrs, attrs.artifacts, true, "center");
         });
       }
     };
@@ -36,32 +36,67 @@ var module = angular.module('cotswoldApp', [])
 
 // directive helpers
 var PADDING = 10;
-function positionChildrenAndResize(scope, element, attrs, children, vertical) {
-  var width = vertical ? 0 : PADDING;
-  var height = vertical ? PADDING : 0;
+function positionChildrenAndResize(scope, element, attrs, children, vertical, align) {
   var children = scope.$eval(children);
+  var topOrLeft = align == "top" || align == "left";
+  var bottomOrRight = align == "bottom" || align == "right";
+  var parentWidth = 0;
+  var parentHeight = 0;
 
   $.each(children, function(index, child) {
-    child.left = vertical ? PADDING : width;
-    child.top = vertical ? height : PADDING;
     if (vertical) {
-      width = Math.max(child.width, width);
-      height += child.height + PADDING;
+      parentWidth = Math.max(child.width, parentWidth);
+      parentHeight += child.height;
+      if (index < (children.length - 1)) {
+        parentHeight += PADDING;
+      }
     } else {
-      width += child.width + PADDING;
-      height = Math.max(child.height, height);
+      parentHeight = Math.max(child.height, parentHeight);
+      parentWidth += child.width;
+      if (index < (children.length - 1)) {
+        parentWidth += PADDING;
+      }
     }
   });
 
-  if (vertical) {
-    width += PADDING * 2;
-  } else {
-    height += PADDING * 2;
-  }
+
+  var offset = PADDING;
+  $.each(children, function(index, child) {
+    if (vertical) {
+      child.top = offset;
+      offset += child.height + PADDING
+      if (topOrLeft) {
+        // align left
+        child.left = PADDING;
+      } else if (bottomOrRight) {
+        // align right
+        child.left = (parentWidth - child.width) + PADDING;
+      } else {
+        // align center
+        child.left = ((parentWidth - child.width)/2) + PADDING;
+      }
+    } else {
+      child.left = offset;
+      offset += child.width + PADDING
+      if (topOrLeft) {
+        // align top
+        child.top = PADDING;
+      } else if (bottomOrRight) {
+        // align bottom
+        child.top = (parentHeight - child.height) + PADDING;
+      } else {
+        // align center
+        child.top = ((parentHeight - child.height)/2) + PADDING;
+      }
+    }
+  });
+
+  parentWidth += 2 * PADDING;
+  parentHeight += 2 * PADDING;
 
   // set own width, height
-  element.css({ width: width+"px" });
-  element.css({ height: height+"px" });
+  element.css({ width: parentWidth+"px" });
+  element.css({ height: parentHeight+"px" });
 
   // tell the watchers to update
   if (!scope.$$phase) scope.$digest();
