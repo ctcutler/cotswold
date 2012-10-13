@@ -10,6 +10,7 @@ var module = angular.module('cotswoldApp', [])
         element.addClass("timeline");
 
         scope.$on('resize', function(event) {
+          // handle resize by repositioning children and resizing self
           resizeHandler(element, false, "bottom");
         });
       }
@@ -22,6 +23,7 @@ var module = angular.module('cotswoldApp', [])
         element.addClass("timepoint");
 
         scope.$on('resize', function(event) {
+          // handle resize by repositioning children and resizing self
           resizeHandler(element, true, "center");
         });
       }
@@ -35,13 +37,13 @@ var module = angular.module('cotswoldApp', [])
         // Bind to model for size so that program can affect artifact size.
         // In watch function, update element size and fire resize (handles
         // cases where app changes artifact size)
-        scope.$watch(attrs.width, function(val) {
+        scope.$watch(attrs.loopVariable+".width", function(val) {
           if (val != null) {
             setWidth(element, val);
             scope.$emit("resize");
           }
         });
-        scope.$watch(attrs.height, function(val) {
+        scope.$watch(attrs.loopVariable+".height", function(val) {
           if (val != null) {
             setHeight(element, val);
             scope.$emit("resize");

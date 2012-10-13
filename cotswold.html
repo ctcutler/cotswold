@@ -11,27 +11,13 @@
     <script src="cotswold.js"></script>
   </head>
   <body style="background-color: #999">
-    <timeline 
-      ng-controller="TimelineController" 
-      timepoints="timepoints"
-    >
-      <timepoint 
-        ng-repeat="timepoint in timepoints" 
-        width="timepoint.width"
-        height="timepoint.height"
-        top="timepoint.top"
-        left="timepoint.left"
-        artifacts="timepoint.artifacts"
-      >
-        <!-- FIXME: if there is a programmatic way to figure out what 
-             the instance variable in the loop is called, could probably
-             avoid this location and size attributes -->
+    <timeline ng-controller="TimelineController">
+      <timepoint ng-repeat="timepoint in timepoints">
+        <!-- FIXME: find programmatic way to determine loop variable name
+             within directive link function -->
         <artifact 
           ng-repeat="artifact in timepoint.artifacts"
-          width="artifact.width"
-          height="artifact.height"
-          top="artifact.top"
-          left="artifact.left"
+          loop-variable="artifact"
         >
           <span>{{artifact.name}}</span>
         </artifact>
