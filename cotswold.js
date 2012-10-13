@@ -1,4 +1,3 @@
-var PADDING = 10;
 var ARTIFACT_WIDTH = 300;
 
 var module = angular.module('cotswoldApp', [])
@@ -11,7 +10,7 @@ var module = angular.module('cotswoldApp', [])
 
         scope.$on('resize', function(event) {
           // handle resize by repositioning children and resizing self
-          resizeHandler(element, false, "bottom");
+          resizeHandler(element, false, "bottom", 10, 10);
         });
       }
     };
@@ -24,7 +23,7 @@ var module = angular.module('cotswoldApp', [])
 
         scope.$on('resize', function(event) {
           // handle resize by repositioning children and resizing self
-          resizeHandler(element, true, "center");
+          resizeHandler(element, true, "center", 10, 0);
         });
       }
     };
@@ -59,7 +58,7 @@ var module = angular.module('cotswoldApp', [])
   });
 
 // directive helpers
-function resizeHandler(element, vertical, align) {
+function resizeHandler(element, vertical, align, margin, padding) {
   var children = element[0].children;
   var topOrLeft = align == "top" || align == "left";
   var bottomOrRight = align == "bottom" || align == "right";
@@ -72,51 +71,51 @@ function resizeHandler(element, vertical, align) {
       parentWidth = Math.max($child.width(), parentWidth);
       parentHeight += $child.height();
       if (index < (children.length - 1)) {
-        parentHeight += PADDING;
+        parentHeight += padding;
       }
     } else {
       parentHeight = Math.max($child.height(), parentHeight);
       parentWidth += $child.width();
       if (index < (children.length - 1)) {
-        parentWidth += PADDING;
+        parentWidth += padding;
       }
     }
   });
 
-  var offset = PADDING;
+  var offset = margin;
   $.each(children, function(index, c) {
     $child = $(c);
     if (vertical) {
       setTop($child, offset);
-      offset += $child.height() + PADDING
+      offset += $child.height() + padding;
       if (topOrLeft) {
         // align left
-        setLeft($child, PADDING);
+        setLeft($child, margin);
       } else if (bottomOrRight) {
         // align right
-        setLeft($child, (parentWidth - $child.width()) + PADDING);
+        setLeft($child, (parentWidth - $child.width()) + margin);
       } else {
         // align center
-        setLeft($child, ((parentWidth - $child.width())/2) + PADDING);
+        setLeft($child, ((parentWidth - $child.width())/2) + margin);
       }
     } else {
       setLeft($child, offset);
-      offset += $child.width() + PADDING;
+      offset += $child.width() + padding;
       if (topOrLeft) {
         // align top
-        setTop($child, PADDING);
+        setTop($child, margin);
       } else if (bottomOrRight) {
         // align bottom
-        setTop($child, (parentHeight - $child.height()) + PADDING);
+        setTop($child, (parentHeight - $child.height()) + margin);
       } else {
         // align center
-        setTop($child, ((parentHeight - $child.height())/2) + PADDING);
+        setTop($child, ((parentHeight - $child.height())/2) + margin);
       }
     }
   });
 
-  parentWidth += 2 * PADDING;
-  parentHeight += 2 * PADDING;
+  parentWidth += 2 * margin;
+  parentHeight += 2 * margin;
 
   // set own width, height
   setWidth(element, parentWidth);
@@ -157,17 +156,17 @@ function TimelineController($scope) {
       name: "timepoint 1",
       artifacts: [
         { 
-          name: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null
         },
         { 
-          name: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null
         },
         { 
-          name: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null 
         },
@@ -177,7 +176,7 @@ function TimelineController($scope) {
       name: "timepoint 2",
       artifacts: [
         { 
-          name: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null
         },
@@ -187,12 +186,12 @@ function TimelineController($scope) {
       name: "timepoint 3",
       artifacts: [
         { 
-          name: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null 
         },
         { 
-          name: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null
         },

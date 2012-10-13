@@ -2,9 +2,6 @@
 <html ng-app="cotswoldApp">
   <head>
     <link rel="stylesheet" type="text/css" href="cotswold.css"/>
-
-    <!-- intentionally add http protocol to these since I want this to be run locally from a file 
-         consider having local versions of these files instead so we can run with no network access -->
     <script src="angular-1.0.2.min.js"></script>
     <script src="jquery-1.8.2.min.js"></script>
     <script src="raphael-2.1.0-min.js"></script>
@@ -19,10 +16,10 @@
           ng-repeat="artifact in timepoint.artifacts"
           loop-variable="artifact"
         >
-          <span>{{artifact.name}}</span>
+          <span>{{artifact.content}}</span>
         </artifact>
+        <span style="position: absolute">{{timepoint.name}}</span>
       </timepoint>
     </timeline>
-    <!--a href="" ng-click="test()">test</a-->
   </body>
 </html>
