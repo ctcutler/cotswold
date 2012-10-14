@@ -1,5 +1,21 @@
 var ARTIFACT_WIDTH = 300;
 
+/*
+  FIXME:
+  * images
+  * movies
+  * hbox and vbox implementations
+  * get offset of text range
+  * editting
+  * comments
+  * tags
+  * zoom in and out (all the way out to full resolution, poster size)
+  * single artifact zoom
+  * scrolling in artifacts
+  * real connections
+  * data storage
+*/
+
 var module = angular.module('cotswoldApp', [])
   .directive('timeline', function() {
     return {
@@ -207,6 +223,7 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
 
 var el;
 window.onload = function () {
+    /*
     var dragger = function () {
         this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
         this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
@@ -223,52 +240,47 @@ window.onload = function () {
     var up = function () {
             this.animate({"fill-opacity": 0}, 500);
         };
+    */
     var $glass = $("#connections");
     var r = Raphael("connections", $glass.width(), $glass.height());
     var connections = [];
-    var shapes = [  r.ellipse(190, 100, 30, 20),
-                    r.rect(290, 80, 60, 40, 10),
-                    r.rect(290, 180, 60, 40, 2),
-                    r.ellipse(450, 100, 20, 20)
+    var shapes = [  r.rect(184, 197, 75, 17, 0),
+                    r.rect(494, 390, 75, 17, 0),
+                    r.rect(495, 443, 51, 17, 0),
+                    r.rect(685, 324, 42, 17, 0),
+                    r.rect(155, 523, 42, 40, 0),
+                    r.rect(678, 445, 42, 17, 0),
                 ];
     for (var i = 0, ii = shapes.length; i < ii; i++) {
-        var color = Raphael.getColor();
-        shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
-        shapes[i].drag(move, dragger, up);
+        shapes[i].attr({stroke: "#f00", "fill-opacity": 0, "stroke-width": 2});
     }
-    connections.push(r.connection(shapes[0], shapes[1], "#000"));
-    connections.push(r.connection(shapes[1], shapes[2], "#000", "#fff|5"));
-    connections.push(r.connection(shapes[1], shapes[3], "#000", "#000"));
+    connections.push(r.connection(shapes[0], shapes[1], "#f00", "#f00|2"));
+    connections.push(r.connection(shapes[2], shapes[3], "#f00", "#f00|2"));
+    connections.push(r.connection(shapes[4], shapes[5], "#f00", "#f00|2"));
 };
 
 function TimelineController($scope) {
-  $scope.test = function() {
-    // Creates canvas 320 × 200 at 10, 50
-    var paper = Raphael(10, 50, 320, 200);
-
-    // Creates circle at x = 50, y = 40, with radius 10
-    var circle = paper.circle(50, 40, 10);
-    // Sets the fill attribute of the circle to red (#f00)
-    circle.attr("fill", "#f00");
-
-    // Sets the stroke attribute of the circle to white
-    circle.attr("stroke", "#fff");
-  };
   $scope.timepoints = [
     { 
-      name: "timepoint 1",
+      name: "Tuesday Class",
       artifacts: [
         { 
+          imageVisibility: "none",
+          contentVisibility: "block",
           content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null
         },
         { 
+          imageVisibility: "none",
+          contentVisibility: "block",
           content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null
         },
         { 
+          imageVisibility: "block",
+          contentVisibility: "none",
           content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null 
@@ -276,9 +288,11 @@ function TimelineController($scope) {
       ]
     },
     { 
-      name: "timepoint 2",
+      name: "Wednesday Feedback",
       artifacts: [
         { 
+          imageVisibility: "none",
+          contentVisibility: "block",
           content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null
@@ -286,14 +300,18 @@ function TimelineController($scope) {
       ]
     },
     { 
-      name: "timepoint 3",
+      name: "Thursday Class",
       artifacts: [
         { 
+          imageVisibility: "none",
+          contentVisibility: "block",
           content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null 
         },
         { 
+          imageVisibility: "none",
+          contentVisibility: "block",
           content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
           width: ARTIFACT_WIDTH,
           height: null
