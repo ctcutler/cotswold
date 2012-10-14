@@ -3,6 +3,12 @@
   border-bottom: 2px solid #9cf;
 }
 
+.connections-glass {
+  left: 0px;
+  top: 0px;
+  position: absolute;
+}
+
 .timepoint {
   position: absolute;
 }

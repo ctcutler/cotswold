@@ -8,7 +8,7 @@
     <script src="cotswold.js"></script>
   </head>
   <body>
-    <timeline ng-controller="TimelineController">
+    <timeline id="timeline" ng-controller="TimelineController">
       <timepoint ng-repeat="timepoint in timepoints">
         <!-- FIXME: find programmatic way to determine loop variable name
              within directive link function -->
@@ -22,5 +22,6 @@
         <span style="position: absolute">{{timepoint.name}}</span>
       </timepoint>
     </timeline>
+    <div id="connections" class="connections-glass"></div>
   </body>
 </html>
