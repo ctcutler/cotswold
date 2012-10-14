@@ -10,7 +10,7 @@ var module = angular.module('cotswoldApp', [])
 
         scope.$on('resize', function(event) {
           // handle resize by repositioning children and resizing self
-          resizeHandler(element, false, "bottom", 10, 10);
+          resizeHandler(element, false, "bottom", 10, 0);
         });
       }
     };
@@ -23,7 +23,7 @@ var module = angular.module('cotswoldApp', [])
 
         scope.$on('resize', function(event) {
           // handle resize by repositioning children and resizing self
-          resizeHandler(element, true, "center", 10, 0);
+          resizeHandler(element, true, "center", 0, 0);
         });
       }
     };

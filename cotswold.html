@@ -7,7 +7,7 @@
     <script src="raphael-2.1.0-min.js"></script>
     <script src="cotswold.js"></script>
   </head>
-  <body style="background-color: #999">
+  <body>
     <timeline ng-controller="TimelineController">
       <timepoint ng-repeat="timepoint in timepoints">
         <!-- FIXME: find programmatic way to determine loop variable name
@@ -16,8 +16,11 @@
           ng-repeat="artifact in timepoint.artifacts"
           loop-variable="artifact"
         >
-          <span>{{artifact.content}}</span>
+          <div class="artifact-content">{{artifact.content}}</div>
+          <div class="artifact-tail"></div>
         </artifact>
+        <div class="timepoint-tail">
+        </div>
         <span style="position: absolute">{{timepoint.name}}</span>
       </timepoint>
     </timeline>
