@@ -1,16 +1,10 @@
 .timeline {
   position: absolute;
+  border-bottom: 2px solid #9cf;
 }
 
 .timepoint {
   position: absolute;
-}
-
-.timepoint-tail {
-  position: absolute; 
-  width: 300px; 
-  height: 0px; 
-  border: 1px solid #69f;
 }
 
 .artifact {
@@ -18,7 +12,7 @@
 }
 
 .artifact-content {
-  background-color: #69f;
+  background-color: #9cf;
 }
 
 .artifact-tail {
@@ -26,5 +20,5 @@
   margin-right:auto;
   width: 0px; 
   height: 10px; 
-  border: 1px solid #69f;
+  border: 1px solid #9cf;
 }
