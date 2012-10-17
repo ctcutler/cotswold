@@ -15,7 +15,7 @@
         <artifact 
           ng-repeat="artifact in timepoint.artifacts"
           loop-variable="artifact"
-        >
+        >Visibility
           <div class="artifact-content" style="display: {{artifact.contentDisplay}};">
             <span ng-repeat="chunk in artifact.contentChunks" 
               id="{{chunk.spanId}}"

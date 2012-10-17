@@ -5,6 +5,10 @@ var ARTIFACT_WIDTH = 300;
   * images
   * movies
   * hbox and vbox implementations
+    ** sizes self based on contents unless width and height attributes are set
+    ** attributes for margin and padding
+    ** attributes for horizontal and vertical alignment
+    ** FIXME: mockup timeline with these options and confirm that they are sufficient
   * get offset of text range
   * editting
   * comments
