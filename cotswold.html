@@ -16,10 +16,12 @@
           ng-repeat="artifact in timepoint.artifacts"
           loop-variable="artifact"
         >
-          <div class="artifact-content" style="display: {{artifact.contentVisibility}};">
-            {{artifact.content}}
+          <div class="artifact-content" style="display: {{artifact.contentDisplay}};">
+            <span ng-repeat="chunk in artifact.contentChunks" 
+              id="{{chunk.spanId}}"
+              class="{{chunk.class}}">{{chunk.content}}</span>
           </div>
-          <img src="baa.jpeg" style="display: {{artifact.imageVisibility}};"/>
+          <img src="baa.jpeg" style="display: {{artifact.imageDisplay}};"/>
           <div class="artifact-tail"></div>
         </artifact>
         <span style="position: absolute">{{timepoint.name}}</span>
