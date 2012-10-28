@@ -31,7 +31,14 @@ var module = angular.module('cotswoldApp', [])
 
         scope.$on('resize', function(event) {
           // handle resize by repositioning children and resizing self
-          resizeHandler(element, false, "bottom", 0, 0);
+          resizeHandler(
+            element, 
+            attrs.direction, 
+            attrs.childAlign, 
+            parseInt(attrs.margin), 
+            parseInt(attrs.padding),
+            ""
+          );
           
           // connections div should always be the same size as element
           var $connections = $("#connections");
@@ -52,7 +59,22 @@ var module = angular.module('cotswoldApp', [])
 
         scope.$on('resize', function(event) {
           // handle resize by repositioning children and resizing self
-          resizeHandler(element, true, "center", 5, 0);
+          resizeHandler(
+            element, 
+            attrs.direction, 
+            attrs.childAlign, 
+            parseInt(attrs.margin), 
+            parseInt(attrs.padding),
+            "timepoint-background"
+          );
+
+          // timepoint-background div should always be the same size as element
+          var $element = $(element);
+          var $background = $element.children(".timepoint-background");
+          setWidth($background, $element.width());
+          setHeight($background, $element.height());
+          setLeft($background, $element.position().left);
+          setTop($background, $element.position().top);
         });
       }
     };
@@ -87,15 +109,19 @@ var module = angular.module('cotswoldApp', [])
   });
 
 // directive helpers
-function resizeHandler(element, vertical, align, margin, padding) {
+function resizeHandler(element, direction, align, margin, padding, ignore) {
   var children = element[0].children;
   var topOrLeft = align == "top" || align == "left";
   var bottomOrRight = align == "bottom" || align == "right";
+  var vertical = direction == true || direction == "vertical";
   var parentWidth = 0;
   var parentHeight = 0;
 
   $.each(children, function(index, c) {
-    $child = $(c);
+    var $child = $(c);
+    if ($child[0].className == ignore) {
+      return;
+    }
     if (vertical) {
       parentWidth = Math.max($child.width(), parentWidth);
       parentHeight += $child.height();
@@ -113,7 +139,10 @@ function resizeHandler(element, vertical, align, margin, padding) {
 
   var offset = margin;
   $.each(children, function(index, c) {
-    $child = $(c);
+    var $child = $(c);
+    if ($child[0].className == ignore) {
+      return;
+    }
     if (vertical) {
       setTop($child, offset);
       offset += $child.height() + padding;
@@ -263,10 +292,6 @@ window.onload = function () {
     connections.push(r.connection(shapes[2], shapes[3], "#f00", "#f00|2"));
     connections.push(r.connection(shapes[4], shapes[5], "#f00", "#f00|2"));
 };
-
-// FIXME: what's the best way to convert properties of objects in the scope
-// into the appropriate class?  Should I be storing the class name in the scope
-// or is there a way to convert it in the markup or in the controller?
 
 function TimelineController($scope) {
   $scope.timepoints = [

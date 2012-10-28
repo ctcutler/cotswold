@@ -1,6 +1,6 @@
 .timeline {
   position: absolute;
-  border-bottom: 2px solid #9cf;
+  border-bottom: 4px solid #9cf;
 }
 
 .connections-glass {
@@ -11,6 +11,17 @@
 
 .timepoint {
   position: absolute;
+}
+
+.timepoint-background {
+}
+
+.timepoint-background-line {
+  border: 2px solid #9cf;
+  width: 0px;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .artifact {
