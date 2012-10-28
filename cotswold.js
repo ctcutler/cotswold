@@ -47,6 +47,8 @@ var module = angular.module('cotswoldApp', [])
           setHeight($connections, $element.height());
           setLeft($connections, $element.position().left);
           setTop($connections, $element.position().top);
+
+          redraw(scope.connections);
         });
       }
     };
@@ -273,15 +275,34 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
     }
 };
 
-var el;
-window.onload = function () {
-    var $glass = $("#connections");
-    var r = Raphael("connections", $glass.width(), $glass.height());
-    var connections = [];
-    connections.push(r.connection($("#span1"), $("#span4"), "#0f0", "#0f0|2"));
-};
+var paper;
+
+function redraw (connectionPairs) {
+  var $glass = $("#connections");
+
+  if (!paper) {
+    paper = Raphael("connections", $glass.width(), $glass.height());
+  } else {
+    paper.setSize($glass.width(), $glass.height());
+  }
+  paper.clear();
+
+  var connections = [];
+  for (var i=0; i < connectionPairs.length; i++) {
+    var leftspan = $("#"+connectionPairs[i][0]);
+    var rightspan = $("#"+connectionPairs[i][1]);
+    if (leftspan.offset() && rightspan.offset()) {
+      connections.push(paper.connection(leftspan, rightspan, "#0f0", "#0f0|2"));
+    }
+  }
+}
+
+//window.onload = redraw; 
 
 function TimelineController($scope) {
+  $scope.connections = [
+    [ "span1", "span4"],
+  ];
   $scope.timepoints = [
     { 
       name: "Tuesday Class",
