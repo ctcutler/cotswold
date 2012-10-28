@@ -32,14 +32,7 @@
   background-color: #9cf;
 }
 
-.artifact-tail {
-  margin-left:auto;
-  margin-right:auto;
-  width: 0px; 
-  height: 10px; 
-  border: 1px solid #9cf;
-}
-
 .highlighted {
-  background-color: #fff;
+  background-color: #ff0;
+  border: 1px solid #ff0;
 }

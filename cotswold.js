@@ -196,6 +196,24 @@ function setLeft(element, val) {
   element.css({ left: val + "px" });
 }
 
+function getBBox(obj) {
+  // don't know why we need to subtract 7 here, but this makes
+  // the connection lines line up right. . . this makes me
+  // nervous
+  var left = obj.offset().left-7;
+  var top = obj.offset().top-7;
+  var width = obj.width();
+  var height = obj.height();
+  return {
+    x: left,
+    y: top,
+    x2: left + width,
+    y2: top + height,
+    width: width,
+    height: height,
+  };
+}
+
 
 // function copied from: http://raphaeljs.com/graffle.html
 Raphael.fn.connection = function (obj1, obj2, line, bg) {
@@ -204,8 +222,8 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
         obj1 = line.from;
         obj2 = line.to;
     }
-    var bb1 = obj1.getBBox(),
-        bb2 = obj2.getBBox(),
+    var bb1 = getBBox(obj1),
+        bb2 = getBBox(obj2),
         p = [{x: bb1.x + bb1.width / 2, y: bb1.y - 1},
         {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
         {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
@@ -257,40 +275,10 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
 
 var el;
 window.onload = function () {
-    /*
-    var dragger = function () {
-        this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
-        this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
-        this.animate({"fill-opacity": .2}, 500);
-    };
-    var move = function (dx, dy) {
-            var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
-            this.attr(att);
-            for (var i = connections.length; i--;) {
-                r.connection(connections[i]);
-            }
-            r.safari();
-        };
-    var up = function () {
-            this.animate({"fill-opacity": 0}, 500);
-        };
-    */
     var $glass = $("#connections");
     var r = Raphael("connections", $glass.width(), $glass.height());
     var connections = [];
-    var shapes = [  r.rect(184, 197, 75, 17, 0),
-                    r.rect(494, 390, 75, 17, 0),
-                    r.rect(495, 443, 51, 17, 0),
-                    r.rect(685, 324, 42, 17, 0),
-                    r.rect(155, 523, 42, 40, 0),
-                    r.rect(678, 445, 42, 17, 0),
-                ];
-    for (var i = 0, ii = shapes.length; i < ii; i++) {
-        shapes[i].attr({stroke: "#f00", "fill-opacity": 0, "stroke-width": 2});
-    }
-    connections.push(r.connection(shapes[0], shapes[1], "#f00", "#f00|2"));
-    connections.push(r.connection(shapes[2], shapes[3], "#f00", "#f00|2"));
-    connections.push(r.connection(shapes[4], shapes[5], "#f00", "#f00|2"));
+    connections.push(r.connection($("#span1"), $("#span4"), "#0f0", "#0f0|2"));
 };
 
 function TimelineController($scope) {
@@ -349,7 +337,9 @@ function TimelineController($scope) {
           imageDisplay: "none",
           contentDisplay: "block",
           contentChunks: [
-            { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+            { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ", spanId: "span3" },
+            { content: "labore", class: "highlighted", spanId: "span4"  },
+            { content: " et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", spanId: "span5" },
           ],
           width: ARTIFACT_WIDTH,
           height: null 
