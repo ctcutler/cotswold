@@ -327,6 +327,7 @@ function TimelineController($scope) {
           height: null
         },
         { 
+          imageSrc: "baa.jpeg",
           imageDisplay: "block",
           contentDisplay: "none",
           contentChunks: [
