@@ -44,12 +44,12 @@ var module = angular.module('cotswoldApp', [])
           );
           
           // connections div should always be the same size as element
-          /*var $connections = $("#connections");
+          var $connections = $("#connections");
           var $element = $(element);
           setWidth($connections, $element.width());
           setHeight($connections, $element.height());
           setLeft($connections, $element.position().left);
-          setTop($connections, $element.position().top);*/
+          setTop($connections, $element.position().top);
 
           redraw(scope.connections);
         });
@@ -88,6 +88,10 @@ var module = angular.module('cotswoldApp', [])
       restrict: 'E',
       link: function(scope, element, attrs) {
         element.addClass("artifact");
+        
+        $(element).scroll(function () {
+          redraw(scope.connections);
+        });
 
         // Bind to model for size so that program can affect artifact size.
         // In watch function, update element size and fire resize (handles
@@ -277,20 +281,21 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
         line.line.attr({path: path});
     } else {
         var color = typeof line == "string" ? line : "#000";
-        return {
+        var rv = {
             bg: bg && bg.split && this.path(path).attr({stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3}),
             line: this.path(path).attr({stroke: color, fill: "none"}),
             from: obj1,
             to: obj2
         };
+        rv.line.toFront();
+        return rv;
     }
 };
 
 var paper;
 
 function redraw (connectionPairs) {
-  //var $glass = $("#connections");
-  var $glass = $("#timeline");
+  var $glass = $("#connections");
 
   if (!paper) {
     paper = Raphael("connections", $glass.width(), $glass.height());
