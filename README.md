@@ -1,18 +1,7 @@
 Cotswold
 ========
 
-Tool to perform Bi-directional Artifact Analysis.
+A tool for bidirectional artifact analysis that runs locally in a web browser. Cotswold enables linking and tagging of multimodal data, and the construction of long-term tracings of individuals’ representational competence in a variety of creative media.
 
-Installation Instructions
-=========================
 
-* go to the the db directory and create a new database file:
-
-  cd db
-  ./freshdb.sh
-
-* back in the main directory, start the server:
-  
-  python router.py  
-
-* load http://localhost:8080 in a web browser
+This project is under active developement so there are no guarantees that anything will work, but if you want to try it, check it out and load cotswold.html in Google Chrome.
