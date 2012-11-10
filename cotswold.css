@@ -26,6 +26,7 @@
 
 .artifact {
   position: absolute;
+  overflow-y: auto;
 }
 
 .artifact-content {

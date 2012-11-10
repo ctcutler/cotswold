@@ -1,8 +1,11 @@
 var ARTIFACT_WIDTH = 300;
+var ARTIFACT_HEIGHT = 300;
 
 /*
   FIXME:
-  * images
+  X images
+  * artifact scrolling
+  * expanded view
   * movies
   * hbox and vbox implementations
     ** sizes self based on contents unless width and height attributes are set
@@ -41,12 +44,12 @@ var module = angular.module('cotswoldApp', [])
           );
           
           // connections div should always be the same size as element
-          var $connections = $("#connections");
+          /*var $connections = $("#connections");
           var $element = $(element);
           setWidth($connections, $element.width());
           setHeight($connections, $element.height());
           setLeft($connections, $element.position().left);
-          setTop($connections, $element.position().top);
+          setTop($connections, $element.position().top);*/
 
           redraw(scope.connections);
         });
@@ -95,9 +98,9 @@ var module = angular.module('cotswoldApp', [])
             scope.$emit("resize");
           }
         });
-        scope.$watch(attrs.loopVariable+".height", function(val) {
+        scope.$watch(attrs.loopVariable+".maxHeight", function(val) {
           if (val != null) {
-            setHeight(element, val);
+            setMaxHeight(element, val);
             scope.$emit("resize");
           }
         });
@@ -190,6 +193,14 @@ function setHeight(element, val) {
   element.css({ height: val + "px" });
 }
 
+function setMaxWidth(element, val) {
+  element.css({ "max-width": val + "px" });
+}
+
+function setMaxHeight(element, val) {
+  element.css({ "max-height": val + "px" });
+}
+
 function setTop(element, val) {
   element.css({ top: val + "px" });
 }
@@ -278,7 +289,8 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
 var paper;
 
 function redraw (connectionPairs) {
-  var $glass = $("#connections");
+  //var $glass = $("#connections");
+  var $glass = $("#timeline");
 
   if (!paper) {
     paper = Raphael("connections", $glass.width(), $glass.height());
@@ -315,7 +327,7 @@ function TimelineController($scope) {
             { content: " sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", spanId: "span2"}
           ],
           width: ARTIFACT_WIDTH,
-          height: null
+          maxHeight: ARTIFACT_HEIGHT,
         },
         { 
           imageDisplay: "none",
@@ -324,7 +336,7 @@ function TimelineController($scope) {
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
           ],
           width: ARTIFACT_WIDTH,
-          height: null
+          maxHeight: ARTIFACT_HEIGHT,
         },
         { 
           imageSrc: "baa.jpeg",
@@ -334,7 +346,7 @@ function TimelineController($scope) {
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
           ],
           width: ARTIFACT_WIDTH,
-          height: null 
+          maxHeight: ARTIFACT_HEIGHT, 
         },
       ]
     },
@@ -348,7 +360,7 @@ function TimelineController($scope) {
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
           ],
           width: ARTIFACT_WIDTH,
-          height: null
+          maxHeight: ARTIFACT_HEIGHT,
         },
       ]
     },
@@ -361,10 +373,10 @@ function TimelineController($scope) {
           contentChunks: [
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ", spanId: "span3" },
             { content: "labore", class: "highlighted", spanId: "span4"  },
-            { content: " et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", spanId: "span5" },
+            { content: " et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", spanId: "span5" },
           ],
           width: ARTIFACT_WIDTH,
-          height: null 
+          maxHeight: ARTIFACT_HEIGHT, 
         },
         { 
           imageDisplay: "none",
@@ -373,7 +385,7 @@ function TimelineController($scope) {
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
           ],
           width: ARTIFACT_WIDTH,
-          height: null
+          maxHeight: ARTIFACT_HEIGHT,
         },
       ]
     }
