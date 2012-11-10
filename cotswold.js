@@ -231,6 +231,33 @@ function getBBox(obj) {
   };
 }
 
+function adjust(v, min, max) {
+  if (v < min) {
+    return min;
+  } else if (v > max) {
+    return max;
+  } else {
+    return v;
+  }
+}
+
+function getAdjustedBBox(obj) {
+  var offsetParent = obj.offsetParent();
+  var objBBox = getBBox(obj);
+  var parentBBox = getBBox(offsetParent);
+
+  objBBox.x = adjust(objBBox.x, parentBBox.x, parentBBox.x2);
+  objBBox.x2 = adjust(objBBox.x2, parentBBox.x, parentBBox.x2);
+
+  objBBox.y = adjust(objBBox.y, parentBBox.y, parentBBox.y2);
+  objBBox.y2 = adjust(objBBox.y2, parentBBox.y, parentBBox.y2);
+
+  objBBox.width = Math.max(objBBox.x2 - objBBox.x, 0); 
+  objBBox.height = Math.max(objBBox.y2 - objBBox.y, 0); 
+
+  return objBBox;
+}
+
 
 // function copied from: http://raphaeljs.com/graffle.html
 Raphael.fn.connection = function (obj1, obj2, line, bg) {
@@ -239,8 +266,8 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
         obj1 = line.from;
         obj2 = line.to;
     }
-    var bb1 = getBBox(obj1),
-        bb2 = getBBox(obj2),
+    var bb1 = getAdjustedBBox(obj1),
+        bb2 = getAdjustedBBox(obj2),
         p = [{x: bb1.x + bb1.width / 2, y: bb1.y - 1},
         {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
         {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
@@ -314,11 +341,10 @@ function redraw (connectionPairs) {
   }
 }
 
-//window.onload = redraw; 
-
 function TimelineController($scope) {
   $scope.connections = [
     [ "span1", "span4"],
+    [ "span1", "span6"],
   ];
   $scope.timepoints = [
     { 
@@ -378,7 +404,8 @@ function TimelineController($scope) {
           contentChunks: [
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ", spanId: "span3" },
             { content: "labore", class: "highlighted", spanId: "span4"  },
-            { content: " et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", spanId: "span5" },
+            { content: " et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  ", spanId: "span5" },
+            { content: "Bottom!", class: "highlighted", spanId: "span6"  },
           ],
           width: ARTIFACT_WIDTH,
           maxHeight: ARTIFACT_HEIGHT, 
