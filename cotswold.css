@@ -38,3 +38,8 @@
   background-color: #ff0;
   border: 1px solid #ff0;
 }
+
+.controls {
+  position: absolute;
+  background-color: #9cf;
+}

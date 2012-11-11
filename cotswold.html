@@ -8,36 +8,46 @@
     <script src="cotswold.js"></script>
   </head>
   <body>
-    <timeline 
-      id="timeline" 
-      ng-controller="TimelineController"
-      direction="horizontal"
-      child-align="bottom"
-      margin="5"
-      padding="5">
-      <timepoint 
-        ng-repeat="timepoint in timepoints"
+    <editor
+        id="editor" 
         direction="vertical"
         child-align="center"
         margin="5"
+        padding="5"
+        ng-controller="EditorController">
+      <timeline 
+        id="timeline" 
+        direction="horizontal"
+        child-align="bottom"
+        margin="5"
         padding="5">
-        <div class="timepoint-background">
-            <div class="timepoint-background-line"></div>
-        </div>
-        <artifact 
-          ng-repeat="artifact in timepoint.artifacts"
-          loop-variable="artifact"
-        >
-          <div class="artifact-content" style="display: {{artifact.contentDisplay}};">
-            <span ng-repeat="chunk in artifact.contentChunks" 
-              id="{{chunk.spanId}}"
-              class="{{chunk.class}}">{{chunk.content}}</span>
+        <timepoint 
+          ng-repeat="timepoint in timepoints"
+          direction="vertical"
+          child-align="center"
+          margin="5"
+          padding="5">
+          <div class="timepoint-background">
+              <div class="timepoint-background-line"></div>
           </div>
-          <img src="{{artifact.imageSrc}}" style="display: {{artifact.imageDisplay}};"/>
-        </artifact>
-        <span style="position: absolute">{{timepoint.name}}</span>
-      </timepoint>
-    </timeline>
+          <artifact 
+            ng-repeat="artifact in timepoint.artifacts"
+            loop-variable="artifact"
+          >
+            <div class="artifact-content" style="display: {{artifact.contentDisplay}};">
+              <span ng-repeat="chunk in artifact.contentChunks" 
+                id="{{chunk.spanId}}"
+                class="{{chunk.class}}">{{chunk.content}}</span>
+            </div>
+            <img src="{{artifact.imageSrc}}" style="display: {{artifact.imageDisplay}};"/>
+          </artifact>
+          <span style="position: absolute">{{timepoint.name}}</span>
+        </timepoint>
+      </timeline>
+      <div class="controls">
+        <a href="" ng-click="toggleZoom()">Toggle Zoom</a>
+      </div>
+    </editor>
     <div id="connections" class="connections-glass"></div>
   </body>
 </html>

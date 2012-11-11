@@ -1,5 +1,7 @@
-var ARTIFACT_WIDTH = 300;
-var ARTIFACT_HEIGHT = 300;
+var ARTIFACT_WIDTH_NORMAL = 300;
+var ARTIFACT_MAX_HEIGHT_NORMAL = 300;
+var ARTIFACT_WIDTH_EXPANDED = 600;
+var ARTIFACT_MAX_HEIGHT_EXPANDED = "none";
 
 /*
   FIXME:
@@ -25,7 +27,27 @@ var ARTIFACT_HEIGHT = 300;
 */
 
 var module = angular.module('cotswoldApp', [])
-  .directive('timeline', function() {
+  .directive('editor', function() {
+    return {
+      restrict: 'E',
+      link: function(scope, element, attrs) {
+
+        element.addClass("editor");
+
+        scope.$on('resize', function(event) {
+          // handle resize by repositioning children and resizing self
+          resizeHandler(
+            element, 
+            attrs.direction, 
+            attrs.childAlign, 
+            parseInt(attrs.margin), 
+            parseInt(attrs.padding),
+            ""
+          );
+        });
+      }
+    };
+  }).directive('timeline', function() {
     return {
       restrict: 'E',
       link: function(scope, element, attrs) {
@@ -198,11 +220,19 @@ function setHeight(element, val) {
 }
 
 function setMaxWidth(element, val) {
-  element.css({ "max-width": val + "px" });
+  if (val == "none") {
+    element.css({ "max-width": val });
+  } else {
+    element.css({ "max-width": val + "px" });
+  }
 }
 
 function setMaxHeight(element, val) {
-  element.css({ "max-height": val + "px" });
+  if (val == "none") {
+    element.css({ "max-height": val });
+  } else {
+    element.css({ "max-height": val + "px" });
+  }
 }
 
 function setTop(element, val) {
@@ -341,7 +371,23 @@ function redraw (connectionPairs) {
   }
 }
 
-function TimelineController($scope) {
+function EditorController($scope) {
+  $scope.toggleZoom = function () {
+    var width = $scope.expanded ? ARTIFACT_WIDTH_NORMAL : ARTIFACT_WIDTH_EXPANDED;
+    var maxHeight = $scope.expanded ? ARTIFACT_MAX_HEIGHT_NORMAL : ARTIFACT_MAX_HEIGHT_EXPANDED;
+
+    $scope.expanded = !$scope.expanded;
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      for (var j=0; j<timepoint.artifacts.length; j++) {
+        var artifact = timepoint.artifacts[j];
+        artifact.width = width;
+        artifact.maxHeight = maxHeight;
+      }
+    }
+    redraw($scope.connections);
+  };
+  $scope.expanded = false;
   $scope.connections = [
     [ "span1", "span4"],
     [ "span1", "span6"],
@@ -357,8 +403,8 @@ function TimelineController($scope) {
             { content: "Lorem ipsum dolor", spanId: "span1", class: "highlighted" },
             { content: " sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", spanId: "span2"}
           ],
-          width: ARTIFACT_WIDTH,
-          maxHeight: ARTIFACT_HEIGHT,
+          width: ARTIFACT_WIDTH_NORMAL,
+          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
         },
         { 
           imageDisplay: "none",
@@ -366,8 +412,8 @@ function TimelineController($scope) {
           contentChunks: [
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
           ],
-          width: ARTIFACT_WIDTH,
-          maxHeight: ARTIFACT_HEIGHT,
+          width: ARTIFACT_WIDTH_NORMAL,
+          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
         },
         { 
           imageSrc: "baa.jpeg",
@@ -376,8 +422,8 @@ function TimelineController($scope) {
           contentChunks: [
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
           ],
-          width: ARTIFACT_WIDTH,
-          maxHeight: ARTIFACT_HEIGHT, 
+          width: ARTIFACT_WIDTH_NORMAL,
+          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
         },
       ]
     },
@@ -390,8 +436,8 @@ function TimelineController($scope) {
           contentChunks: [
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
           ],
-          width: ARTIFACT_WIDTH,
-          maxHeight: ARTIFACT_HEIGHT,
+          width: ARTIFACT_WIDTH_NORMAL,
+          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
         },
       ]
     },
@@ -407,8 +453,8 @@ function TimelineController($scope) {
             { content: " et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  ", spanId: "span5" },
             { content: "Bottom!", class: "highlighted", spanId: "span6"  },
           ],
-          width: ARTIFACT_WIDTH,
-          maxHeight: ARTIFACT_HEIGHT, 
+          width: ARTIFACT_WIDTH_NORMAL,
+          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
         },
         { 
           imageDisplay: "none",
@@ -416,8 +462,8 @@ function TimelineController($scope) {
           contentChunks: [
             { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
           ],
-          width: ARTIFACT_WIDTH,
-          maxHeight: ARTIFACT_HEIGHT,
+          width: ARTIFACT_WIDTH_NORMAL,
+          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
         },
       ]
     }
