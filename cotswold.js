@@ -244,11 +244,12 @@ function setLeft(element, val) {
 }
 
 function getBBox(obj) {
-  // don't know why we need to subtract 7 here, but this makes
-  // the connection lines line up right. . . this makes me
-  // nervous
-  var left = obj.offset().left-7;
-  var top = obj.offset().top-7;
+  // don't know why we need to subtract WEIRD_CONSTANT here, 
+  // but this makes the connection lines line up right. . . 
+  // this makes me nervous
+  var WEIRD_CONSTANT = 4
+  var left = obj.offset().left-WEIRD_CONSTANT;
+  var top = obj.offset().top-WEIRD_CONSTANT;
   var width = obj.width();
   var height = obj.height();
   return {
