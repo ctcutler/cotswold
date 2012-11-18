@@ -39,7 +39,15 @@
                 id="{{chunk.spanId}}"
                 class="{{chunk.class}}">{{chunk.content}}</span>
             </div>
-            <img src="{{artifact.imageSrc}}" style="display: {{artifact.imageDisplay}};"/>
+            <img src="{{artifact.imageSrc}}" 
+                 id="{{artifact.imageId}}"
+                 style="display: {{artifact.imageDisplay}};">
+              <div class="image-box" 
+                   ng-repeat="imageBox in artifact.imageBoxes"
+                   id="{{imageBox.id}}"
+                   style="left: {{imageBox.left}}px; top: {{imageBox.top}}px; width: {{imageBox.width}}px; height: {{imageBox.height}}px;">
+              </div>
+            </img>
           </artifact>
           <span style="position: absolute">{{timepoint.name}}</span>
         </timepoint>

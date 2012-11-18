@@ -6,8 +6,8 @@ var ARTIFACT_MAX_HEIGHT_EXPANDED = "none";
 /*
   FIXME:
   X images
-  * artifact scrolling
-  * expanded view
+  X artifact scrolling
+  X expanded view
   * movies
   * hbox and vbox implementations
     ** sizes self based on contents unless width and height attributes are set
@@ -18,9 +18,9 @@ var ARTIFACT_MAX_HEIGHT_EXPANDED = "none";
   * editting
   * comments
   * tags
-  * zoom in and out (all the way out to full resolution, poster size)
+  x zoom in and out (all the way out to full resolution, poster size)
   * single artifact zoom
-  * scrolling in artifacts
+  x scrolling in artifacts
   * real connections
   * data storage
   * newline rendering
@@ -364,10 +364,10 @@ function redraw (connectionPairs) {
 
   var connections = [];
   for (var i=0; i < connectionPairs.length; i++) {
-    var leftspan = $("#"+connectionPairs[i][0]);
-    var rightspan = $("#"+connectionPairs[i][1]);
-    if (leftspan.offset() && rightspan.offset()) {
-      connections.push(paper.connection(leftspan, rightspan, "#0f0", "#0f0|2"));
+    var left = $("#"+connectionPairs[i].leftId);
+    var right = $("#"+connectionPairs[i].rightId);
+    if (left.offset() && right.offset()) {
+      connections.push(paper.connection(left, right, "#0f0", "#0f0|2"));
     }
   }
 }
@@ -390,8 +390,9 @@ function EditorController($scope) {
   };
   $scope.expanded = false;
   $scope.connections = [
-    [ "span1", "span4"],
-    [ "span1", "span6"],
+    { leftId: "span1", rightId: "span4", },
+    { leftId: "span1", rightId: "span6"},
+    { leftId: "box1", rightId: "span4"},
   ];
   $scope.timepoints = [
     { 
@@ -418,11 +419,11 @@ function EditorController($scope) {
         },
         { 
           imageSrc: "baa.jpeg",
+          imageBoxes: [
+            { id: "box1", left: 150, top: 135, width: 40, height: 40 },
+          ],
           imageDisplay: "block",
           contentDisplay: "none",
-          contentChunks: [
-            { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-          ],
           width: ARTIFACT_WIDTH_NORMAL,
           maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
         },
