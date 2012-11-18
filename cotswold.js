@@ -373,11 +373,24 @@ function redraw (connectionPairs) {
 }
 
 function EditorController($scope) {
+  /*
+  localStorage.clear();
+  localStorage["expanded"] = JSON.stringify(hardCodedExpanded);
+  localStorage["connections"] = JSON.stringify(hardCodedConnections);
+  localStorage["timepoints"] = JSON.stringify(hardCodedTimepoints);
+  */
+
+  $scope.expanded = JSON.parse(localStorage["expanded"]);
+  $scope.connections = JSON.parse(localStorage["connections"]);
+  $scope.timepoints = JSON.parse(localStorage["timepoints"]);
+
   $scope.toggleZoom = function () {
     var width = $scope.expanded ? ARTIFACT_WIDTH_NORMAL : ARTIFACT_WIDTH_EXPANDED;
     var maxHeight = $scope.expanded ? ARTIFACT_MAX_HEIGHT_NORMAL : ARTIFACT_MAX_HEIGHT_EXPANDED;
 
     $scope.expanded = !$scope.expanded;
+    localStorage["expanded"] = JSON.stringify($scope.expanded);
+
     for (var i=0; i<$scope.timepoints.length; i++) {
       var timepoint = $scope.timepoints[i];
       for (var j=0; j<timepoint.artifacts.length; j++) {
@@ -386,88 +399,92 @@ function EditorController($scope) {
         artifact.maxHeight = maxHeight;
       }
     }
+    localStorage["timepoints"] = JSON.stringify($scope.timepoints);
+
     redraw($scope.connections);
   };
-  $scope.expanded = false;
-  $scope.connections = [
-    { leftId: "span1", rightId: "span4", },
-    { leftId: "span1", rightId: "span6"},
-    { leftId: "box1", rightId: "span4"},
-  ];
-  $scope.timepoints = [
-    { 
-      name: "Tuesday Class",
-      artifacts: [
-        { 
-          imageDisplay: "none",
-          contentDisplay: "block",
-          contentChunks: [
-            { content: "Lorem ipsum dolor", spanId: "span1", class: "highlighted" },
-            { content: " sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", spanId: "span2"}
-          ],
-          width: ARTIFACT_WIDTH_NORMAL,
-          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
-        },
-        { 
-          imageDisplay: "none",
-          contentDisplay: "block",
-          contentChunks: [
-            { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-          ],
-          width: ARTIFACT_WIDTH_NORMAL,
-          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
-        },
-        { 
-          imageSrc: "baa.jpeg",
-          imageBoxes: [
-            { id: "box1", left: 150, top: 135, width: 40, height: 40 },
-          ],
-          imageDisplay: "block",
-          contentDisplay: "none",
-          width: ARTIFACT_WIDTH_NORMAL,
-          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
-        },
-      ]
-    },
-    { 
-      name: "Wednesday Feedback",
-      artifacts: [
-        { 
-          imageDisplay: "none",
-          contentDisplay: "block",
-          contentChunks: [
-            { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-          ],
-          width: ARTIFACT_WIDTH_NORMAL,
-          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
-        },
-      ]
-    },
-    { 
-      name: "Thursday Class",
-      artifacts: [
-        { 
-          imageDisplay: "none",
-          contentDisplay: "block",
-          contentChunks: [
-            { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ", spanId: "span3" },
-            { content: "labore", class: "highlighted", spanId: "span4"  },
-            { content: " et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  ", spanId: "span5" },
-            { content: "Bottom!", class: "highlighted", spanId: "span6"  },
-          ],
-          width: ARTIFACT_WIDTH_NORMAL,
-          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
-        },
-        { 
-          imageDisplay: "none",
-          contentDisplay: "block",
-          contentChunks: [
-            { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-          ],
-          width: ARTIFACT_WIDTH_NORMAL,
-          maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
-        },
-      ]
-    }
-  ];
 }
+
+
+var hardCodedExpanded = false;
+var hardCodedConnections = [
+  { leftId: "span1", rightId: "span4", },
+  { leftId: "span1", rightId: "span6"},
+  { leftId: "box1", rightId: "span4"},
+];
+var hardCodedTimepoints = [
+  { 
+    name: "Tuesday Class",
+    artifacts: [
+      { 
+        imageDisplay: "none",
+        contentDisplay: "block",
+        contentChunks: [
+          { content: "Lorem ipsum dolor", spanId: "span1", class: "highlighted" },
+          { content: " sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", spanId: "span2"}
+        ],
+        width: ARTIFACT_WIDTH_NORMAL,
+        maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
+      },
+      { 
+        imageDisplay: "none",
+        contentDisplay: "block",
+        contentChunks: [
+          { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+        ],
+        width: ARTIFACT_WIDTH_NORMAL,
+        maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
+      },
+      { 
+        imageSrc: "baa.jpeg",
+        imageBoxes: [
+          { id: "box1", left: 150, top: 135, width: 40, height: 40 },
+        ],
+        imageDisplay: "block",
+        contentDisplay: "none",
+        width: ARTIFACT_WIDTH_NORMAL,
+        maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
+      },
+    ]
+  },
+  { 
+    name: "Wednesday Feedback",
+    artifacts: [
+      { 
+        imageDisplay: "none",
+        contentDisplay: "block",
+        contentChunks: [
+          { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+        ],
+        width: ARTIFACT_WIDTH_NORMAL,
+        maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
+      },
+    ]
+  },
+  { 
+    name: "Thursday Class",
+    artifacts: [
+      { 
+        imageDisplay: "none",
+        contentDisplay: "block",
+        contentChunks: [
+          { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ", spanId: "span3" },
+          { content: "labore", class: "highlighted", spanId: "span4"  },
+          { content: " et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  ", spanId: "span5" },
+          { content: "Bottom!", class: "highlighted", spanId: "span6"  },
+        ],
+        width: ARTIFACT_WIDTH_NORMAL,
+        maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
+      },
+      { 
+        imageDisplay: "none",
+        contentDisplay: "block",
+        contentChunks: [
+          { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+        ],
+        width: ARTIFACT_WIDTH_NORMAL,
+        maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
+      },
+    ]
+  }
+];
