@@ -1,0 +1,70 @@
+The fundamental problem we're dealing with here is the transformation between
+a model that allows overlapping ranges and a view that doesn't.  
+
+One approach says that in an overlap situation in the view we just truncate
+the range that is "underneath".  This is attractive because it means that we
+can maintain a one to one relationship between ranges and their representations
+in the view.  I had a moment of doubt about this approach when considering 
+a situation where one range is nested (which is to say, wholly enclosed) in
+another (wouldn't that require us to truncate part of the enclosing range?)
+but of course, HTML's syntax allows for nesting, just not overlaps.  
+
+So that's what I'm going to go with for now, but it is intriguing to think about
+whether we could use angularjs' directives to get around this restriction on 
+nesting somehow.  I'm not certain that there is a way to do this. . . it is a 
+pretty fundamental feature of the family of markup languages that HTML belongs to
+. . . but it is worth considering.  
+
+THE ALGORITHM
+
+Input: a list of ranges where every range has a start offset, an end offset, 
+style information, and a range id. The raw content that the offsets are indexes
+into.  
+
+* Go through the ranges, splitting each into two separate offset objects
+  which has the style info and range id.
+* Sort the list of offset objects by offset
+* Create a prev variable and set it to null
+
+for every offset object (cur) in the sorted list:
+  if cur > 0: 
+    create a chunk object and put the content demarcated by prev and cur
+    if prev is not null: 
+      if 
+
+Output: a tree where each node contains content (split into before and after), 
+a list of style information, and (optionally) an id like this:
+
+$scope.spanTree = [
+    {before: "aaaaa", after: "aaaa", style: "red", id: "range1", nodes: [
+     {before: "bbbb", after: "bbbbb", style: "blue", id: "range2", nodes:[]}
+    ]},
+    {before: "ccc", after: "ccc", style: "green", id: "range3", nodes: []}];
+}]);
+
+THE WRINKLE
+All of this is built on the assumption that there is a one to one 
+correspondance between chunks and spans.  This assumption fails in the 
+case of nested ranges.  What I need to know is how angular handles
+nested elements in its looping constructs.
+
+What I want is an angular directive that will transform an arbitrarily
+nested data structure into an arbitrarily nexted element structure.
+
+Here's my base inspiration:
+
+https://groups.google.com/forum/?fromgroups=#!topic/angular/TbpjE-5XEM0
+http://jsfiddle.net/brendanowen/uXbn6/8/
+
+And here it is:
+
+http://jsfiddle.net/ctcutler/BSxB5/2/
+
+But it has too many extra spans floating around.  I'm hoping I can clean
+these up with:
+http://docs.angularjs.org/api/ng.directive:ngSwitch
+or
+https://github.com/tigbro/jquery-mobile-angular-adapter/blob/master/src/main/webapp/utils/if.js
+as described in:
+http://stackoverflow.com/questions/11367769/creating-tables-with-angular-js
+
