@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+ <head> 
+    
+      <script type='text/javascript' src="http://code.angularjs.org/1.0.2/angular.js"></script>
+      <script type='text/javascript' src="http://code.jquery.com/jquery-1.8.2.js"></script>
+      <link rel="stylesheet" type="text/css" href="spantree.css">
+  
+</head>
+<body ng-app="myApp">
+  <script type="text/ng-template" id="recursiveSpan"><span class="ng-scope ng-binding" ngm-if="data.content">{{data.content}}</span><span ng-repeat="data in data.nodes" 
+ng-include="'recursiveSpan'" 
+class="{{data.style}}"
+id="{{data.id}}"></span></script>
+
+<div ng-app="Application" ng-controller="TestController">
+    <input ng-click="loadSpanTree()" type="button" value="load"></input>
+    <span ng-repeat="data in spanTree" ng-include="'recursiveSpan'" class="{{data.style}}" id="{{data.id}}"></span>
+    <div>{{dumpSpanTree()}}</div>
+</div>
+
+
+
+<script type='text/javascript' src="spantree.js"></script> 
+
+</body>
+
+
+</html>
