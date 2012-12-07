@@ -71,6 +71,7 @@ controller("TestController", ['$scope', function($scope) {
   $scope.content = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
   
   $scope.ranges = [
+    /*
     // normal, no overlap, no nest
     { start: 0, end: 11, id: "range1", style: "red" },
     { start: 18, end: 21, id: "range2", style: "blue" },
@@ -97,7 +98,16 @@ controller("TestController", ['$scope', function($scope) {
     { start: 70, end: 74, id: "range6", style: "red" },
     { start: 71, end: 74, id: "range7", style: "blue" },
 
+    // FIXME: two nested, as in AAAABBBBAAAACCCCAAAA
+    */
+
     // overlapping
+    { start: 80, end: 84, id: "range6", style: "red" },
+    { start: 82, end: 86, id: "range7", style: "blue" },
+    { start: 84, end: 88, id: "range7", style: "green" },
+
+    // overlapping reversed (FIXME: adding second set of ranges 
+    // screws up first overlapping test)
 
     // adjacent
   ];
@@ -108,11 +118,11 @@ controller("TestController", ['$scope', function($scope) {
     angular.forEach($scope.ranges, function(range) {
       offsets.push({
         offset: range.start, id: range.id, style: range.style, kind: "start", 
-        length: range.end - range.start
+        length: range.end - range.start, start: range.start, end: range.end
       });
       offsets.push({
         offset: range.end, id: range.id, style: range.style, kind: "end", 
-        length: range.end - range.start
+        length: range.end - range.start, start: range.start, end: range.end
       });
     });
     // sort offset list
@@ -130,6 +140,7 @@ controller("TestController", ['$scope', function($scope) {
         return a.offset-b.offset;
       }
     });
+    $scope.offsetsDump = JSON.stringify(offsets);
     return offsets;
   };
 
@@ -151,6 +162,8 @@ controller("TestController", ['$scope', function($scope) {
     return JSON.stringify($scope.spanTree);
   };
   
+  $scope.offsetsDump = "";
+  
   $scope.loadSpanTree = function () {
     var offsets = $scope.makeOffsetList();
     
@@ -165,7 +178,9 @@ controller("TestController", ['$scope', function($scope) {
             prev.style, prev.id, prev.offset, cur.offset 
           );
           stackTop.nodes.push(outerSpanObj);
-          stack.push(outerSpanObj);
+          if (prev.end >= cur.end) {
+            stack.push(outerSpanObj);
+          }
         } else if (prev.kind == "start" && cur.kind == "end") {
           if (prev.id == cur.id) {
             // finish uninterrupted range
@@ -173,7 +188,10 @@ controller("TestController", ['$scope', function($scope) {
               $scope.makeStyledSpanObj(prev.style, prev.id, prev.offset, cur.offset)
             );
           } else {
-            // finish overlapping unless offsets are equal (then "adjacent" case)
+            // middle of overlapping unless offsets are equal (then "adjacent" case)
+            stackTop.nodes.push(
+              $scope.makeStyledSpanObj(prev.style, prev.id, prev.offset, cur.offset)
+            );
           }
         } else if (prev.kind == "end" && cur.kind == "start") {
           // range without any style or id
@@ -181,7 +199,9 @@ controller("TestController", ['$scope', function($scope) {
         } else if (prev.kind == "end" && cur.kind == "end") {
           // finish nested
           stackTop.nodes.push($scope.makeUnStyledSpanObj(prev.offset, cur.offset));
-          stack.pop();
+          if (prev.start >= cur.start) {
+            stack.pop();
+          }
         }
       }
       prev = cur;
