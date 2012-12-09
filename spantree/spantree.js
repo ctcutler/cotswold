@@ -75,16 +75,15 @@ controller("TestController", ['$scope', function($scope) {
     { start: 0, end: 11, id: "range1", style: "red" },
     { start: 18, end: 21, id: "range2", style: "blue" },
 
-    /*
-    // nested (three layers)
-    { start: 23, end: 38, id: "range3", style: "red" },
-    { start: 26, end: 34, id: "range4", style: "blue" },
-    { start: 28, end: 31, id: "range5", style: "green" },
-
     // nested (two chunks)
     { start: 12, end: 17, id: "nest1", style: "red" },
     { start: 13, end: 14, id: "nest2", style: "blue" },
     { start: 15, end: 16, id: "nest3", style: "green" },
+
+    // nested (three layers)
+    { start: 23, end: 38, id: "range3", style: "red" },
+    { start: 26, end: 34, id: "range4", style: "blue" },
+    { start: 28, end: 31, id: "range5", style: "green" },
 
     // nested, matching start, shorter first 
     { start: 40, end: 43, id: "range6", style: "blue" },
@@ -112,6 +111,7 @@ controller("TestController", ['$scope', function($scope) {
     { start: 80, end: 84, id: "range6", style: "red" },
     { start: 82, end: 86, id: "range7", style: "blue" },
     { start: 84, end: 88, id: "range7", style: "green" },
+    /*
 
     */
     // overlapping reversed (FIXME: adding second set of ranges 
@@ -243,6 +243,7 @@ controller("TestController", ['$scope', function($scope) {
 
     angular.forEach($scope.ranges, function(range) {
       var nodes = [];
+      tree.id;
       angular.forEach(contentNodes, function(node) {
         if (range.start < node.end && range.end > node.start) {
           nodes.push(node);
@@ -280,14 +281,13 @@ controller("TestController", ['$scope', function($scope) {
           // make perfect content node for range and put in innerChildren
           var innerChild = makeContentNode(range.start, range.end, leftEdge.parentNode);
           innerChildren.push(innerChild);
-          leftEdge.parentNode.nodes.push(innerChild);
-          // create right edge node and add it to its parent
+          // create right edge node
           var rightEdge = makeContentNode(range.end, leftEdge.end, leftEdge.parentNode);
-          rightEdge.parentNode.nodes.push(rightEdge);
           // update left edge node
           updateContentNode(leftEdge, leftEdge.start, range.start);
 
-          // update content nodes
+          // update content nodes and parent nodes
+          replaceObjInArray(leftEdge.parentNode.nodes, leftEdge, [leftEdge, innerChild, rightEdge]);
           replaceObjInArray(contentNodes, leftEdge, [leftEdge, innerChild, rightEdge]);
 
           // ignore the tweaked leftEdge and rightEdge
@@ -340,7 +340,7 @@ controller("TestController", ['$scope', function($scope) {
           }
 
           // make new span node
-          var spanNode = makeSpanNode(range.id, range.dominant, range.style, spanChildren);
+          var spanNode = makeSpanNode(range.id, range.dominant, range.style, spanChildren, lca);
 
           // update lca (tree)
           replaceArrayInArray(lca.nodes, lcaInnerChildren, [spanNode]);
@@ -374,7 +374,7 @@ controller("TestController", ['$scope', function($scope) {
         var idx = ancestors.indexOf(n.parentNode);
         // if it is and it is higher in the ancestor list than the current LCA, update the LCA
         if (idx != -1) {
-          lcaIndex = Math.max(lcaIndex, idx);
+          lcaIndex = Math.min(lcaIndex, idx);
           break;
         }
         n = n.parentNode;
