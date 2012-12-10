@@ -12,15 +12,17 @@ class="{{data.style}}"
 id="{{data.id}}"></span></script>
 
 <div ng-app="Application" ng-controller="TestController">
-    <input ng-click="loadSpanTree2()" type="button" value="load"></input>
+    <input ng-click="test()" type="button" value="load"></input>
+    <div>
     <span ng-repeat="data in spanTree" ng-include="'recursiveSpan'" class="{{data.style}}" id="{{data.id}}"></span>
+    </div>
     <div>Span tree: {{dumpSpanTree()}}</div>
-    <div>Offsets: {{offsetsDump}}</div>
 </div>
 
 
 
 <script type='text/javascript' src="spantree.js"></script> 
+<script type='text/javascript' src="spantree-test.js"></script> 
 
 </body>
 
