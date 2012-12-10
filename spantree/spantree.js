@@ -105,20 +105,29 @@ controller("TestController", ['$scope', function($scope) {
     { start: 76, end: 77, id: "range14", style: "blue" },
     { start: 75, end: 78, id: "range15", style: "red" },
 
-
-
     // overlapping
-    { start: 80, end: 84, id: "range6", style: "red" },
-    { start: 82, end: 86, id: "range7", style: "blue" },
-    { start: 84, end: 88, id: "range7", style: "green" },
-    /*
+    { start: 80, end: 84, id: "range16", style: "red" },
+    { start: 82, end: 86, id: "range17", style: "blue" },
+    { start: 84, end: 88, id: "range18", style: "green" },
 
-    */
-    // overlapping reversed (FIXME: adding second set of ranges 
-    // screws up first overlapping test)
+    // overlapping reversed 
+    { start: 94, end: 98, id: "range21", style: "green" },
+    { start: 92, end: 96, id: "range20", style: "blue" },
+    { start: 90, end: 94, id: "range19", style: "red" },
 
     // adjacent
+    { start: 100, end: 103, id: "range21", style: "green" },
+    { start: 103, end: 106, id: "range20", style: "blue" },
+ 
   ];
+
+  // FIXME:
+  // * clean up and package as library and test script
+  // * make better test cases that make it possible to tell at a glance if anything failed
+  // * add advanced test cases based on diagrams in my journal
+  // * add borders to spans that indicate where overlaps truncated
+  // * add dominance support
+  // * integrate library with main app and convert main app to using ranges
   
   $scope.makeOffsetList = function () {
     var offsets = [];
@@ -295,6 +304,29 @@ controller("TestController", ['$scope', function($scope) {
           leftEdge = null;
         } 
 
+        // this means we're overlapping with something on the left side
+        // and we need to move the range in to avoid overlapping the spans
+        if (leftEdge && leftEdge.parentNode != lca) {
+          leftEdge = null;
+          for (var i=0; i<innerChildren.length; i++) {
+            var innerChild = innerChildren[i];
+            if (innerChild.parentNode == lca) {
+              break;
+            }
+          }
+          innerChildren = innerChildren.slice(i);
+        }
+        if (rightEdge && rightEdge.parentNode != lca) {
+          rightEdge = null;
+          for (var i=innerChildren.length; i>0; i--) {
+            var innerChild = innerChildren[i-1];
+            if (innerChild.parentNode == lca) {
+              break;
+            }
+          }
+          innerChildren = innerChildren.slice(0,i);
+        }
+
         if (leftEdge && leftEdge.start == range.start) {
           innerChildren.unshift(leftEdge);
           leftEdge = null;
@@ -304,8 +336,6 @@ controller("TestController", ['$scope', function($scope) {
           rightEdge = null;
         }
 
-        // if edges' immediate parent is that common parent or edges match range 
-        // boundaries, this is the non-overlap case
         if ((leftEdge == null || leftEdge.parentNode == lca)
             && (rightEdge == null || rightEdge.parentNode == lca)) {
 
@@ -346,9 +376,8 @@ controller("TestController", ['$scope', function($scope) {
           replaceArrayInArray(lca.nodes, lcaInnerChildren, [spanNode]);
           // update contentNodes list (need to build list to update it with)
           replaceArrayInArray(contentNodes, innerChildren, newContentNodes);
-        }
+        } 
       }
-  
     });
     
     $scope.spanTree.push(tree);
