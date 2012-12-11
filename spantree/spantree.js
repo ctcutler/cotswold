@@ -148,10 +148,23 @@ function loadSpanTree (ranges, content) {
         // make new span node
         var spanNode = makeSpanNode(range.id, range.dominant, range.style, spanChildren, lca);
 
-        // update lca (tree)
-        replaceArrayInArray(lca.nodes, lcaInnerChildren, [spanNode]);
-        // update contentNodes list (need to build list to update it with)
-        replaceArrayInArray(contentNodes, innerChildren, newContentNodes);
+        // update lca (tree) and contentNodes list 
+        if (innerChildren.length == 0) {
+          if (leftEdge) {
+            lca.nodes.splice(lca.nodes.indexOf(leftEdge)+1, 0, spanNode);
+            contentNodes.splice.apply(
+              contentNodes, [contentNodes.indexOf(leftEdge)+1, 0].concat(newContentNodes)
+            );
+          } else if (rightEdge) {
+            lca.nodes.splice(lca.nodes.indexOf(rightEdge), 0, spanNode);
+            contentNodes.splice.apply(
+              contentNodes, [contentNodes.indexOf(rightEdge), 0].concat(newContentNodes)
+            );
+          }
+        } else {
+          replaceArrayInArray(lca.nodes, lcaInnerChildren, [spanNode]);
+          replaceArrayInArray(contentNodes, innerChildren, newContentNodes);
+        }
       } 
     }
   });

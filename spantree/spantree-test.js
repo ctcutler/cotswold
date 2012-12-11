@@ -25,7 +25,7 @@ controller("TestController", ['$scope', function($scope) {
     addTest("nested matching end, shorter first", [[2, 6, "red"], [0, 6, "blue"]], "BBRRRR");
     addTest("nested matching start, longer first", [[0, 6, "red"], [2, 6, "blue"]], "RRBBBB");
     addTest("overlapping", [[0, 4, "red"], [2, 6, "blue"], [4, 8, "green"]], "RRRRBBGG");
-    addTest("overlapping reversed (broken)", [[4, 8, "red"], [2, 6, "blue"], [0, 4, "green"]], "GGBBRRRR");
+    addTest("overlapping reversed", [[4, 8, "red"], [2, 6, "blue"], [0, 4, "green"]], "GGBBRRRR");
     addTest("adjacent", [[0, 2, "red"], [2, 4, "blue"]], "RRBB");
 
     $scope.spanTree.push(loadSpanTree($scope.ranges, $scope.content));
