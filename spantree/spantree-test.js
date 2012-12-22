@@ -1,7 +1,5 @@
 // FIXME:
-// * make better test cases that make it possible to tell at a glance if anything failed
 // * add advanced test cases based on diagrams in my journal
-// * add borders to spans that indicate where overlaps truncated
 // * add dominance support
 // * integrate library with main app and convert main app to using ranges
 
@@ -23,7 +21,7 @@ controller("TestController", ['$scope', function($scope) {
     addTest("nested matching start, shorter first", [[0, 4, "red"], [0, 6, "blue"]], "RRRRBB");
     addTest("nested matching start, longer first", [[0, 6, "red"], [0, 4, "blue"]], "BBBBRR");
     addTest("nested matching end, shorter first", [[2, 6, "red"], [0, 6, "blue"]], "BBRRRR");
-    addTest("nested matching start, longer first", [[0, 6, "red"], [2, 6, "blue"]], "RRBBBB");
+    addTest("nested matching end, longer first", [[0, 6, "red"], [2, 6, "blue"]], "RRBBBB");
     addTest("overlapping", [[0, 4, "red"], [2, 6, "blue"], [4, 8, "green"]], "RRRRBBGG");
     addTest("overlapping reversed", [[4, 8, "red"], [2, 6, "blue"], [0, 4, "green"]], "GGBBRRRR");
     addTest("adjacent", [[0, 2, "red"], [2, 4, "blue"]], "RRBB");

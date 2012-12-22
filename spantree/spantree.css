@@ -1,12 +1,31 @@
 .red {
-    background-color: red;
-    /*border-style: solid none solid solid;*/
+  background-color: red;
+  border-color: #8B0000;
 }
 
 .blue {
-    background-color: #5CB3FF;
+  background-color: #5CB3FF;
+  border-color: #00008B;
 }
 
 .green {
-    background-color: #00FF00;
+  background-color: #00FF00;
+  border-color: #008B00;
 }
+
+.allborders {
+  border-style: solid;
+}
+
+.truncatedLeft {
+  border-style: solid solid solid none;
+}
+
+.truncatedRight {
+  border-style: solid none solid solid;
+}
+
+.truncatedBoth {
+  border-style: solid none solid none;
+}
+

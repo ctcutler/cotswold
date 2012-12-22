@@ -80,9 +80,12 @@ function loadSpanTree (ranges, content) {
         leftEdge = null;
       } 
 
+      var truncatedLeft = false;
+      var truncatedRight = false;
       // this means we're overlapping with something on the left side
       // and we need to move the range in to avoid overlapping the spans
       if (leftEdge && leftEdge.parentNode != lca) {
+        truncatedLeft = true;
         leftEdge = null;
         for (var i=0; i<innerChildren.length; i++) {
           var innerChild = innerChildren[i];
@@ -92,7 +95,11 @@ function loadSpanTree (ranges, content) {
         }
         innerChildren = innerChildren.slice(i);
       }
+
+      // this means we're overlapping with something on the right side
+      // and we need to move the range in to avoid overlapping the spans
       if (rightEdge && rightEdge.parentNode != lca) {
+        truncatedRight = true;
         rightEdge = null;
         for (var i=innerChildren.length; i>0; i--) {
           var innerChild = innerChildren[i-1];
@@ -146,7 +153,9 @@ function loadSpanTree (ranges, content) {
         }
 
         // make new span node
-        var spanNode = makeSpanNode(range.id, range.dominant, range.style, spanChildren, lca);
+        var spanNode = makeSpanNode(
+          range.id, range.dominant, range.style, spanChildren, lca, truncatedLeft, truncatedRight
+        );
 
         // update lca (tree) and contentNodes list 
         if (innerChildren.length == 0) {
@@ -253,10 +262,21 @@ function makeContentNode(start, end, parentNode, content) {
   };
 }
 
-function makeSpanNode(id, dominant, style, nodes, parentNode) {
+function makeSpanNode(id, dominant, style, nodes, parentNode, truncatedLeft, truncatedRight) {
+  if (style) {
+    if (truncatedRight && truncatedLeft) {
+      style += " truncatedBoth";
+    } else if (truncatedLeft) {
+      style += " truncatedLeft";
+    } else if (truncatedRight) {
+      style += " truncatedRight";
+    } else {
+      style += " allborders";
+    }
+  }
   var spanNode = {
       dominant: dominant,
-      style: style,
+      style: style ? style+" allborders" : style,
       nodes: nodes,
       parentNode: parentNode
   };
