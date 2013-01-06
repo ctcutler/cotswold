@@ -8,7 +8,7 @@ function makeSpanTree (ranges, content) {
 
   angular.forEach(ranges, function(range) {
     var nodes = [];
-    tree.id;
+    //tree.id;
     angular.forEach(contentNodes, function(node) {
       if (range.start < node.end && range.end > node.start) {
         nodes.push(node);
@@ -241,7 +241,8 @@ function makeSpanNode(id, dominant, style, nodes, parentNode, truncatedLeft, tru
       dominant: dominant,
       style: style ? style+" allborders" : style,
       nodes: nodes,
-      parentNode: parentNode
+      parentNode: parentNode,
+      id: id
   };
   angular.forEach(nodes, function(node) {
     node.parentNode = spanNode;
