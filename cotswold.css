@@ -49,3 +49,34 @@
   background-color: #f00;
   opacity: 0.4;
 }
+
+.red {
+  background-color: #FFC0CB;
+  border-color: #8B0000;
+}
+
+.blue {
+  background-color: #ADD8E6;
+  border-color: #00008B;
+}
+
+.green {
+  background-color: #90EE90;
+  border-color: #008B00;
+}
+
+.allborders {
+  border-style: solid;
+}
+
+.truncatedLeft {
+  border-style: solid solid solid none;
+}
+
+.truncatedRight {
+  border-style: solid none solid solid;
+}
+
+.truncatedBoth {
+  border-style: solid none solid none;
+}

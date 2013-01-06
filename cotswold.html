@@ -5,9 +5,11 @@
     <script src="angular-1.0.2.min.js"></script>
     <script src="jquery-1.8.2.min.js"></script>
     <script src="raphael-2.1.0-min.js"></script>
+    <script src="spantree.js"></script>
     <script src="cotswold.js"></script>
   </head>
   <body>
+    <script type="text/ng-template" id="recursiveSpan"><span class="ng-scope ng-binding" ngm-if="data.content">{{data.content}}</span><span ng-repeat="data in data.nodes" ng-include="'recursiveSpan'" class="{{data.style}}" id="{{data.id}}"></span></script>
     <editor
         id="editor" 
         direction="vertical"
@@ -35,9 +37,10 @@
             loop-variable="artifact"
           >
             <div class="artifact-content" style="display: {{artifact.contentDisplay}};">
-              <span ng-repeat="chunk in artifact.contentChunks" 
-                id="{{chunk.spanId}}"
-                class="{{chunk.class}}">{{chunk.content}}</span>
+              <span ng-repeat="data in artifact.nodes" 
+                ng-include="'recursiveSpan'" 
+                class="{{data.style}}" 
+                id="{{data.id}}"></span>
             </div>
             <img src="{{artifact.imageSrc}}" 
                  id="{{artifact.imageId}}"

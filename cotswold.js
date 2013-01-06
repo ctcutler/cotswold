@@ -26,6 +26,47 @@ var ARTIFACT_MAX_HEIGHT_EXPANDED = "none";
   * newline rendering
 */
 
+(function (angular) {
+    /*
+     * Defines the ng:if tag. This is useful if jquery mobile does not allow
+     * an ng-switch element in the dom, e.g. between ul and li.
+     */
+    var ngIfDirective = {
+        transclude:'element',
+        priority:1000,
+        terminal:true,
+        compile:function (element, attr, linker) {
+            return function (scope, iterStartElement, attr) {
+                iterStartElement[0].doNotMove = true;
+                var expression = attr.ngmIf;
+                var lastElement;
+                var lastScope;
+                scope.$watch(expression, function (newValue) {
+                    if (lastElement) {
+                        lastElement.remove();
+                        lastElement = null;
+                    }
+                    lastScope && lastScope.$destroy();
+                    if (newValue) {
+                        lastScope = scope.$new();
+                        linker(lastScope, function (clone) {
+                            lastElement = clone;
+                            iterStartElement.after(clone);
+                        });
+                    }
+                    // Note: need to be parent() as jquery cannot trigger events on comments
+                    // (angular creates a comment node when using transclusion, as ng-repeat does).
+                    $(iterStartElement.parent()).trigger("$childrenChanged");
+                });
+            };
+        }
+    };
+    var ng = angular.module('ng');
+    ng.directive('ngmIf', function () {
+        return ngIfDirective;
+    });
+})(angular);
+
 var module = angular.module('cotswoldApp', [])
   .directive('editor', function() {
     return {
@@ -373,16 +414,26 @@ function redraw (connectionPairs) {
 }
 
 function EditorController($scope) {
-  /*
   localStorage.clear();
-  localStorage["expanded"] = JSON.stringify(hardCodedExpanded);
-  localStorage["connections"] = JSON.stringify(hardCodedConnections);
-  localStorage["timepoints"] = JSON.stringify(hardCodedTimepoints);
-  */
 
+  if (!localStorage["expanded"]) {
+    localStorage["expanded"] = JSON.stringify(hardCodedExpanded);
+    localStorage["connections"] = JSON.stringify(hardCodedConnections);
+    localStorage["timepoints"] = JSON.stringify(hardCodedTimepoints);
+  }
+
+  var timepoints = JSON.parse(localStorage["timepoints"]);
+  for (var i=0; i<timepoints.length; i++) {
+    var timepoint = timepoints[i];
+    for (var j=0; j<timepoint.artifacts.length; j++) {
+      var artifact = timepoint.artifacts[j];
+      artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
+    }
+  }
+
+  $scope.timepoints = timepoints;
   $scope.expanded = JSON.parse(localStorage["expanded"]);
   $scope.connections = JSON.parse(localStorage["connections"]);
-  $scope.timepoints = JSON.parse(localStorage["timepoints"]);
 
   $scope.toggleZoom = function () {
     var width = $scope.expanded ? ARTIFACT_WIDTH_NORMAL : ARTIFACT_WIDTH_EXPANDED;
@@ -405,12 +456,11 @@ function EditorController($scope) {
   };
 }
 
-
 var hardCodedExpanded = false;
 var hardCodedConnections = [
-  { leftId: "span1", rightId: "span4", },
-  { leftId: "span1", rightId: "span6"},
-  { leftId: "box1", rightId: "span4"},
+  { leftId: "range1", rightId: "range14", },
+  { leftId: "range2", rightId: "range16"},
+  { leftId: "box1", rightId: "range14"},
 ];
 var hardCodedTimepoints = [
   { 
@@ -419,9 +469,10 @@ var hardCodedTimepoints = [
       { 
         imageDisplay: "none",
         contentDisplay: "block",
-        contentChunks: [
-          { content: "Lorem ipsum dolor", spanId: "span1", class: "highlighted" },
-          { content: " sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", spanId: "span2"}
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        ranges: [
+          { start: 6, end: 11, id: "range1", style: "red" },
+          { start: 18, end: 21, id: "range2", style: "blue" },
         ],
         width: ARTIFACT_WIDTH_NORMAL,
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
@@ -429,8 +480,10 @@ var hardCodedTimepoints = [
       { 
         imageDisplay: "none",
         contentDisplay: "block",
-        contentChunks: [
-          { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        ranges: [
+          { start: 6, end: 11, id: "range11", style: "red" },
+          { start: 18, end: 21, id: "range12", style: "blue" },
         ],
         width: ARTIFACT_WIDTH_NORMAL,
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
@@ -453,8 +506,10 @@ var hardCodedTimepoints = [
       { 
         imageDisplay: "none",
         contentDisplay: "block",
-        contentChunks: [
-          { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        ranges: [
+          { start: 6, end: 11, id: "range13", style: "red" },
+          { start: 18, end: 21, id: "range14", style: "blue" },
         ],
         width: ARTIFACT_WIDTH_NORMAL,
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
@@ -467,20 +522,30 @@ var hardCodedTimepoints = [
       { 
         imageDisplay: "none",
         contentDisplay: "block",
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        ranges: [
+          { start: 6, end: 11, id: "range15", style: "red" },
+          { start: 18, end: 21, id: "range16", style: "blue" },
+        ],
+        /*
+        FIXME: translate these into ranges
         contentChunks: [
           { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ", spanId: "span3" },
           { content: "labore", class: "highlighted", spanId: "span4"  },
           { content: " et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.  ", spanId: "span5" },
           { content: "Bottom!", class: "highlighted", spanId: "span6"  },
         ],
+        */
         width: ARTIFACT_WIDTH_NORMAL,
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
       },
       { 
         imageDisplay: "none",
         contentDisplay: "block",
-        contentChunks: [
-          { content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
+        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        ranges: [
+          { start: 6, end: 11, id: "range17", style: "red" },
+          { start: 18, end: 21, id: "range18", style: "blue" },
         ],
         width: ARTIFACT_WIDTH_NORMAL,
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
