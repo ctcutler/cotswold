@@ -421,15 +421,19 @@ function getArtifactParent(node) {
 }
 
 
-// Copied from: http://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container
+// Adapted from: http://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container
 // Thanks, Tim Down!
-function getCaretCharacterOffsetWithin(element) {
+function getCaretCharacterOffsetWithin(element, start) {
     var caretOffset = 0;
     if (typeof window.getSelection != "undefined") {
         var range = window.getSelection().getRangeAt(0);
         var preCaretRange = range.cloneRange();
         preCaretRange.selectNodeContents(element);
-        preCaretRange.setEnd(range.endContainer, range.endOffset);
+        if (start) {
+          preCaretRange.setEnd(range.startContainer, range.startOffset);
+        } else {
+          preCaretRange.setEnd(range.endContainer, range.endOffset);
+        }
         caretOffset = preCaretRange.toString().length;
     } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
         var textRange = document.selection.createRange();
@@ -468,8 +472,8 @@ function EditorController($scope) {
     var startParent = getArtifactParent(sel.anchorNode);
     var endParent = getArtifactParent(sel.focusNode);
     // FIXME: this could be neater
-    var endOffset = getCaretCharacterOffsetWithin(startParent.firstElementChild.firstElementChild);
-    var startOffset = endOffset - (sel.focusOffset - sel.anchorOffset);
+    var startOffset = getCaretCharacterOffsetWithin(startParent.firstElementChild.firstElementChild, true);
+    var endOffset = getCaretCharacterOffsetWithin(startParent.firstElementChild.firstElementChild, false);
 
     if (startParent.id != endParent.id) {
       sel.removeAllRanges();
@@ -496,9 +500,6 @@ function EditorController($scope) {
       }
       if (foundArtifact) break;
     }
-    // FIXME: if start node and end node are within the same artifact
-    // (how to determine this?) add a new range to the data structure
-    // and re-render
   };
 
   $scope.toggleZoom = function () {
