@@ -5,6 +5,7 @@
     <script src="angular-1.0.2.min.js"></script>
     <script src="jquery-1.8.2.min.js"></script>
     <script src="raphael-2.1.0-min.js"></script>
+    <script src="rangy-core-1.2.3-min.js"></script>
     <script src="spantree/spantree.js"></script>
     <script src="cotswold.js"></script>
   </head>
@@ -27,6 +28,7 @@
           ng-repeat="timepoint in timepoints"
           direction="vertical"
           child-align="center"
+          id="{{timepoint.id}}"
           margin="5"
           padding="5">
           <div class="timepoint-background">
@@ -35,6 +37,7 @@
           <artifact 
             ng-repeat="artifact in timepoint.artifacts"
             loop-variable="artifact"
+            id="{{artifact.id}}"
           >
             <div class="artifact-content" style="display: {{artifact.contentDisplay}};">
               <span ng-repeat="data in artifact.nodes" 
@@ -57,6 +60,7 @@
       </timeline>
       <div class="controls">
         <a href="" ng-click="toggleZoom()">Toggle Zoom</a>
+        <a href="" ng-click="makeRange()">Make Range</a>
       </div>
     </editor>
     <div id="connections" class="connections-glass"></div>

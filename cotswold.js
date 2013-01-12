@@ -413,6 +413,34 @@ function redraw (connectionPairs) {
   }
 }
 
+function getArtifactParent(node) {
+  while (node && node.nodeName != "ARTIFACT") {
+    node = node.parentNode;
+  }
+  return node;
+}
+
+
+// Copied from: http://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container
+// Thanks, Tim Down!
+function getCaretCharacterOffsetWithin(element) {
+    var caretOffset = 0;
+    if (typeof window.getSelection != "undefined") {
+        var range = window.getSelection().getRangeAt(0);
+        var preCaretRange = range.cloneRange();
+        preCaretRange.selectNodeContents(element);
+        preCaretRange.setEnd(range.endContainer, range.endOffset);
+        caretOffset = preCaretRange.toString().length;
+    } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
+        var textRange = document.selection.createRange();
+        var preCaretTextRange = document.body.createTextRange();
+        preCaretTextRange.moveToElementText(element);
+        preCaretTextRange.setEndPoint("EndToEnd", textRange);
+        caretOffset = preCaretTextRange.text.length;
+    }
+    return caretOffset;
+}
+
 function EditorController($scope) {
   localStorage.clear();
 
@@ -434,6 +462,44 @@ function EditorController($scope) {
   $scope.timepoints = timepoints;
   $scope.expanded = JSON.parse(localStorage["expanded"]);
   $scope.connections = JSON.parse(localStorage["connections"]);
+
+  $scope.makeRange = function () {
+    var sel = rangy.getSelection();
+    var startParent = getArtifactParent(sel.anchorNode);
+    var endParent = getArtifactParent(sel.focusNode);
+    // FIXME: this could be neater
+    var endOffset = getCaretCharacterOffsetWithin(startParent.firstElementChild.firstElementChild);
+    var startOffset = endOffset - (sel.focusOffset - sel.anchorOffset);
+
+    if (startParent.id != endParent.id) {
+      sel.removeAllRanges();
+      return;
+    }
+
+    var foundArtifact = false;
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      for (var j=0; j<timepoint.artifacts.length; j++) {
+        var artifact = timepoint.artifacts[j];
+        if (artifact.id == startParent.id) {
+          artifact.ranges.push(
+            {
+              start: startOffset, end: endOffset, 
+              id: "range-"+artifact.id+"."+(artifact.ranges.length+1),
+              style: "red"
+            }
+          );
+          artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
+          foundArtifact = true;
+          break;
+        }
+      }
+      if (foundArtifact) break;
+    }
+    // FIXME: if start node and end node are within the same artifact
+    // (how to determine this?) add a new range to the data structure
+    // and re-render
+  };
 
   $scope.toggleZoom = function () {
     var width = $scope.expanded ? ARTIFACT_WIDTH_NORMAL : ARTIFACT_WIDTH_EXPANDED;
@@ -464,9 +530,11 @@ var hardCodedConnections = [
 ];
 var hardCodedTimepoints = [
   { 
+    id: "1",
     name: "Tuesday Class",
     artifacts: [
       { 
+        id: "1.1",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -478,6 +546,7 @@ var hardCodedTimepoints = [
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
       },
       { 
+        id: "1.2",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -489,6 +558,7 @@ var hardCodedTimepoints = [
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
       },
       { 
+        id: "1.3",
         imageSrc: "baa.jpeg",
         imageBoxes: [
           { id: "box1", left: 150, top: 135, width: 40, height: 40 },
@@ -501,9 +571,11 @@ var hardCodedTimepoints = [
     ]
   },
   { 
+    id: "2",
     name: "Wednesday Feedback",
     artifacts: [
       { 
+        id: "2.1",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -517,9 +589,11 @@ var hardCodedTimepoints = [
     ]
   },
   { 
+    id: "3",
     name: "Thursday Class",
     artifacts: [
       { 
+        id: "3.1",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -540,6 +614,7 @@ var hardCodedTimepoints = [
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
       },
       { 
+        id: "3.2",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
