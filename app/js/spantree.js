@@ -1,3 +1,5 @@
+"use strict";
+
 function makeSpanTree (ranges, content) {
   if (!content || !ranges) {
     return {};

@@ -1,3 +1,5 @@
+"use strict";
+
 var ARTIFACT_WIDTH_NORMAL = 300;
 var ARTIFACT_MAX_HEIGHT_NORMAL = 300;
 var ARTIFACT_WIDTH_EXPANDED = 600;
@@ -628,7 +630,7 @@ var hardCodedTimepoints = [
       },
       { 
         id: "1.3",
-        imageSrc: "baa.jpeg",
+        imageSrc: "img/baa.jpeg",
         imageBoxes: [
           { id: "box1", left: 150, top: 135, width: 40, height: 40 },
         ],

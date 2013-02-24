@@ -1,0 +1,25 @@
+* write unit tests first, before writing any code
+* forces you to figure out exactly what the code should do, no more, no less
+* forces you to refactor sometimes
+* makes it easy to re-factor the code base confidently
+
+* test names are statements:
+** X can do Y and Z
+** one simple, small thing that it does
+
+* first test: make sure spring is configured
+
+
+* not being able to test something is a reason not to do it (???)
+
+* don't write code until you have a test that fails
+
+* don't do things you don't need to do yet. . . just do what you need right now
+
+* tool to analyze test coverage?
+
+* find ways to test things without introducing complexity
+
+* all activity orginates in the test: test shouldn't even compile in the begining, let alone run
+
+* TDD is not equivalent to writing code and then writing unit tests

@@ -1,13 +1,13 @@
 <!doctype html>
 <html ng-app="cotswoldApp">
   <head>
-    <link rel="stylesheet" type="text/css" href="cotswold.css"/>
-    <script src="angular-1.0.2.min.js"></script>
-    <script src="jquery-1.8.2.min.js"></script>
-    <script src="raphael-2.1.0-min.js"></script>
-    <script src="rangy-core-1.2.3-min.js"></script>
-    <script src="spantree/spantree.js"></script>
-    <script src="cotswold.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/cotswold.css"/>
+    <script src="lib/angular-1.0.2.min.js"></script>
+    <script src="lib/jquery-1.8.2.min.js"></script>
+    <script src="lib/raphael-2.1.0-min.js"></script>
+    <script src="lib/rangy-core-1.2.3-min.js"></script>
+    <script src="js/spantree.js"></script>
+    <script src="js/cotswold.js"></script>
   </head>
   <body>
     <script type="text/ng-template" id="recursiveSpan"><span class="ng-scope ng-binding" ngm-if="data.content">{{data.content}}</span><span ng-repeat="data in data.nodes" ng-include="'recursiveSpan'" class="{{data.style}}" id="{{data.id}}"></span></script>
