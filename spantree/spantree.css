@@ -29,3 +29,7 @@
   border-style: solid none solid none;
 }
 
+.selected {
+  background-color: #FFFF00;
+}
+

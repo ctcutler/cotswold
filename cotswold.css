@@ -80,3 +80,10 @@
 .truncatedBoth {
   border-style: solid none solid none;
 }
+
+/* declare this last so that it takes precedence over other styles */
+.selected {
+  background-color: #FFFF00;
+  font-weight: bold;
+}
+

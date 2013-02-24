@@ -55,17 +55,18 @@ controller("TestController", ['$scope', function($scope) {
   };
 
   $scope.test = function () {
-    addTest("basic ranges", [[0, 3, "red"], [4, 7, "blue"]], "RRR BBB");
-    addTest("nested", [[0, 6, "red"], [2, 4, "blue"]], "RRBBRR");
-    addTest("nested three layers", [[0, 6, "red"], [1, 5, "blue"], [2, 4, "green"]], "RBGGBR");
-    addTest("nested two chunks", [[0, 6, "red"], [1, 2, "blue"], [4, 5, "green"]], "RBRRGR");
-    addTest("nested matching start, shorter first", [[0, 4, "red"], [0, 6, "blue"]], "RRRRBB");
-    addTest("nested matching start, longer first", [[0, 6, "red"], [0, 4, "blue"]], "BBBBRR");
-    addTest("nested matching end, shorter first", [[2, 6, "red"], [0, 6, "blue"]], "BBRRRR");
-    addTest("nested matching end, longer first", [[0, 6, "red"], [2, 6, "blue"]], "RRBBBB");
-    addTest("overlapping", [[0, 4, "red"], [2, 6, "blue"], [4, 8, "green"]], "RRRRBBGG");
-    addTest("overlapping reversed", [[4, 8, "red"], [2, 6, "blue"], [0, 4, "green"]], "GGBBRRRR");
-    addTest("adjacent", [[0, 2, "red"], [2, 4, "blue"]], "RRBB");
+    addTest("basic ranges", [[0, 3, "red", false], [4, 7, "blue", false]], "RRR BBB");
+    addTest("nested", [[0, 6, "red", false], [2, 4, "blue", false]], "RRBBRR");
+    addTest("nested three layers", [[0, 6, "red", false], [1, 5, "blue", false], [2, 4, "green", false]], "RBGGBR");
+    addTest("nested two chunks", [[0, 6, "red", false], [1, 2, "blue", false], [4, 5, "green", false]], "RBRRGR");
+    addTest("nested matching start, shorter first", [[0, 4, "red", false], [0, 6, "blue", false]], "RRRRBB");
+    addTest("nested matching start, longer first", [[0, 6, "red", false], [0, 4, "blue", false]], "BBBBRR");
+    addTest("nested matching end, shorter first", [[2, 6, "red", false], [0, 6, "blue", false]], "BBRRRR");
+    addTest("nested matching end, longer first", [[0, 6, "red", false], [2, 6, "blue", false]], "RRBBBB");
+    addTest("overlapping", [[0, 4, "red", false], [2, 6, "blue", false], [4, 8, "green", false]], "RRRRBBGG");
+    addTest("overlapping reversed", [[4, 8, "red", false], [2, 6, "blue", false], [0, 4, "green", false]], "GGBBRRRR");
+    addTest("adjacent", [[0, 2, "red", false], [2, 4, "blue", false]], "RRBB");
+    addTest("selected", [[0, 2, "red", true]], "RR");
 
     $scope.spanTree.push(makeSpanTree($scope.ranges, $scope.content));
   };
@@ -83,6 +84,7 @@ controller("TestController", ['$scope', function($scope) {
         end: range[1]+contentOffset, 
         id: "range"+rangeCount,
         style: range[2],
+        selected: range[3],
       });
     });
     contentOffset += content.length + 3;
@@ -94,12 +96,15 @@ controller("TestController", ['$scope', function($scope) {
     return JSON.stringify(
       obj,
       function(key, val) {
-         if (typeof val == "object") {
-              if (seen.indexOf(val) >= 0)
-                  return undefined
-              seen.push(val)
-          }
-          return val
+        if (key == "$$hashKey") {
+          return undefined;
+        }
+        if (typeof val == "object") {
+          if (seen.indexOf(val) >= 0)
+            return undefined;
+          seen.push(val)
+        }
+        return val
       }
     );
   }
