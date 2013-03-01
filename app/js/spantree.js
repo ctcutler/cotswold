@@ -1,5 +1,10 @@
 "use strict";
 
+var ALLBORDERS_STYLE = "allborders";
+var TRUNC_LEFT_STYLE = "truncatedLeft";
+var TRUNC_RIGHT_STYLE = "truncatedRight";
+var TRUNC_BOTH_STYLE = "truncatedBoth";
+
 function makeSpanTree (ranges, content) {
   if (!content || !ranges) {
     return {};
@@ -235,13 +240,13 @@ function makeSpanNode(id, dominant, style, selected, nodes, parentNode, truncate
 
   if (style) {
     if (truncatedRight && truncatedLeft) {
-      style += " truncatedBoth";
+      style += " " + TRUNC_BOTH_STYLE;
     } else if (truncatedLeft) {
-      style += " truncatedLeft";
+      style += " " + TRUNC_LEFT_STYLE;
     } else if (truncatedRight) {
-      style += " truncatedRight";
+      style += " " + TRUNC_RIGHT_STYLE;
     } else {
-      style += " allborders";
+      style += " " + ALLBORDERS_STYLE;
     }
   }
 
