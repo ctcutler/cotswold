@@ -1,5 +1,6 @@
 "use strict";
 
+var SELECTED_STYLE = "selected";
 var ALLBORDERS_STYLE = "allborders";
 var TRUNC_LEFT_STYLE = "truncatedLeft";
 var TRUNC_RIGHT_STYLE = "truncatedRight";
@@ -235,7 +236,7 @@ function makeContentNode(start, end, parentNode, content) {
 
 function makeSpanNode(id, dominant, style, selected, nodes, parentNode, truncatedLeft, truncatedRight) {
   if (selected) {
-    style = "selected " + style;
+    style = SELECTED_STYLE + " " + style;
   }
 
   if (style) {
