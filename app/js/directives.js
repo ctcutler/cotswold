@@ -39,118 +39,138 @@
     });
 })(angular);
 
-var module = angular.module('cotswoldApp', [])
-  .directive('editor', function() {
-    return {
-      restrict: 'E',
-      link: function(scope, element, attrs) {
+var module = angular.module('cotswoldApp', []);
 
-        element.addClass("editor");
+module.directive('editor', function() {
+  return {
+    restrict: 'E',
+    link: function(scope, element, attrs) {
 
-        scope.$on('resize', function(event) {
-          // handle resize by repositioning children and resizing self
-          resizeHandler(
-            element, 
-            attrs.direction, 
-            attrs.childAlign, 
-            parseInt(attrs.margin), 
-            parseInt(attrs.padding),
-            ""
-          );
-        });
-      }
-    };
-  }).directive('timeline', function() {
-    return {
-      restrict: 'E',
-      link: function(scope, element, attrs) {
+      element.addClass("editor");
 
-        element.addClass("timeline");
+      scope.$on('resize', function(event) {
+        // handle resize by repositioning children and resizing self
+        resizeHandler(
+          element, 
+          attrs.direction, 
+          attrs.childAlign, 
+          parseInt(attrs.margin), 
+          parseInt(attrs.padding),
+          ""
+        );
+      });
+    }
+  };
+});
 
-        scope.$on('resize', function(event) {
-          // handle resize by repositioning children and resizing self
-          resizeHandler(
-            element, 
-            attrs.direction, 
-            attrs.childAlign, 
-            parseInt(attrs.margin), 
-            parseInt(attrs.padding),
-            ""
-          );
-          
-          // connections div should always be the same size as element
-          var $connections = $("#connections");
-          var $element = $(element);
-          setWidth($connections, $element.width());
-          setHeight($connections, $element.height());
-          setLeft($connections, $element.position().left);
-          setTop($connections, $element.position().top);
+module.directive('timeline', function() {
+  return {
+    restrict: 'E',
+    link: function(scope, element, attrs) {
 
-          redraw(scope.connections);
-        });
-      }
-    };
-  }).directive('timepoint', function() {
-    return {
-      restrict: 'E',
-      link: function(scope, element, attrs) {
+      element.addClass("timeline");
 
-        element.addClass("timepoint");
-
-        scope.$on('resize', function(event) {
-          // handle resize by repositioning children and resizing self
-          resizeHandler(
-            element, 
-            attrs.direction, 
-            attrs.childAlign, 
-            parseInt(attrs.margin), 
-            parseInt(attrs.padding),
-            "timepoint-background"
-          );
-
-          // timepoint-background div should always be the same size as element
-          var $element = $(element);
-          var $background = $element.children(".timepoint-background");
-          setWidth($background, $element.width());
-          setHeight($background, $element.height());
-          setLeft($background, $element.position().left);
-          setTop($background, $element.position().top);
-        });
-      }
-    };
-  }).directive('artifact', function() {
-    return {
-      restrict: 'E',
-      link: function(scope, element, attrs) {
-        element.addClass("artifact");
+      scope.$on('resize', function(event) {
+        // handle resize by repositioning children and resizing self
+        resizeHandler(
+          element, 
+          attrs.direction, 
+          attrs.childAlign, 
+          parseInt(attrs.margin), 
+          parseInt(attrs.padding),
+          ""
+        );
         
-        $(element).scroll(function () {
-          redraw(scope.connections);
-        });
+        // connections div should always be the same size as element
+        var $connections = $("#connections");
+        var $element = $(element);
+        setWidth($connections, $element.width());
+        setHeight($connections, $element.height());
+        setLeft($connections, $element.position().left);
+        setTop($connections, $element.position().top);
 
-        // Bind to model for size so that program can affect artifact size.
-        // In watch function, update element size and fire resize (handles
-        // cases where app changes artifact size)
-        scope.$watch(attrs.loopVariable+".width", function(val) {
-          if (val != null) {
-            setWidth(element, val);
-            scope.$emit("resize");
-          }
-        });
-        scope.$watch(attrs.loopVariable+".maxHeight", function(val) {
-          if (val != null) {
-            setMaxHeight(element, val);
-            scope.$emit("resize");
-          }
-        });
+        redraw(scope.connections);
+      });
+    }
+  };
+});
 
-        // on window load fire resize (handles case where browser determines size)
-        angular.element(window).bind('load', function() {
-            scope.$emit("resize");
-        });
-      }
-    };
-  });
+module.directive('timepoint', function() {
+  return {
+    restrict: 'E',
+    link: function(scope, element, attrs) {
+
+      element.addClass("timepoint");
+
+      scope.$on('resize', function(event) {
+        // handle resize by repositioning children and resizing self
+        resizeHandler(
+          element, 
+          attrs.direction, 
+          attrs.childAlign, 
+          parseInt(attrs.margin), 
+          parseInt(attrs.padding),
+          "timepoint-background"
+        );
+
+        // timepoint-background div should always be the same size as element
+        var $element = $(element);
+        var $background = $element.children(".timepoint-background");
+        setWidth($background, $element.width());
+        setHeight($background, $element.height());
+        setLeft($background, $element.position().left);
+        setTop($background, $element.position().top);
+      });
+    }
+  };
+});
+
+module.directive('artifact', function() {
+  return {
+    restrict: 'E',
+    link: function(scope, element, attrs) {
+      element.addClass("artifact");
+      
+      $(element).scroll(function () {
+        redraw(scope.connections);
+      });
+
+      // Bind to model for size so that program can affect artifact size.
+      // In watch function, update element size and fire resize (handles
+      // cases where app changes artifact size)
+      scope.$watch(attrs.loopVariable+".width", function(val) {
+        if (val != null) {
+          setWidth(element, val);
+          scope.$emit("resize");
+        }
+      });
+      scope.$watch(attrs.loopVariable+".maxHeight", function(val) {
+        if (val != null) {
+          setMaxHeight(element, val);
+          scope.$emit("resize");
+        }
+      });
+
+      // on window load fire resize (handles case where browser determines size)
+      angular.element(window).bind('load', function() {
+          scope.$emit("resize");
+      });
+    }
+  };
+});
+
+// make storage mechanism injectable so that we can 
+// fake it for testing, etc.
+module.factory('storage', function() {
+  localStorage.clear();
+
+  if (!localStorage["expanded"]) {
+    localStorage["expanded"] = JSON.stringify(hardCodedExpanded);
+    localStorage["connections"] = JSON.stringify(hardCodedConnections);
+    localStorage["timepoints"] = JSON.stringify(hardCodedTimepoints);
+  }
+  return localStorage;
+});
 
 // directive helpers
 function resizeHandler(element, direction, align, margin, padding, ignore) {
