@@ -143,7 +143,7 @@ describe("The EditorController", function() {
     expect(scope.connections[0]).toContain("range2");
   });
 
-  it("should select remove a connection", function() {
+  it("should remove a connection", function() {
     // two connected ranges are selected, the connection is removed
     scope.updateSelection("range1", false);
     scope.updateSelection("range2", true);
@@ -229,6 +229,9 @@ describe("The EditorController", function() {
 
 
   // FIXME:
+  // * connections tests failing because they call redraw which uses Rapahel. . . 
+  //   consider trying to get binding to notice changes to nodes and connections
+  //   and updating all by itself
   // * reload artifact nodes
   // * reload all nodes
   // * reload connections
