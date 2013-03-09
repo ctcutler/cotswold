@@ -14,10 +14,6 @@ function EditorController($scope, storage) {
   $scope.expanded = JSON.parse(storage["expanded"]);
   $scope.connections = JSON.parse(storage["connections"]);
 
-  // FIXME: there's a lot of duplicate code throughout this class
-  // that searches through the model for a particular range. . .
-  // refactor this
-
   $scope.makeRange = function () {
     var sel = rangy.getSelection();
     var startArtifact = getArtifactAncestor(sel.anchorNode);
@@ -35,29 +31,21 @@ function EditorController($scope, storage) {
       return;
     }
 
-    var foundArtifact = false;
     var newRangeId = null;
-    for (var i=0; i<$scope.timepoints.length; i++) {
-      var timepoint = $scope.timepoints[i];
-      for (var j=0; j<timepoint.artifacts.length; j++) {
-        var artifact = timepoint.artifacts[j];
-        if (artifact.id == startArtifact.id) {
-          newRangeId = "range-"+artifact.id+"."+(artifact.ranges.length+1);
-          artifact.ranges.push(
-            {
-              start: startOffset, 
-              end: endOffset, 
-              id: newRangeId,
-              style: "red",
-              selected: true
-            }
-          );
-          artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
-          foundArtifact = true;
-          break;
+    var artifact = $scope.getArtifactById(startArtifact.id);
+    if (artifact) {
+      newRangeId = "range-"+artifact.id+"."+(artifact.ranges.length+1);
+      artifact.ranges.push(
+        {
+          start: startOffset, 
+          end: endOffset, 
+          id: newRangeId,
+          style: "red",
+          selected: true
         }
-      }
-      if (foundArtifact) break;
+      );
+      artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
+      foundArtifact = true;
     }
 
     if (newRangeId) {
@@ -197,6 +185,37 @@ function EditorController($scope, storage) {
     } else {
       console.log(selectedRanges.length + " range(s) selected: refusing to remove connection.");
     }
+  };
+
+  $scope.getArtifactById = function (artifactId) {
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      for (var j=0; j<timepoint.artifacts.length; j++) {
+        var artifact = timepoint.artifacts[j];
+        if (artifact.id == artifactId) {
+          return artifact;
+        }
+      }
+    }
+    return null;
+  };
+
+  $scope.getRangeById = function (rangeId) {
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      for (var j=0; j<timepoint.artifacts.length; j++) {
+        var artifact = timepoint.artifacts[j];
+        if (artifact.ranges) {
+          for (var k=0; k<artifact.ranges.length; k++) {
+            var range = artifact.ranges[k];
+            if (range.id === rangeId) {
+              return range;
+            }
+          }
+        }
+      }
+    }
+    return null;
   };
 
   $scope.toggleZoom = function () {

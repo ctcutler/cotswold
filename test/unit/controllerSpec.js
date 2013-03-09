@@ -210,4 +210,20 @@ describe("The EditorController", function() {
     expect(scope.timepoints[0].artifacts[1].ranges.length).toBe(1);
     expect(scope.timepoints[0].artifacts[2].ranges.length).toBe(1);
   });
+
+  it("should get artifacts by id", function() {
+    var artifact = scope.getArtifactById("1.1");
+    expect(artifact).not.toBe(null);
+
+    artifact = scope.getArtifactById("2.1");
+    expect(artifact).toBe(null);
+  });
+
+  it("should get ranges by id", function() {
+    var range = scope.getRangeById("range1");
+    expect(range).not.toBe(null);
+
+    range = scope.getRangeById("range0");
+    expect(range).toBe(null);
+  });
 });
