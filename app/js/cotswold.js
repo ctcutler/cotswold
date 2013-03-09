@@ -17,10 +17,6 @@ function EditorController($scope, storage) {
   $scope.connectSelected = function () {
   }
 
-  $scope.makeConnection = function (left, right) {
-    $scope.connections.push({leftId: left, rightId: right});
-  };
-
   $scope.makeRange = function () {
     var sel = rangy.getSelection();
     var startArtifact = getArtifactAncestor(sel.anchorNode);
@@ -112,6 +108,48 @@ function EditorController($scope, storage) {
     }
     $scope.previousSelection = newlySelected;
   };
+
+  $scope.getSelectedRanges = function() {
+    var selectedRanges = [];
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      for (var j=0; j<timepoint.artifacts.length; j++) {
+        var artifact = timepoint.artifacts[j];
+        if (artifact.ranges) {
+          for (var k=0; k<artifact.ranges.length; k++) {
+            var range = artifact.ranges[k];
+            if (range.selected) {
+              selectedRanges.push(range);
+            }
+          }
+        }
+      }
+    }
+    return selectedRanges;
+  }
+
+  $scope.connectSelected = function() {
+    var selectedRanges = $scope.getSelectedRanges();
+    if (selectedRanges.length === 2) {
+      var r1 = selectedRanges[0];
+      var r2 = selectedRanges[1];
+      var foundDup = false;
+      for (var i=0; i<$scope.connections.length; i++) {
+        var connection = $scope.connections[i];
+        if (connection.indexOf(r1.id) != -1 && connection.indexOf(r2.id) != -1) {
+          foundDup = true;
+        }
+      }
+      
+      if (foundDup) {
+        console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create conneciton");
+      } else {
+        $scope.connections.push([r1.id, r2.id]);
+      }
+    } else {
+      console.log(selectedRanges.length + " range(s) selected: refusing to create connection.");
+    }
+  }
 
   $scope.toggleZoom = function () {
     var width = $scope.expanded ? ARTIFACT_WIDTH_NORMAL : ARTIFACT_WIDTH_EXPANDED;

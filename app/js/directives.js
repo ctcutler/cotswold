@@ -290,8 +290,8 @@ function redraw (connectionPairs) {
 
   var connections = [];
   for (var i=0; i < connectionPairs.length; i++) {
-    var left = $("#"+connectionPairs[i].leftId);
-    var right = $("#"+connectionPairs[i].rightId);
+    var left = $("#"+connectionPairs[i][0]);
+    var right = $("#"+connectionPairs[i][1]);
     if (left.offset() && right.offset()) {
       connections.push(paper.connection(left, right, "#0f0", "#0f0|2"));
     }

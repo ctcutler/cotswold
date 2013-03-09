@@ -101,8 +101,30 @@ describe("The EditorController", function() {
   });
 
   it("should return all selected ranges", function() {
+    scope.updateSelection("range1", false);
+    var ranges = scope.getSelectedRanges();
+    expect(ranges.length).toBe(1);
+    expect(ranges).toContain(scope.timepoints[0].artifacts[0].ranges[0]);
+
+    scope.updateSelection("range2", true);
+    ranges = scope.getSelectedRanges();
+    expect(ranges.length).toBe(2);
+    expect(ranges).toContain(scope.timepoints[0].artifacts[0].ranges[0]);
+    expect(ranges).toContain(scope.timepoints[0].artifacts[1].ranges[0]);
   });
 
   it("should connect the two selected ranges.", function() {
+    scope.updateSelection("range1", false);
+    scope.updateSelection("range2", true);
+    scope.connectSelected();
+    expect(scope.connections.length).toBe(1);
+    expect(scope.connections[0]).toContain("range1");
+    expect(scope.connections[0]).toContain("range2");
+
+    // confirm that it won't create duplicate
+    scope.connectSelected();
+    expect(scope.connections.length).toBe(1);
+    expect(scope.connections[0]).toContain("range1");
+    expect(scope.connections[0]).toContain("range2");
   });
 });

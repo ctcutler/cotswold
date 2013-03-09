@@ -2,9 +2,9 @@
 
 var hardCodedExpanded = false;
 var hardCodedConnections = [
-  { leftId: "range1", rightId: "range14", },
-  { leftId: "range2", rightId: "range16"},
-  { leftId: "box1", rightId: "range14"},
+  [ "range1", "range14", ],
+  [ "range2", "range16"],
+  [ "box1", "range14"],
 ];
 var hardCodedTimepoints = [
   { 
