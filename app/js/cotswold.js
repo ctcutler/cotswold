@@ -83,6 +83,8 @@ function EditorController($scope, storage) {
     return stringify($scope.timepoints);
   };
 
+  $scope.shiftDown = false;
+
   $scope.clickHandler = function (clickEvent) {
     // look at event target and its ancestors 
     var node = clickEvent.target;
@@ -94,7 +96,8 @@ function EditorController($scope, storage) {
       return;
     }
 
-    $scope.updateSelection(node.id);
+    $scope.updateSelection(node.id, $scope.shiftDown);
+    rangy.getSelection().removeAllRanges();
   };
 
   $scope.previousSelection = null;
