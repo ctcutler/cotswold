@@ -1,29 +1,5 @@
 "use strict";
 
-/*
-  FIXME:
-  X images
-  X artifact scrolling
-  X expanded view
-  * movies
-  * hbox and vbox implementations
-    ** sizes self based on contents unless width and height attributes are set
-    ** attributes for margin and padding
-    ** attributes for horizontal and vertical alignment
-    ** FIXME: mockup timeline with these options and confirm that they are sufficient
-  * get offset of text range
-  * editting
-  * comments
-  * tags
-  x zoom in and out (all the way out to full resolution, poster size)
-  * single artifact zoom
-  x scrolling in artifacts
-  * real connections
-  * data storage
-  * newline rendering
-*/
-
-
 function EditorController($scope, storage) {
   var timepoints = JSON.parse(storage["timepoints"]);
   for (var i=0; i<timepoints.length; i++) {

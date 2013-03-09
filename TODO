@@ -1,0 +1,17 @@
+Basic Functionality
+* Create/delete connections
+* Image region selection
+* Create/delete tags
+* Create/edit connection tags and comments
+* Create/delete timepoints
+* Create/delete artifacts (incl. file upload)
+* Proper storage
+
+Later
+* Create ranges/connections from diff between artifacts
+* Better styling
+* Output to PDF
+* Zoom levels (incl. single artifact zoom, artifact pair zoom)
+* Better layout functionality
+* Video artifacts (with connections to certain points in the video)
+
