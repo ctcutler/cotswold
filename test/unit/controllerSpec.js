@@ -83,6 +83,21 @@ describe("The EditorController", function() {
     expect(scope.timepoints[0].artifacts[2].ranges[0].selected).toBe(true);
   });
 
+  it("should clear all selections", function() {
+    // clear one selection
+    scope.updateSelection("range1", false);
+    scope.clearAllSelections();
+    var ranges = scope.getSelectedRanges();
+    expect(ranges.length).toBe(0);
+
+    // clear two selections
+    scope.updateSelection("range1", false);
+    scope.updateSelection("range2", true);
+    scope.clearAllSelections();
+    ranges = scope.getSelectedRanges();
+    expect(ranges.length).toBe(0);
+  });
+  
   it("should select at most two ranges", function() {
     scope.updateSelection("range1", true);
     expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(true);
@@ -126,5 +141,73 @@ describe("The EditorController", function() {
     expect(scope.connections.length).toBe(1);
     expect(scope.connections[0]).toContain("range1");
     expect(scope.connections[0]).toContain("range2");
+  });
+
+  it("should select remove a connection", function() {
+    // two connected ranges are selected, the connection is removed
+    scope.updateSelection("range1", false);
+    scope.updateSelection("range2", true);
+    scope.connectSelected();
+    expect(scope.connections.length).toBe(1);
+
+    scope.removeConnection();
+    expect(scope.connections.length).toBe(0);
+    scope.clearAllSelections();
+
+    // one unconnected range is selected, nothing happens
+    scope.updateSelection("range1", false);
+    scope.removeConnection();
+    expect(scope.connections.length).toBe(0);
+    scope.clearAllSelections();
+
+    // two unconnected ranges are selected, nothing happens
+    scope.updateSelection("range1", false);
+    scope.updateSelection("range2", true);
+    scope.removeConnection();
+    expect(scope.connections.length).toBe(0);
+    scope.clearAllSelections();
+
+    // one connected range is selected, nothing happens
+    scope.updateSelection("range1", false);
+    scope.updateSelection("range2", true);
+    scope.connectSelected();
+    expect(scope.connections.length).toBe(1);
+
+    scope.updateSelection("range1", false);
+    scope.removeConnection();
+    expect(scope.connections.length).toBe(1);
+    scope.clearAllSelections();
+
+    // a second connected range (not connected to the first) is 
+    // also selected, nothing happens
+    scope.updateSelection("range2", false);
+    scope.updateSelection("range3", true);
+    scope.connectSelected();
+    scope.clearAllSelections();
+
+    scope.updateSelection("range1", false);
+    scope.updateSelection("range3", true);
+
+    expect(scope.connections.length).toBe(2);
+    scope.removeConnection();
+    expect(scope.connections.length).toBe(2);
+  });
+
+  it("should create a range", function() {
+    // FIXME: refactor makeRange method to make it testable here
+    // (inject rangy object?. . . or just separate rangy interaction
+    // from model manipulation)
+  });
+
+  it("should select remove a range", function() {
+    scope.updateSelection("range1", false);
+    scope.removeRange();
+    expect(scope.timepoints[0].artifacts[0].ranges.length).toBe(0);
+
+    scope.updateSelection("range2", false);
+    scope.updateSelection("range3", true);
+    scope.removeRange();
+    expect(scope.timepoints[0].artifacts[1].ranges.length).toBe(1);
+    expect(scope.timepoints[0].artifacts[2].ranges.length).toBe(1);
   });
 });

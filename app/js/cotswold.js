@@ -14,8 +14,9 @@ function EditorController($scope, storage) {
   $scope.expanded = JSON.parse(storage["expanded"]);
   $scope.connections = JSON.parse(storage["connections"]);
 
-  $scope.connectSelected = function () {
-  }
+  // FIXME: there's a lot of duplicate code throughout this class
+  // that searches through the model for a particular range. . .
+  // refactor this
 
   $scope.makeRange = function () {
     var sel = rangy.getSelection();
@@ -63,6 +64,30 @@ function EditorController($scope, storage) {
       // even though new range is already selected, 
       // need to make sure everything else is unselected
       $scope.updateSelection(newRangeId);
+    }
+  };
+
+  $scope.removeRange = function () {
+    var selectedRanges = $scope.getSelectedRanges();
+    if (selectedRanges.length === 1) {
+      var selectedRange = selectedRanges[0];
+      for (var i=0; i<$scope.timepoints.length; i++) {
+        var timepoint = $scope.timepoints[i];
+        for (var j=0; j<timepoint.artifacts.length; j++) {
+          var artifact = timepoint.artifacts[j];
+          if (artifact.ranges) {
+            for (var k=0; k<artifact.ranges.length; k++) {
+              var range = artifact.ranges[k];
+              if (range === selectedRange) {
+                artifact.ranges.splice(k, 1);
+                break;
+              }
+            }
+          }
+        }
+      }
+    } else {
+      console.log(selectedRanges.length + " range(s) selected: refusing to remove range.");
     }
   };
 
@@ -126,7 +151,14 @@ function EditorController($scope, storage) {
       }
     }
     return selectedRanges;
-  }
+  };
+ 
+  $scope.clearAllSelections = function() {
+    var selectedRanges = $scope.getSelectedRanges();
+    for (var i=0; i<selectedRanges.length; i++) {
+      selectedRanges[i].selected = false;
+    }
+  };
 
   $scope.connectSelected = function() {
     var selectedRanges = $scope.getSelectedRanges();
@@ -142,14 +174,30 @@ function EditorController($scope, storage) {
       }
       
       if (foundDup) {
-        console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create conneciton");
+        console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create connection");
       } else {
         $scope.connections.push([r1.id, r2.id]);
       }
     } else {
       console.log(selectedRanges.length + " range(s) selected: refusing to create connection.");
     }
-  }
+  };
+
+  $scope.removeConnection = function () {
+    var selectedRanges = $scope.getSelectedRanges();
+    if (selectedRanges.length === 2) {
+      for (var i=0; i<$scope.connections.length; i++) {
+        var connection = $scope.connections[i];
+        if (connection.indexOf(selectedRanges[0].id) !== -1 
+          && connection.indexOf(selectedRanges[1].id) !== -1) {
+          $scope.connections.splice(i, 1);
+          break;
+        }
+      }
+    } else {
+      console.log(selectedRanges.length + " range(s) selected: refusing to remove connection.");
+    }
+  };
 
   $scope.toggleZoom = function () {
     var width = $scope.expanded ? ARTIFACT_WIDTH_NORMAL : ARTIFACT_WIDTH_EXPANDED;
