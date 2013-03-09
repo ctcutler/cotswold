@@ -131,13 +131,13 @@ describe("The EditorController", function() {
   it("should connect the two selected ranges.", function() {
     scope.updateSelection("range1", false);
     scope.updateSelection("range2", true);
-    scope.connectSelected();
+    scope.makeConnection();
     expect(scope.connections.length).toBe(1);
     expect(scope.connections[0]).toContain("range1");
     expect(scope.connections[0]).toContain("range2");
 
     // confirm that it won't create duplicate
-    scope.connectSelected();
+    scope.makeConnection();
     expect(scope.connections.length).toBe(1);
     expect(scope.connections[0]).toContain("range1");
     expect(scope.connections[0]).toContain("range2");
@@ -147,7 +147,7 @@ describe("The EditorController", function() {
     // two connected ranges are selected, the connection is removed
     scope.updateSelection("range1", false);
     scope.updateSelection("range2", true);
-    scope.connectSelected();
+    scope.makeConnection();
     expect(scope.connections.length).toBe(1);
 
     scope.removeConnection();
@@ -170,7 +170,7 @@ describe("The EditorController", function() {
     // one connected range is selected, nothing happens
     scope.updateSelection("range1", false);
     scope.updateSelection("range2", true);
-    scope.connectSelected();
+    scope.makeConnection();
     expect(scope.connections.length).toBe(1);
 
     scope.updateSelection("range1", false);
@@ -182,7 +182,7 @@ describe("The EditorController", function() {
     // also selected, nothing happens
     scope.updateSelection("range2", false);
     scope.updateSelection("range3", true);
-    scope.connectSelected();
+    scope.makeConnection();
     scope.clearAllSelections();
 
     scope.updateSelection("range1", false);
@@ -226,4 +226,12 @@ describe("The EditorController", function() {
     range = scope.getRangeById("range0");
     expect(range).toBe(null);
   });
+
+
+  // FIXME:
+  // * reload artifact nodes
+  // * reload all nodes
+  // * reload connections
+  // * add/remove connection/artifact actually updates nodes
+  // * what happens when we remove a connected range?
 });

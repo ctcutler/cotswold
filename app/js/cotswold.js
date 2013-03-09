@@ -2,17 +2,23 @@
 
 function EditorController($scope, storage) {
   var timepoints = JSON.parse(storage["timepoints"]);
-  for (var i=0; i<timepoints.length; i++) {
-    var timepoint = timepoints[i];
-    for (var j=0; j<timepoint.artifacts.length; j++) {
-      var artifact = timepoint.artifacts[j];
-      artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
-    }
-  }
 
   $scope.timepoints = timepoints;
   $scope.expanded = JSON.parse(storage["expanded"]);
   $scope.connections = JSON.parse(storage["connections"]);
+
+  $scope.reloadArtifactNodes = function(artifact) {
+    artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
+  }
+
+  $scope.reloadAllNodes = function(artifact) {
+    for (var i=0; i<timepoints.length; i++) {
+      var timepoint = timepoints[i];
+      for (var j=0; j<timepoint.artifacts.length; j++) {
+        $scope.reloadArtifactNodes(timepoint.artifacts[j]);
+      }
+    }
+  }
 
   $scope.makeRange = function () {
     var sel = rangy.getSelection();
@@ -44,8 +50,7 @@ function EditorController($scope, storage) {
           selected: true
         }
       );
-      artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
-      foundArtifact = true;
+      $scope.reloadArtifactNodes(artifact);
     }
 
     if (newRangeId) {
@@ -68,6 +73,7 @@ function EditorController($scope, storage) {
               var range = artifact.ranges[k];
               if (range === selectedRange) {
                 artifact.ranges.splice(k, 1);
+                $scope.reloadArtifactNodes(artifact);
                 break;
               }
             }
@@ -118,7 +124,7 @@ function EditorController($scope, storage) {
               range.selected = false;
             }
           }
-          artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
+          $scope.reloadArtifactNodes(artifact);
         }
       }
     }
@@ -151,7 +157,7 @@ function EditorController($scope, storage) {
     }
   };
 
-  $scope.connectSelected = function() {
+  $scope.makeConnection = function() {
     var selectedRanges = $scope.getSelectedRanges();
     if (selectedRanges.length === 2) {
       var r1 = selectedRanges[0];
@@ -168,6 +174,7 @@ function EditorController($scope, storage) {
         console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create connection");
       } else {
         $scope.connections.push([r1.id, r2.id]);
+        redraw($scope.connections);
       }
     } else {
       console.log(selectedRanges.length + " range(s) selected: refusing to create connection.");
@@ -182,6 +189,7 @@ function EditorController($scope, storage) {
         if (connection.indexOf(selectedRanges[0].id) !== -1 
           && connection.indexOf(selectedRanges[1].id) !== -1) {
           $scope.connections.splice(i, 1);
+          redraw($scope.connections);
           break;
         }
       }
@@ -226,7 +234,7 @@ function EditorController($scope, storage) {
     var maxHeight = $scope.expanded ? ARTIFACT_MAX_HEIGHT_NORMAL : ARTIFACT_MAX_HEIGHT_EXPANDED;
 
     $scope.expanded = !$scope.expanded;
-    storage["expanded"] = JSON.stringify($scope.expanded);
+    storage["expanded"] = stringify($scope.expanded);
 
     for (var i=0; i<$scope.timepoints.length; i++) {
       var timepoint = $scope.timepoints[i];
@@ -236,10 +244,13 @@ function EditorController($scope, storage) {
         artifact.maxHeight = maxHeight;
       }
     }
-    storage["timepoints"] = JSON.stringify($scope.timepoints);
+    storage["timepoints"] = stringify($scope.timepoints);
 
     redraw($scope.connections);
   };
+
+  $scope.reloadAllNodes();
+  
 }
 
 function stringify(obj) {
