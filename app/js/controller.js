@@ -174,7 +174,6 @@ function EditorController($scope, storage) {
         console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create connection");
       } else {
         $scope.connections.push([r1.id, r2.id]);
-        redraw($scope.connections);
       }
     } else {
       console.log(selectedRanges.length + " range(s) selected: refusing to create connection.");
@@ -189,7 +188,6 @@ function EditorController($scope, storage) {
         if (connection.indexOf(selectedRanges[0].id) !== -1 
           && connection.indexOf(selectedRanges[1].id) !== -1) {
           $scope.connections.splice(i, 1);
-          redraw($scope.connections);
           break;
         }
       }
@@ -246,7 +244,7 @@ function EditorController($scope, storage) {
     }
     storage["timepoints"] = stringify($scope.timepoints);
 
-    redraw($scope.connections);
+    //redraw($scope.connections);
   };
 
   $scope.reloadAllNodes();

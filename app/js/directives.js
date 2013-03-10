@@ -109,6 +109,10 @@ module.directive('timeline', function() {
 
         redraw(scope.connections);
       });
+
+      scope.$watch("connections.length", function(val) {
+        redraw(scope.connections);
+      });
     }
   };
 });
