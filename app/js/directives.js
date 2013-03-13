@@ -142,6 +142,18 @@ module.directive('timepoint', function() {
         setHeight($background, $element.height());
         setLeft($background, $element.position().left);
         setTop($background, $element.position().top);
+
+        var $element = $(element);
+        var children = $element.find("img:visible");
+        $.each(children, function(index, c) {
+          var $child = $(c);
+          imageAreas[$child.attr("src")] = {
+            width: $child.width(),
+            height: $child.height(),
+            top: $child.offset().top,
+            left: $child.offset().left,
+          };
+        });
       });
     }
   };
@@ -297,27 +309,3 @@ function setTop(element, val) {
 function setLeft(element, val) {
   element.css({ left: val + "px" });
 }
-
-var paper;
-
-function redraw (connectionPairs) {
-  var $glass = $("#connections");
-
-  if (!paper) {
-    paper = Raphael("connections", $glass.width(), $glass.height());
-  } else {
-    paper.setSize($glass.width(), $glass.height());
-  }
-  paper.clear();
-
-  var connections = [];
-  for (var i=0; i < connectionPairs.length; i++) {
-    var left = $("#"+connectionPairs[i][0]);
-    var right = $("#"+connectionPairs[i][1]);
-    if (left.offset() && right.offset()) {
-      connections.push(paper.connection(left, right, "#0f0", "#0f0|2"));
-    }
-  }
-}
-
-

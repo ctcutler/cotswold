@@ -7,7 +7,7 @@
     <script src="lib/raphael-2.1.0-min.js"></script>
     <script src="lib/rangy-core-1.2.3-min.js"></script>
     <script src="js/constants.js"></script>
-    <script src="js/layout.js"></script>
+    <script src="js/graphics.js"></script>
     <script src="js/hardcoded.js"></script>
     <script src="js/spantree.js"></script>
     <script src="js/controller.js"></script>
@@ -51,12 +51,11 @@
                 id="{{data.id}}"></span>
             </div>
             <img src="{{artifact.imageSrc}}" 
-                 id="{{artifact.imageId}}"
                  style="display: {{artifact.imageDisplay}};">
               <div class="image-box" 
-                   ng-repeat="imageBox in artifact.imageBoxes"
-                   id="{{imageBox.id}}"
-                   style="left: {{imageBox.left}}px; top: {{imageBox.top}}px; width: {{imageBox.width}}px; height: {{imageBox.height}}px;">
+                   ng-repeat="range in artifact.ranges"
+                   id="{{range.id}}"
+                   style="left: {{range.left}}px; top: {{range.top}}px; width: {{range.width}}px; height: {{range.height}}px;">
               </div>
             </img>
           </artifact>
@@ -71,6 +70,6 @@
         <a href="" ng-click="removeConnection()">Remove Connection</a>
       </div>
     </editor>
-    <div id="connections" class="connections-glass"></div>
+    <div id="connections" class="glass"></div>
   </body>
 </html>

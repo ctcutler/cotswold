@@ -43,14 +43,14 @@ describe("The EditorController", function() {
               },
               { 
                 id: "1.3",
-                imageDisplay: "none",
-                contentDisplay: "block",
-                content: "Foo bar baz buz quux",
+                imageSrc: "img/baa.jpeg",
                 ranges: [
-                  { start: 1, end: 4, id: "range3", style: "red", selected: false },
+                  { id: "range3", left: 150, top: 135, width: 40, height: 40, selected: false },
                 ],
+                imageDisplay: "block",
+                contentDisplay: "none",
                 width: 300,
-                maxHeight: 300,
+                maxHeight: 300, 
               },
             ]
           },

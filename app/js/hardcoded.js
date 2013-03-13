@@ -38,8 +38,8 @@ var hardCodedTimepoints = [
       { 
         id: "1.3",
         imageSrc: "img/baa.jpeg",
-        imageBoxes: [
-          { id: "box1", left: 150, top: 135, width: 40, height: 40 },
+        ranges: [
+          { id: "box1", left: 150, top: 135, width: 40, height: 40, selected: false},
         ],
         imageDisplay: "block",
         contentDisplay: "none",

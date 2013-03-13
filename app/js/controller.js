@@ -258,14 +258,43 @@ function EditorController($scope, storage) {
       }
     }
     storage["timepoints"] = stringify($scope.timepoints);
-
-    //redraw($scope.connections);
   };
 
   $scope.reloadAllNodes();
   
 }
 
+
+function getArtifactAncestor(node) {
+  while (node && node.nodeName != "ARTIFACT") {
+    node = node.parentNode;
+  }
+  return node;
+}
+
+// Adapted from: http://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container
+// Thanks, Tim Down!
+function getCaretCharacterOffsetWithin(element, start) {
+    var caretOffset = 0;
+    if (typeof window.getSelection != "undefined") {
+        var range = window.getSelection().getRangeAt(0);
+        var preCaretRange = range.cloneRange();
+        preCaretRange.selectNodeContents(element);
+        if (start) {
+          preCaretRange.setEnd(range.startContainer, range.startOffset);
+        } else {
+          preCaretRange.setEnd(range.endContainer, range.endOffset);
+        }
+        caretOffset = preCaretRange.toString().length;
+    } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
+        var textRange = document.selection.createRange();
+        var preCaretTextRange = document.body.createTextRange();
+        preCaretTextRange.moveToElementText(element);
+        preCaretTextRange.setEndPoint("EndToEnd", textRange);
+        caretOffset = preCaretTextRange.text.length;
+    }
+    return caretOffset;
+}
 function stringify(obj) {
   // http://stackoverflow.com/questions/9382167/serializing-object-that-contains-cyclic-object-value
   var seen = []
