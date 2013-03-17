@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+
+.red {
+  background-color: #FFC0CB;
+  border-color: #8B0000;
+}
+
+.blue {
+  background-color: #ADD8E6;
+  border-color: #00008B;
+}
+
+.green {
+  background-color: #90EE90;
+  border-color: #008B00;
+}
+
+#htmlLayer {
+  overflow: hidden;
+}
+
+.timepoint {
+  float: left;
+}
+
+#svgLayer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+}
+
+html, body {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+}
+
+</style>
+</head>
+<body>
+<div id="htmlLayer">
+</div>
+<div id="svgLayer">
+</div>
+<script src="data.js"></script>
+<script src="d3.v3/d3.v3.min.js"></script>
+<script>
+  function recursiveSpans(sel) {
+    // this wraps _everything_ in a span, including
+    // content nodes that don't require it. . . to
+    // work around this we would need a way to 
+    // dynamically choose to append a span or a 
+    // text element based on the data. . . right now
+    // d3.append only takes a constant
+    sel.each(function (selected) {
+      if (selected.nodes) {
+        d3.select(this)
+          .selectAll("span")
+          .data(selected.nodes)
+          .enter()
+          .append("span")
+          .attr("class", function (d) { return d.class })
+          .attr("id", function (d) { return d.id })
+          .call(recursiveSpans);
+      } else if (selected.content) {
+        d3.select(this)
+          .text(selected.content)
+      }
+    });
+  }
+
+  var htmlLayer = d3.select("#htmlLayer");
+
+  var timepoints = htmlLayer.selectAll("div")
+    .data(timeline)
+    .enter()
+    .append("div")
+    .attr("class", "timepoint");
+
+  var artifacts = timepoints.selectAll("div")
+    .data(function (d) { return d })
+    .enter()
+    .append("div")
+    .call(recursiveSpans); // spans
+
+  var svgLayer = d3.select("#svgLayer")
+  var svg = svgLayer.append("svg")
+    .attr("width", htmlLayer.style("width"))
+    .attr("height", htmlLayer.style("height"));
+    /*
+    .append("circle")
+    .attr("cy", 10)
+    .attr("cx", 10)
+    .attr("r", 7);
+    */
+
+  // FIXME: too much more of this positioning code and we'll go straight
+  // to jquery for the values
+  svg.selectAll("rect")
+    .data(connectionEnds)
+    .enter()
+    .append("rect")
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("x", function (d) { return artifacts.select("#"+d).property("offsetLeft")})
+    .attr("y", function (d) { return artifacts.select("#"+d).property("offsetTop")})
+    .attr("width", function (d) { return artifacts.select("#"+d).property("offsetWidth")})
+    .attr("height", function (d) { return artifacts.select("#"+d).property("offsetHeight")});
+
+
+  // give some of the spans ids and then update connections
+  // and then go through connections drawing lines
+</script>
+</body>
+</html>
