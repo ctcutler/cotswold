@@ -25,10 +25,13 @@ function getBestConnection(box1, box2) {
   var shortest = Number.MAX_VALUE;
   var shortestPair = null;
   var permutations = [
+    /*
     [rightSide(box1), rightSide(box2)],
     [leftSide(box1), leftSide(box2)],
     [topSide(box1), topSide(box2)],
     [bottomSide(box1), bottomSide(box2)],
+    */
+
     [rightSide(box1), leftSide(box2)],
     [leftSide(box1), rightSide(box2)],
     [rightSide(box1), topSide(box2)],
@@ -80,6 +83,30 @@ function recursiveSpans(sel) {
   });
 }
 
+function makeConnectionCoords(connections) {
+  var connectionCoords = [];
+  for (var i=0; i<connections.length; i++) {
+    var $left = jQuery("#"+connections[i][0]);
+    var $right = jQuery("#"+connections[i][1]);
+    var leftBox = { 
+      left: $left.offset().left, top: $left.offset().top, 
+      width: $left.width(), height: $left.height(), 
+    };
+    var rightBox = { 
+      left: $right.offset().left, top: $right.offset().top, 
+      width: $right.width(), height: $right.height(), 
+    };
+    var best = getBestConnection(leftBox, rightBox);
+    connectionCoords.push({
+      x1: best[0].x,
+      y1: best[0].y,
+      x2: best[1].x,
+      y2: best[1].y,
+    });
+  }
+  return connectionCoords;
+}
+
 function reload(timeline, connections) {
 
   var htmlLayer = d3.select("#htmlLayer");
@@ -100,29 +127,21 @@ function reload(timeline, connections) {
   var svg = svgLayer.append("svg")
     .attr("width", htmlLayer.style("width"))
     .attr("height", htmlLayer.style("height"));
- 
-  var connectionEnds = [];
-  for (var i=0; i<connections.length; i++) {
-    connectionEnds.push(connections[i][0]);
-    connectionEnds.push(connections[i][1]);
-  }
 
-  // FIXME: too much more of this positioning code and we'll go straight
-  // to jquery for the values
-  svg.selectAll("rect")
-    .data(connectionEnds)
+  svg.selectAll("line")
+    .data(makeConnectionCoords(connections))
     .enter()
-    .append("rect")
-    .attr("fill", "none")
-    .attr("stroke", "black")
-    .attr("x", function (d) { return artifacts.select("#"+d).property("offsetLeft")})
-    .attr("y", function (d) { return artifacts.select("#"+d).property("offsetTop")})
-    .attr("width", function (d) { return artifacts.select("#"+d).property("offsetWidth")})
-    .attr("height", function (d) { return artifacts.select("#"+d).property("offsetHeight")});
+    .append("line")
+    .attr("stroke", "green")
+    .attr("stroke-width", "3")
+    .attr("x1", function (d) { return d.x1 })
+    .attr("y1", function (d) { return d.y1 })
+    .attr("x2", function (d) { return d.x2 })
+    .attr("y2", function (d) { return d.y2 });
 
   // FIXME:
+  // X draw connections
   // * render images
-  // * draw connections
   // * allow for selection
   // * allow for range creation
   // * allow for connection creation

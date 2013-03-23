@@ -63,7 +63,8 @@ describe("The EditorController", function() {
         }
       }
 
-      controller = new EditorController(scope, storage);
+      var reload = function () {}; // no op since this is not part of tests
+      controller = new EditorController(scope, storage, reload);
   });
 
   describe("range logic", function() {

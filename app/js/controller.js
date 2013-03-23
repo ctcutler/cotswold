@@ -1,11 +1,16 @@
 "use strict";
 
-function EditorController($scope, storage) {
+function EditorController($scope, storage, reload) {
+
   var timepoints = JSON.parse(storage["timepoints"]);
 
   $scope.timepoints = timepoints;
   $scope.expanded = JSON.parse(storage["expanded"]);
   $scope.connections = JSON.parse(storage["connections"]);
+
+  angular.element(window).bind('load', function() {
+    reload($scope.timepoints, $scope.connections);
+  });
 
   $scope.reloadArtifactNodes = function(artifact) {
     artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;

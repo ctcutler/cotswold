@@ -6,14 +6,30 @@
     <script src="lib/jquery-1.8.2.min.js"></script>
     <script src="lib/raphael-2.1.0-min.js"></script>
     <script src="lib/rangy-core-1.2.3-min.js"></script>
+    <script src="lib/d3.v3.min.js"></script>
     <script src="js/constants.js"></script>
-    <script src="js/graphics.js"></script>
+    <!-- <script src="js/graphics.js"></script> -->
     <script src="js/hardcoded.js"></script>
     <script src="js/spantree.js"></script>
     <script src="js/controller.js"></script>
+    <script src="js/view.js"></script>
     <script src="js/directives.js"></script>
   </head>
   <body>
+    <div ng-controller="EditorController">
+      <div id="htmlLayer">
+      </div>
+      <div id="svgLayer">
+      </div>
+      <div class="controls">
+        <a href="" ng-click="toggleZoom()">Toggle Zoom</a>
+        <a href="" ng-click="makeRange()">Make Range</a>
+        <a href="" ng-click="removeRange()">Remove Range</a>
+        <a href="" ng-click="makeConnection()">Make Connection</a>
+        <a href="" ng-click="removeConnection()">Remove Connection</a>
+      </div>
+    </div>
+    <!--
     <script type="text/ng-template" id="recursiveSpan"><span class="ng-scope ng-binding" ngm-if="data.content">{{data.content}}</span><span ng-repeat="data in data.nodes" ng-include="'recursiveSpan'" class="{{data.style}}" id="{{data.id}}"></span></script>
     <editor
         id="editor" 
@@ -71,5 +87,6 @@
       </div>
     </editor>
     <div id="connections" class="glass"></div>
+    -->
   </body>
 </html>

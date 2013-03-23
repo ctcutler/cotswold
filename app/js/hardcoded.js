@@ -2,9 +2,9 @@
 
 var hardCodedExpanded = false;
 var hardCodedConnections = [
-  [ "range1", "range14", ],
-  [ "range2", "range16"],
-  [ "box1", "range14"],
+  [ "range1", "range12", ],
+  [ "range2", "range17"],
+  //[ "box1", "range14"],
 ];
 var hardCodedTimepoints = [
   { 

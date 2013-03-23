@@ -41,6 +41,8 @@
 
 var module = angular.module('cotswoldApp', []);
 
+/*
+
 module.directive('editor', function() {
   return {
     restrict: 'E',
@@ -192,6 +194,7 @@ module.directive('artifact', function() {
     }
   };
 });
+*/
 
 // make storage mechanism injectable so that we can 
 // fake it for testing, etc.
@@ -205,6 +208,14 @@ module.factory('storage', function() {
   }
   return localStorage;
 });
+
+// make view reload mechanism injectable so that we can 
+// fake it for testing, etc.
+module.factory('reload', function() {
+  return reload;
+});
+ 
+/*
 
 // directive helpers
 function resizeHandler(element, direction, align, margin, padding, ignore) {
@@ -309,3 +320,5 @@ function setTop(element, val) {
 function setLeft(element, val) {
   element.css({ left: val + "px" });
 }
+
+*/

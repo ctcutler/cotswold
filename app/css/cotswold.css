@@ -1,3 +1,4 @@
+/*
 .timeline {
   position: absolute;
   border-bottom: 4px solid #9cf;
@@ -34,11 +35,6 @@
   background-color: #9cf;
 }
 
-.highlighted {
-  background-color: #ff0;
-  border: 1px solid #ff0;
-}
-
 .controls {
   position: absolute;
   background-color: #9cf;
@@ -48,6 +44,13 @@
   position: absolute;
   background-color: #f00;
   opacity: 0.4;
+}
+
+*/
+
+.highlighted {
+  background-color: #ff0;
+  border: 1px solid #ff0;
 }
 
 .red {
@@ -81,9 +84,32 @@
   border-style: solid none solid none;
 }
 
+#htmlLayer {
+  overflow: hidden;
+}
+
+.timepoint {
+  float: left;
+  width: 300px;
+}
+
+#svgLayer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+}
+
+html, body {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+}
+
 /* declare this last so that it takes precedence over other styles */
 .selected {
   background-color: #FFFF00;
   font-weight: bold;
 }
+
 
