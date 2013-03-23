@@ -69,15 +69,18 @@
 }
 
 .allborders {
-  border-style: solid;
+  /*border-style: solid;*/
+  border-style: none;
 }
 
 .truncatedLeft {
-  border-style: solid solid solid none;
+  /*border-style: solid solid solid none;*/
+  border-style: none;
 }
 
 .truncatedRight {
-  border-style: solid none solid solid;
+  /*border-style: solid none solid solid;*/
+  border-style: none;
 }
 
 .truncatedBoth {

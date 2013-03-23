@@ -133,7 +133,7 @@ function reload(timeline, connections) {
     .enter()
     .append("line")
     .attr("stroke", "green")
-    .attr("stroke-width", "3")
+    .attr("stroke-width", "1")
     .attr("x1", function (d) { return d.x1 })
     .attr("y1", function (d) { return d.y1 })
     .attr("x2", function (d) { return d.x2 })
