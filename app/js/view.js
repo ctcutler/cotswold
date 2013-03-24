@@ -26,6 +26,8 @@ function getBestConnection(box1, box2) {
   var shortestPair = null;
   var permutations = [
     /*
+    Even when these are correct they don't look right
+
     [rightSide(box1), rightSide(box2)],
     [leftSide(box1), leftSide(box2)],
     [topSide(box1), topSide(box2)],
@@ -121,7 +123,15 @@ function reload(timeline, connections) {
     .data(function (d) { return d.artifacts })
     .enter()
     .append("div")
-    .call(recursiveSpans); // spans
+    .each(function (d) { 
+      // differentiate between images and text
+      if ("imageSrc" in d) {
+        d3.select(this).append("img")
+          .attr("src", d.imageSrc);
+      } else {
+        d3.select(this).call(recursiveSpans);
+      }
+    });
 
   var svgLayer = d3.select("#svgLayer")
   var svg = svgLayer.append("svg")
@@ -141,7 +151,7 @@ function reload(timeline, connections) {
 
   // FIXME:
   // X draw connections
-  // * render images
+  // X render images
   // * allow for selection
   // * allow for range creation
   // * allow for connection creation

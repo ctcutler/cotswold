@@ -86,7 +86,15 @@ html, body {
     .data(function (d) { return d })
     .enter()
     .append("div")
-    .call(recursiveSpans); // spans
+    .each(function (d) {
+      if ("imageSrc" in d) {
+        d3.select(this).append("img")
+          .attr("src", d.imageSrc);
+      } else {
+        d3.select(this).call(recursiveSpans);
+      }
+    });
+    //.call(recursiveSpans); // spans
 
   var svgLayer = d3.select("#svgLayer")
   var svg = svgLayer.append("svg")

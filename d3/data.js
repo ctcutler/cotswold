@@ -74,6 +74,9 @@ var timeline = [
     {
       nodes: nested2,
     },
+    {
+      imageSrc: "img/baa.jpeg",
+    },
   ],
 ];
 
