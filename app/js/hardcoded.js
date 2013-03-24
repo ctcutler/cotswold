@@ -5,6 +5,7 @@ var hardCodedConnections = [
   [ "range1", "range12", ],
   [ "range2", "range17"],
   [ "range1", "range14"],
+  [ "box1", "range14"],
 ];
 var hardCodedTimepoints = [
   { 

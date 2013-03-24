@@ -86,7 +86,8 @@ html, body {
     .data(function (d) { return d })
     .enter()
     .append("div")
-    .each(function (d) {
+    .each(function (d) { 
+      // use each to differentiate between images and text
       if ("imageSrc" in d) {
         d3.select(this).append("img")
           .attr("src", d.imageSrc);

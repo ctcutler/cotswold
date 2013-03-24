@@ -85,18 +85,32 @@ function recursiveSpans(sel) {
   });
 }
 
+function getWidth($node) {
+  // jquery's width() seems to return 0 for svg nodes
+  return $node.width() === 0 ? $node.attr("width") : $node.width(); 
+}
+
+function getHeight($node) {
+  // jquery's height() seems to return 0 for svg nodes
+  return $node.height() === 0 ? $node.attr("height") : $node.height(); 
+}
+
 function makeConnectionCoords(connections) {
   var connectionCoords = [];
   for (var i=0; i<connections.length; i++) {
     var $left = jQuery("#"+connections[i][0]);
     var $right = jQuery("#"+connections[i][1]);
     var leftBox = { 
-      left: $left.offset().left, top: $left.offset().top, 
-      width: $left.width(), height: $left.height(), 
+      left: $left.offset().left, 
+      top: $left.offset().top, 
+      width: getWidth($left), 
+      height: getHeight($left), 
     };
     var rightBox = { 
-      left: $right.offset().left, top: $right.offset().top, 
-      width: $right.width(), height: $right.height(), 
+      left: $right.offset().left, 
+      top: $right.offset().top, 
+      width: getWidth($right), 
+      height: getHeight($right), 
     };
     var best = getBestConnection(leftBox, rightBox);
     connectionCoords.push({
@@ -119,15 +133,24 @@ function reload(timeline, connections) {
     .append("div")
     .attr("class", "timepoint");
 
+  var imageBoxes = [];
   var artifacts = timepoints.selectAll("div")
     .data(function (d) { return d.artifacts })
     .enter()
     .append("div")
-    .each(function (d) { 
+    .attr("id", function (d) { return d.id })
+    .each(function (artifact) { 
       // differentiate between images and text
-      if ("imageSrc" in d) {
+      if ("imageSrc" in artifact) {
         d3.select(this).append("img")
-          .attr("src", d.imageSrc);
+          .attr("src", artifact.imageSrc);
+        var artifactOffset = jQuery(this).offset();
+        for (var i=0; i < artifact.ranges.length; i++) {
+          var range = artifact.ranges[i];
+          range.left += artifactOffset.left;
+          range.top += artifactOffset.top;
+          imageBoxes.push(range);
+        }
       } else {
         d3.select(this).call(recursiveSpans);
       }
@@ -138,6 +161,16 @@ function reload(timeline, connections) {
     .attr("width", htmlLayer.style("width"))
     .attr("height", htmlLayer.style("height"));
 
+  svg.selectAll("rect")
+    .data(imageBoxes)
+    .enter()
+    .append("rect")
+    .attr("id", function (d) { return d.id })
+    .attr("x", function (d) { return d.left })
+    .attr("y", function (d) { return d.top })
+    .attr("width", function (d) { return d.width })
+    .attr("height", function (d) { return d.height });
+  
   svg.selectAll("line")
     .data(makeConnectionCoords(connections))
     .enter()
@@ -148,6 +181,7 @@ function reload(timeline, connections) {
     .attr("y1", function (d) { return d.y1 })
     .attr("x2", function (d) { return d.x2 })
     .attr("y2", function (d) { return d.y2 });
+
 
   // FIXME:
   // X draw connections
