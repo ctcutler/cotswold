@@ -9,7 +9,7 @@ function EditorController($scope, storage, reload) {
   $scope.connections = JSON.parse(storage["connections"]);
 
   angular.element(window).bind('load', function() {
-    reload($scope.timepoints, $scope.connections);
+    reload($scope);
   });
 
   $scope.reloadArtifactNodes = function(artifact) {
@@ -61,7 +61,7 @@ function EditorController($scope, storage, reload) {
     if (newRangeId) {
       // even though new range is already selected, 
       // need to make sure everything else is unselected
-      $scope.updateSelection(newRangeId);
+      $scope.updateSelection(newRangeId, true);
     }
   };
 
@@ -111,6 +111,7 @@ function EditorController($scope, storage, reload) {
 
   $scope.shiftDown = false;
 
+    /*
   $scope.clickHandler = function (clickEvent) {
     // look at event target and its ancestors 
     var node = clickEvent.target;
@@ -122,13 +123,15 @@ function EditorController($scope, storage, reload) {
       return;
     }
 
-    $scope.updateSelection(node.id, $scope.shiftDown);
+    $scope.updateSelection(node.id);
     rangy.getSelection().removeAllRanges();
   };
+    */
 
   $scope.previousSelection = null;
-  $scope.updateSelection = function(rangeIdToSelect, keepPrevious) {
+  $scope.updateSelection = function(rangeIdToSelect, clearPrevious) {
     var newlySelected = null;
+    if (clearPrevious == null) clearPrevious = !$scope.shiftDown;
     for (var i=0; i<$scope.timepoints.length; i++) {
       var timepoint = $scope.timepoints[i];
       for (var j=0; j<timepoint.artifacts.length; j++) {
@@ -140,7 +143,7 @@ function EditorController($scope, storage, reload) {
             if (range.id == rangeIdToSelect) {
               range.selected = true;
               newlySelected = range.id;
-            } else if (!(keepPrevious && $scope.previousSelection == range.id)) {
+            } else if (clearPrevious || $scope.previousSelection != range.id) {
               range.selected = false;
             }
           }

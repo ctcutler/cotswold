@@ -69,17 +69,17 @@ describe("The EditorController", function() {
 
   describe("range logic", function() {
     it("should select a single range and clear the others", function() {
-      scope.updateSelection("range1", false);
+      scope.updateSelection("range1", true);
       expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(true);
       expect(scope.timepoints[0].artifacts[1].ranges[0].selected).toBe(false);
       expect(scope.timepoints[0].artifacts[2].ranges[0].selected).toBe(false);
 
-      scope.updateSelection("range2", false);
+      scope.updateSelection("range2", true);
       expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(false);
       expect(scope.timepoints[0].artifacts[1].ranges[0].selected).toBe(true);
       expect(scope.timepoints[0].artifacts[2].ranges[0].selected).toBe(false);
 
-      scope.updateSelection("range3", false);
+      scope.updateSelection("range3", true);
       expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(false);
       expect(scope.timepoints[0].artifacts[1].ranges[0].selected).toBe(false);
       expect(scope.timepoints[0].artifacts[2].ranges[0].selected).toBe(true);
@@ -87,43 +87,43 @@ describe("The EditorController", function() {
 
     it("should clear all selections", function() {
       // clear one selection
-      scope.updateSelection("range1", false);
+      scope.updateSelection("range1", true);
       scope.clearAllSelections();
       var ranges = scope.getSelectedRanges();
       expect(ranges.length).toBe(0);
 
       // clear two selections
-      scope.updateSelection("range1", false);
-      scope.updateSelection("range2", true);
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
       scope.clearAllSelections();
       ranges = scope.getSelectedRanges();
       expect(ranges.length).toBe(0);
     });
     
     it("should select at most two ranges", function() {
-      scope.updateSelection("range1", true);
+      scope.updateSelection("range1", false);
       expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(true);
       expect(scope.timepoints[0].artifacts[1].ranges[0].selected).toBe(false);
       expect(scope.timepoints[0].artifacts[2].ranges[0].selected).toBe(false);
 
-      scope.updateSelection("range2", true);
+      scope.updateSelection("range2", false);
       expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(true);
       expect(scope.timepoints[0].artifacts[1].ranges[0].selected).toBe(true);
       expect(scope.timepoints[0].artifacts[2].ranges[0].selected).toBe(false);
 
-      scope.updateSelection("range3", true);
+      scope.updateSelection("range3", false);
       expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(false);
       expect(scope.timepoints[0].artifacts[1].ranges[0].selected).toBe(true);
       expect(scope.timepoints[0].artifacts[2].ranges[0].selected).toBe(true);
     });
 
     it("should return all selected ranges", function() {
-      scope.updateSelection("range1", false);
+      scope.updateSelection("range1", true);
       var ranges = scope.getSelectedRanges();
       expect(ranges.length).toBe(1);
       expect(ranges).toContain(scope.timepoints[0].artifacts[0].ranges[0]);
 
-      scope.updateSelection("range2", true);
+      scope.updateSelection("range2", false);
       ranges = scope.getSelectedRanges();
       expect(ranges.length).toBe(2);
       expect(ranges).toContain(scope.timepoints[0].artifacts[0].ranges[0]);
@@ -137,22 +137,22 @@ describe("The EditorController", function() {
     });
 
     it("should remove a range", function() {
-      scope.updateSelection("range1", false);
+      scope.updateSelection("range1", true);
       scope.removeRange();
       expect(scope.timepoints[0].artifacts[0].ranges.length).toBe(0);
 
       // removing two selected ranges shouldn't work
-      scope.updateSelection("range2", false);
-      scope.updateSelection("range3", true);
+      scope.updateSelection("range2", true);
+      scope.updateSelection("range3", false);
       scope.removeRange();
       expect(scope.timepoints[0].artifacts[1].ranges.length).toBe(1);
       expect(scope.timepoints[0].artifacts[2].ranges.length).toBe(1);
 
       // removing a connected range shouldn't work
-      scope.updateSelection("range2", false);
-      scope.updateSelection("range3", true);
+      scope.updateSelection("range2", true);
+      scope.updateSelection("range3", false);
       scope.makeConnection();
-      scope.updateSelection("range2", false);
+      scope.updateSelection("range2", true);
       scope.removeRange();
       expect(scope.timepoints[0].artifacts[1].ranges.length).toBe(1);
     });
@@ -177,8 +177,8 @@ describe("The EditorController", function() {
 
   describe("connection logic", function() {
     it("should connect the two selected ranges.", function() {
-      scope.updateSelection("range1", false);
-      scope.updateSelection("range2", true);
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
       scope.makeConnection();
       expect(scope.connections.length).toBe(1);
       expect(scope.connections[0]).toContain("range1");
@@ -193,8 +193,8 @@ describe("The EditorController", function() {
 
     it("should remove a connection", function() {
       // two connected ranges are selected, the connection is removed
-      scope.updateSelection("range1", false);
-      scope.updateSelection("range2", true);
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
       scope.makeConnection();
       expect(scope.connections.length).toBe(1);
 
@@ -203,38 +203,38 @@ describe("The EditorController", function() {
       scope.clearAllSelections();
 
       // one unconnected range is selected, nothing happens
-      scope.updateSelection("range1", false);
+      scope.updateSelection("range1", true);
       scope.removeConnection();
       expect(scope.connections.length).toBe(0);
       scope.clearAllSelections();
 
       // two unconnected ranges are selected, nothing happens
-      scope.updateSelection("range1", false);
-      scope.updateSelection("range2", true);
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
       scope.removeConnection();
       expect(scope.connections.length).toBe(0);
       scope.clearAllSelections();
 
       // one connected range is selected, nothing happens
-      scope.updateSelection("range1", false);
-      scope.updateSelection("range2", true);
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
       scope.makeConnection();
       expect(scope.connections.length).toBe(1);
 
-      scope.updateSelection("range1", false);
+      scope.updateSelection("range1", true);
       scope.removeConnection();
       expect(scope.connections.length).toBe(1);
       scope.clearAllSelections();
 
       // a second connected range (not connected to the first) is 
       // also selected, nothing happens
-      scope.updateSelection("range2", false);
-      scope.updateSelection("range3", true);
+      scope.updateSelection("range2", true);
+      scope.updateSelection("range3", false);
       scope.makeConnection();
       scope.clearAllSelections();
 
-      scope.updateSelection("range1", false);
-      scope.updateSelection("range3", true);
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range3", false);
 
       expect(scope.connections.length).toBe(2);
       scope.removeConnection();
@@ -245,7 +245,7 @@ describe("The EditorController", function() {
   describe("node logic", function() {
     it("should reload an artifact's nodes", function() {
       var nodesBefore = stringify(scope.timepoints[0].artifacts[0].nodes);
-      scope.updateSelection("range1", false);
+      scope.updateSelection("range1", true);
       scope.removeRange();
       var nodesAfter = stringify(scope.timepoints[0].artifacts[0].nodes);
       expect(nodesBefore).not.toBe(nodesAfter);

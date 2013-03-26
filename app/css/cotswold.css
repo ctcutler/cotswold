@@ -103,6 +103,10 @@
   pointer-events: none;
 }
 
+rect.imageBox {
+  pointer-events: auto;
+}
+
 html, body {
   margin: 0px;
   padding: 0px;

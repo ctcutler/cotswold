@@ -61,7 +61,7 @@ function getBestConnection(box1, box2) {
 }
 
 
-function recursiveSpans(sel) {
+function recursiveSpans(sel, controllerScope) {
   // this wraps _everything_ in a span, including
   // content nodes that don't require it. . . to
   // work around this we would need a way to 
@@ -77,7 +77,16 @@ function recursiveSpans(sel) {
         .append("span")
         .attr("class", function (d) { return d.style })
         .attr("id", function (d) { return d.id })
-        .call(recursiveSpans);
+        .call(recursiveSpans)
+        .filter(function (d) { return "id" in d; })
+        .on("click", function (d) {
+          // FIXME: need to refresh everything after this happens
+          controllerScope.updateSelection(d.id);
+          rangy.getSelection().removeAllRanges();
+
+          // in case spans are nested, only select this one
+          d3.event.stopPropagation();
+        });
     } else if (selected.content) {
       d3.select(this)
         .text(selected.content)
@@ -123,12 +132,12 @@ function makeConnectionCoords(connections) {
   return connectionCoords;
 }
 
-function reload(timeline, connections) {
+function reload(controllerScope) {
 
   var htmlLayer = d3.select("#htmlLayer");
 
   var timepoints = htmlLayer.selectAll("div")
-    .data(timeline)
+    .data(controllerScope.timepoints)
     .enter()
     .append("div")
     .attr("class", "timepoint");
@@ -152,11 +161,11 @@ function reload(timeline, connections) {
           imageBoxes.push(range);
         }
       } else {
-        d3.select(this).call(recursiveSpans);
+        d3.select(this).call(recursiveSpans, controllerScope);
       }
     });
 
-  var svgLayer = d3.select("#svgLayer")
+  var svgLayer = d3.select("#svgLayer");
   var svg = svgLayer.append("svg")
     .attr("width", htmlLayer.style("width"))
     .attr("height", htmlLayer.style("height"));
@@ -169,10 +178,16 @@ function reload(timeline, connections) {
     .attr("x", function (d) { return d.left })
     .attr("y", function (d) { return d.top })
     .attr("width", function (d) { return d.width })
-    .attr("height", function (d) { return d.height });
+    .attr("height", function (d) { return d.height })
+    .attr("class", "imageBox")
+    .on("click", function (d) { 
+      console.log("clicked");
+      controllerScope.updateSelection(d.id);
+      rangy.getSelection().removeAllRanges();
+    });
   
   svg.selectAll("line")
-    .data(makeConnectionCoords(connections))
+    .data(makeConnectionCoords(controllerScope.connections))
     .enter()
     .append("line")
     .attr("stroke", "green")
