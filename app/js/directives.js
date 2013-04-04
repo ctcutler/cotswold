@@ -1,8 +1,9 @@
+/*
 (function (angular) {
-    /*
+    *
      * Defines the ng:if tag. This is useful if jquery mobile does not allow
      * an ng-switch element in the dom, e.g. between ul and li.
-     */
+     *
     var ngIfDirective = {
         transclude:'element',
         priority:1000,
@@ -38,6 +39,7 @@
         return ngIfDirective;
     });
 })(angular);
+*/
 
 var module = angular.module('cotswoldApp', []);
 
@@ -211,8 +213,8 @@ module.factory('storage', function() {
 
 // make view reload mechanism injectable so that we can 
 // fake it for testing, etc.
-module.factory('reload', function() {
-  return reload;
+module.factory('render', function() {
+  return render;
 });
  
 /*

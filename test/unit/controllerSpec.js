@@ -252,4 +252,5 @@ describe("The EditorController", function() {
       expect(nodesBefore.length).toBeGreaterThan(nodesAfter.length);
     });
   });
+
 });

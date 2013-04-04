@@ -104,6 +104,18 @@ function getHeight($node) {
   return $node.height() === 0 ? $node.attr("height") : $node.height(); 
 }
 
+function makeImageBoxes(node, artifact) {
+  var artifactOffset = jQuery(node).offset();
+  var imageBoxes = [];
+  for (var i=0; i < artifact.ranges.length; i++) {
+    var range = artifact.ranges[i];
+    range.left += artifactOffset.left;
+    range.top += artifactOffset.top;
+    imageBoxes.push(range);
+  }
+  return imageBoxes;
+}
+
 function makeConnectionCoords(connections) {
   var connectionCoords = [];
   for (var i=0; i<connections.length; i++) {
@@ -132,70 +144,75 @@ function makeConnectionCoords(connections) {
   return connectionCoords;
 }
 
-function reload(controllerScope) {
+function render(controllerScope) {
 
   var htmlLayer = d3.select("#htmlLayer");
 
-  var timepoints = htmlLayer.selectAll("div")
-    .data(controllerScope.timepoints)
-    .enter()
+  var svg = d3.select("#mainSvg")
+    .attr("width", htmlLayer.style("width"))
+    .attr("height", htmlLayer.style("height"));
+
+  var timepoints = htmlLayer.selectAll(".timepoint")
+    .data(controllerScope.timepoints);
+  timepoints.enter()
     .append("div")
     .attr("class", "timepoint");
+  timepoints.exit()
+    .remove();
 
-  var imageBoxes = [];
-  var artifacts = timepoints.selectAll("div")
-    .data(function (d) { return d.artifacts })
-    .enter()
+
+  var artifact = timepoints.selectAll(".artifact")
+    .data(function (d) { 
+      return d.artifacts 
+    });
+  artifact.enter()
     .append("div")
+    .attr("class", "artifact")
     .attr("id", function (d) { return d.id })
     .each(function (artifact) { 
       // differentiate between images and text
       if ("imageSrc" in artifact) {
         d3.select(this).append("img")
           .attr("src", artifact.imageSrc);
-        var artifactOffset = jQuery(this).offset();
-        for (var i=0; i < artifact.ranges.length; i++) {
-          var range = artifact.ranges[i];
-          range.left += artifactOffset.left;
-          range.top += artifactOffset.top;
-          imageBoxes.push(range);
-        }
+
+        var className = "imageBox"+artifact.id;
+        var imageBox = svg.selectAll("."+className)
+          .data(makeImageBoxes(this, artifact));
+        imageBox.enter()
+          .append("rect")
+          .attr("id", function (d) { return d.id })
+          .attr("x", function (d) { return d.left })
+          .attr("y", function (d) { return d.top })
+          .attr("width", function (d) { return d.width })
+          .attr("height", function (d) { return d.height })
+          .attr("class", className)
+          .on("click", function (d) { 
+            console.log("clicked");
+            controllerScope.updateSelection(d.id);
+            rangy.getSelection().removeAllRanges();
+          });
+        imageBox.exit()
+          .remove();
       } else {
         d3.select(this).call(recursiveSpans, controllerScope);
       }
     });
+  artifact.exit()
+    .remove();
 
-  var svgLayer = d3.select("#svgLayer");
-  var svg = svgLayer.append("svg")
-    .attr("width", htmlLayer.style("width"))
-    .attr("height", htmlLayer.style("height"));
-
-  svg.selectAll("rect")
-    .data(imageBoxes)
-    .enter()
-    .append("rect")
-    .attr("id", function (d) { return d.id })
-    .attr("x", function (d) { return d.left })
-    .attr("y", function (d) { return d.top })
-    .attr("width", function (d) { return d.width })
-    .attr("height", function (d) { return d.height })
-    .attr("class", "imageBox")
-    .on("click", function (d) { 
-      console.log("clicked");
-      controllerScope.updateSelection(d.id);
-      rangy.getSelection().removeAllRanges();
-    });
-  
-  svg.selectAll("line")
-    .data(makeConnectionCoords(controllerScope.connections))
-    .enter()
+  var line = svg.selectAll(".connection")
+    .data(makeConnectionCoords(controllerScope.connections));
+  line.enter()
     .append("line")
+    .attr("class", "connection")
     .attr("stroke", "green")
     .attr("stroke-width", "1")
     .attr("x1", function (d) { return d.x1 })
     .attr("y1", function (d) { return d.y1 })
     .attr("x2", function (d) { return d.x2 })
     .attr("y2", function (d) { return d.y2 });
+  line.exit()
+    .remove();
 
 
   // FIXME:

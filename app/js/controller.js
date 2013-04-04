@@ -1,15 +1,20 @@
 "use strict";
 
-function EditorController($scope, storage, reload) {
+function EditorController($scope, storage, render) {
 
   var timepoints = JSON.parse(storage["timepoints"]);
+
+  // FIXME: re-think reload methods. . . know we need
+  // to call the view reload whenever the model updates
+  // unless there's a way to set a watch that notices
+  // any update to the model
 
   $scope.timepoints = timepoints;
   $scope.expanded = JSON.parse(storage["expanded"]);
   $scope.connections = JSON.parse(storage["connections"]);
 
   angular.element(window).bind('load', function() {
-    reload($scope);
+    render($scope);
   });
 
   $scope.reloadArtifactNodes = function(artifact) {
@@ -23,6 +28,7 @@ function EditorController($scope, storage, reload) {
         $scope.reloadArtifactNodes(timepoint.artifacts[j]);
       }
     }
+    render($scope);
   }
 
   $scope.makeRange = function () {
