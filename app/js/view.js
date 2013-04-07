@@ -70,23 +70,33 @@ function recursiveSpans(sel, controllerScope) {
   // d3.append only takes a constant
   sel.each(function (selected) {
     if (selected.nodes) {
-      d3.select(this)
-        .selectAll("span")
-        .data(selected.nodes)
-        .enter()
+      var selector = "#"+selected.id+" > span";
+      var span = d3.select(this)
+        .selectAll(selector)
+        .data(selected.nodes);
+
+      span.enter()
         .append("span")
-        .attr("class", function (d) { return d.style })
         .attr("id", function (d) { return d.id })
-        .call(recursiveSpans)
         .filter(function (d) { return "id" in d; })
         .on("click", function (d) {
-          // FIXME: need to refresh everything after this happens
+          console.log("click");
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
 
           // in case spans are nested, only select this one
           d3.event.stopPropagation();
         });
+
+      // this works the first time the tree of spans is 
+      // displayed but the second time something goes wrong
+
+      span
+        .attr("class", function (d) { return d.style })
+        .call(recursiveSpans, controllerScope);
+
+      span.exit().remove();
+
     } else if (selected.content) {
       d3.select(this)
         .text(selected.content)
@@ -163,11 +173,16 @@ function render(controllerScope) {
   artifact.enter()
     .append("div")
     .attr("class", "artifact")
-    .attr("id", function (d) { return d.id })
+    .attr("id", function (d) { return d.id });
+  artifact
     .each(function (artifact) { 
       // differentiate between images and text
       if ("imageSrc" in artifact) {
-        d3.select(this).append("img")
+        d3.select(this)
+          .selectAll("img")
+          .data([artifact.imageSrc])
+          .enter()
+          .append("img")
           .attr("src", artifact.imageSrc);
 
         var className = "imageBox"+artifact.id;
@@ -180,12 +195,15 @@ function render(controllerScope) {
           .attr("y", function (d) { return d.top })
           .attr("width", function (d) { return d.width })
           .attr("height", function (d) { return d.height })
-          .attr("class", className)
           .on("click", function (d) { 
             console.log("clicked");
             controllerScope.updateSelection(d.id);
             rangy.getSelection().removeAllRanges();
           });
+
+        imageBox
+          .attr("class", className);
+
         imageBox.exit()
           .remove();
       } else {

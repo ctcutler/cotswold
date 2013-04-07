@@ -4,38 +4,42 @@ function EditorController($scope, storage, render) {
 
   var timepoints = JSON.parse(storage["timepoints"]);
 
-  // FIXME: re-think reload methods. . . know we need
-  // to call the view reload whenever the model updates
-  // unless there's a way to set a watch that notices
-  // any update to the model
-
   $scope.timepoints = timepoints;
   $scope.expanded = JSON.parse(storage["expanded"]);
   $scope.connections = JSON.parse(storage["connections"]);
 
-  angular.element(window).bind('load', function() {
+  $scope.reloadView = function () {
+    console.log("reloading view");
     render($scope);
+  };
+
+  angular.element(window).bind('load', function() {
+    $scope.reloadView();
   });
 
-  $scope.reloadArtifactNodes = function(artifact) {
+  $scope.reloadArtifactNodes = function(artifact, reloadView) {
     artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
+
+    // by default we reload the view
+    if (reloadView || reloadView === undefined) {
+      $scope.reloadView();
+    }
   }
 
   $scope.reloadAllNodes = function(artifact) {
     for (var i=0; i<timepoints.length; i++) {
       var timepoint = timepoints[i];
       for (var j=0; j<timepoint.artifacts.length; j++) {
-        $scope.reloadArtifactNodes(timepoint.artifacts[j]);
+        $scope.reloadArtifactNodes(timepoint.artifacts[j], false);
       }
     }
-    render($scope);
+    $scope.reloadView();
   }
 
   $scope.makeRange = function () {
     var sel = rangy.getSelection();
     var startArtifact = getArtifactAncestor(sel.anchorNode);
     var endArtifact = getArtifactAncestor(sel.focusNode);
-    // FIXME: this could be neater
     var startOffset = getCaretCharacterOffsetWithin(
       startArtifact.firstElementChild.firstElementChild, true
     );

@@ -1,0 +1,12 @@
+What I want to know is:
+* why are we doing extra texts the second time through?
+* why does doing extra texts seem to wipe out existing spans?
+
+is there additional data?
+is this a side effect of the d3 functional model that I don't understand?
+
+maybe it is the exit().remove that's the trouble
+
+
+aha. . . a theory: the span selection at the top is getting (naturally)
+all the descendant spans, not just the direct children
