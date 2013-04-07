@@ -1,17 +1,17 @@
 function rightSide(box) {
-  return { x: box.left + box.width, y: box.top + (box.height/2)};
+  return { x: box.x + box.width, y: box.y + (box.height/2)};
 }
 
 function leftSide(box) {
-  return { x: box.left, y: box.top + (box.height/2)};
+  return { x: box.x, y: box.y + (box.height/2)};
 }
 
 function topSide(box) {
-  return { x: box.left + (box.width/2), y: box.top};
+  return { x: box.x + (box.width/2), y: box.y};
 }
 
 function bottomSide(box) {
-  return { x: box.left + (box.width/2), y: box.top + box.height};
+  return { x: box.x + (box.width/2), y: box.y + box.height};
 }
 
 function getPerimeter(point1, point2) {
@@ -94,16 +94,6 @@ function recursiveSpans(sel, controllerScope) {
   });
 }
 
-function getWidth($node) {
-  // jquery's width() seems to return 0 for svg nodes
-  return $node.width() === 0 ? $node.attr("width") : $node.width(); 
-}
-
-function getHeight($node) {
-  // jquery's height() seems to return 0 for svg nodes
-  return $node.height() === 0 ? $node.attr("height") : $node.height(); 
-}
-
 function makeImageBoxes(node, artifact) {
   var artifactOffset = jQuery(node).offset();
   var imageBoxes = [];
@@ -116,23 +106,28 @@ function makeImageBoxes(node, artifact) {
   return imageBoxes;
 }
 
+function makeBox(id) {
+  var box = {};
+  var node = document.getElementById(id);
+  if (node.nodeName === "SPAN") {
+    var $node = jQuery(node);
+    box.x = $node.offset().left;
+    box.y = $node.offset().top;
+    box.width = $node.width();
+    box.height = $node.height();
+  } else if (node.nodeName === "rect") {
+    box = node.getBBox();
+  } else {
+    console.log("unknown node type: " + node.nodeName);
+  }
+  return box;
+}
+
 function makeConnectionCoords(connections) {
   var connectionCoords = [];
   for (var i=0; i<connections.length; i++) {
-    var $left = jQuery("#"+connections[i][0]);
-    var $right = jQuery("#"+connections[i][1]);
-    var leftBox = { 
-      left: $left.offset().left, 
-      top: $left.offset().top, 
-      width: getWidth($left), 
-      height: getHeight($left), 
-    };
-    var rightBox = { 
-      left: $right.offset().left, 
-      top: $right.offset().top, 
-      width: getWidth($right), 
-      height: getHeight($right), 
-    };
+    var leftBox = makeBox(connections[i][0]);
+    var rightBox = makeBox(connections[i][1]);
     var best = getBestConnection(leftBox, rightBox);
     connectionCoords.push({
       x1: best[0].x,
