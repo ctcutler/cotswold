@@ -3,20 +3,20 @@
 describe("The view code", function() {
   describe("connection logic", function() {
     it("should correctly identify the right side midpoint of a box", function() {
-      expect(rightSide({left: 9, top: 10, width: 11, height: 12})).toEqual({x: 20, y: 16});
-      expect(rightSide({left: 9, top: 10, width: 11, height: 13})).toEqual({x: 20, y: 16.5});
+      expect(rightSide({x: 9, y: 10, width: 11, height: 12})).toEqual({x: 20, y: 16});
+      expect(rightSide({x: 9, y: 10, width: 11, height: 13})).toEqual({x: 20, y: 16.5});
     });
     it("should correctly identify the left side midpoint of a box", function() {
-      expect(leftSide({left: 9, top: 10, width: 11, height: 12})).toEqual({x: 9, y: 16});
-      expect(leftSide({left: 9, top: 10, width: 11, height: 13})).toEqual({x: 9, y: 16.5});
+      expect(leftSide({x: 9, y: 10, width: 11, height: 12})).toEqual({x: 9, y: 16});
+      expect(leftSide({x: 9, y: 10, width: 11, height: 13})).toEqual({x: 9, y: 16.5});
     });
     it("should correctly identify the top side midpoint of a box", function() {
-      expect(topSide({left: 9, top: 10, width: 11, height: 12})).toEqual({x: 14.5, y: 10});
-      expect(topSide({left: 9, top: 10, width: 12, height: 12})).toEqual({x: 15, y: 10});
+      expect(topSide({x: 9, y: 10, width: 11, height: 12})).toEqual({x: 14.5, y: 10});
+      expect(topSide({x: 9, y: 10, width: 12, height: 12})).toEqual({x: 15, y: 10});
     });
     it("should correctly identify the bottom side midpoint of a box", function() {
-      expect(bottomSide({left: 9, top: 10, width: 11, height: 12})).toEqual({x: 14.5, y: 22});
-      expect(bottomSide({left: 9, top: 10, width: 12, height: 12})).toEqual({x: 15, y: 22});
+      expect(bottomSide({x: 9, y: 10, width: 11, height: 12})).toEqual({x: 14.5, y: 22});
+      expect(bottomSide({x: 9, y: 10, width: 12, height: 12})).toEqual({x: 15, y: 22});
     });
 
     it("should find the right perimeter distance given two coordinate pairs", function() {
@@ -26,27 +26,27 @@ describe("The view code", function() {
     });
 
     it("should find the right connection when the boxes are side by side", function() {
-      var box1 = {left: 9, top: 9, width: 9, height: 9};
-      var box2 = {left: 45, top: 9, width: 9, height: 9};
+      var box1 = {x: 9, y: 9, width: 9, height: 9};
+      var box2 = {x: 45, y: 9, width: 9, height: 9};
       expect(getBestConnection(box1, box2)).toEqual([rightSide(box1), leftSide(box2)]);
       expect(getBestConnection(box2, box1)).toEqual([leftSide(box2), rightSide(box1)]);
     });
    
     it("should find the right connection when the boxes are nearly side by side", function() {
-      var box1 = {left: 9, top: 9, width: 9, height: 9};
-      var box2 = {left: 45, top: 13, width: 9, height: 9};
+      var box1 = {x: 9, y: 9, width: 9, height: 9};
+      var box2 = {x: 45, y: 13, width: 9, height: 9};
       expect(getBestConnection(box1, box2)).toEqual([rightSide(box1), leftSide(box2)]);
       expect(getBestConnection(box2, box1)).toEqual([leftSide(box2), rightSide(box1)]);
     });
     it("should find the right connection when the boxes are above and below each other", function() {
-      var box1 = {left: 9, top: 9, width: 9, height: 9};
-      var box2 = {left: 9, top: 45, width: 9, height: 9};
+      var box1 = {x: 9, y: 9, width: 9, height: 9};
+      var box2 = {x: 9, y: 45, width: 9, height: 9};
       expect(getBestConnection(box1, box2)).toEqual([bottomSide(box1), topSide(box2)]);
       expect(getBestConnection(box2, box1)).toEqual([topSide(box2), bottomSide(box1)]);
     });
     it("should find the right connection when the boxes are above and below each other", function() {
-      var box1 = {left: 9, top: 9, width: 9, height: 9};
-      var box2 = {left: 13, top: 45, width: 9, height: 9};
+      var box1 = {x: 9, y: 9, width: 9, height: 9};
+      var box2 = {x: 13, y: 45, width: 9, height: 9};
       expect(getBestConnection(box1, box2)).toEqual([bottomSide(box1), topSide(box2)]);
       expect(getBestConnection(box2, box1)).toEqual([topSide(box2), bottomSide(box1)]);
     });

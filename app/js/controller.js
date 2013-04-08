@@ -17,6 +17,19 @@ function EditorController($scope, storage, render) {
     $scope.reloadView();
   });
 
+
+  jQuery('body').bind('keydown', function(e) {
+    if (e.keyCode === 16) {
+      $scope.shiftDown = true;
+    }
+  });
+
+  jQuery('body').bind('keyup', function(e) {
+    if (e.keyCode === 16) {
+      $scope.shiftDown = false;
+    }
+  });
+
   $scope.reloadArtifactNodes = function(artifact, reloadView) {
     artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;
 
