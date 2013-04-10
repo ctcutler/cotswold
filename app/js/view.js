@@ -76,9 +76,16 @@ function recursiveSpans(sel, controllerScope) {
         .data(selected.nodes);
 
       span.enter()
-        .append("span")
-        .attr("id", function (d) { return d.id })
+        .append("span");
+
+      // this works the first time the tree of spans is 
+      // displayed but the second time something goes wrong
+
+      span
+        .attr("class", function (d) { return d.style })
+        .call(recursiveSpans, controllerScope)
         .filter(function (d) { return "id" in d; })
+        .attr("id", function (d) { return d.id })
         .on("click", function (d) {
           console.log("click");
           controllerScope.updateSelection(d.id);
@@ -87,13 +94,6 @@ function recursiveSpans(sel, controllerScope) {
           // in case spans are nested, only select this one
           d3.event.stopPropagation();
         });
-
-      // this works the first time the tree of spans is 
-      // displayed but the second time something goes wrong
-
-      span
-        .attr("class", function (d) { return d.style })
-        .call(recursiveSpans, controllerScope);
 
       span.exit().remove();
 

@@ -9,7 +9,6 @@ function EditorController($scope, storage, render) {
   $scope.connections = JSON.parse(storage["connections"]);
 
   $scope.reloadView = function () {
-    console.log("reloading view");
     render($scope);
   };
 
@@ -54,10 +53,10 @@ function EditorController($scope, storage, render) {
     var startArtifact = getArtifactAncestor(sel.anchorNode);
     var endArtifact = getArtifactAncestor(sel.focusNode);
     var startOffset = getCaretCharacterOffsetWithin(
-      startArtifact.firstElementChild.firstElementChild, true
+      startArtifact.firstElementChild, true
     );
     var endOffset = getCaretCharacterOffsetWithin(
-      startArtifact.firstElementChild.firstElementChild, false
+      startArtifact.firstElementChild, false
     );
 
     if (startArtifact.id != endArtifact.id) {
@@ -68,7 +67,7 @@ function EditorController($scope, storage, render) {
     var newRangeId = null;
     var artifact = $scope.getArtifactById(startArtifact.id);
     if (artifact) {
-      newRangeId = "range-"+artifact.id+"."+(artifact.ranges.length+1);
+      newRangeId = "range"+artifact.id+(artifact.ranges.length+1);
       artifact.ranges.push(
         {
           start: startOffset, 
@@ -274,6 +273,9 @@ function EditorController($scope, storage, render) {
   };
 
   $scope.toggleZoom = function () {
+    /*
+    FIXME: reimplement in view.js
+
     var width = $scope.expanded ? ARTIFACT_WIDTH_NORMAL : ARTIFACT_WIDTH_EXPANDED;
     var maxHeight = $scope.expanded ? ARTIFACT_MAX_HEIGHT_NORMAL : ARTIFACT_MAX_HEIGHT_EXPANDED;
 
@@ -289,6 +291,7 @@ function EditorController($scope, storage, render) {
       }
     }
     storage["timepoints"] = stringify($scope.timepoints);
+    */
   };
 
   $scope.reloadAllNodes();
@@ -297,7 +300,7 @@ function EditorController($scope, storage, render) {
 
 
 function getArtifactAncestor(node) {
-  while (node && node.nodeName != "ARTIFACT") {
+  while (node && node.className != "artifact") {
     node = node.parentNode;
   }
   return node;
