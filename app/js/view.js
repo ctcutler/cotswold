@@ -71,9 +71,16 @@ function recursiveSpans(sel, controllerScope) {
   sel.each(function (selected) {
     if (selected.nodes) {
       var selector = "#"+selected.id+" > span";
+
       var span = d3.select(this)
         .selectAll(selector)
-        .data(selected.nodes);
+        .data(selected.nodes, function (d) { 
+          if (d.id != undefined)
+            return d.id;
+          else {
+            return d.start + ":" + d.end;
+          }
+        }).order();
 
       span.enter()
         .append("span");
