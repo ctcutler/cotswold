@@ -219,6 +219,7 @@ function EditorController($scope, storage, render) {
         console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create connection");
       } else {
         $scope.connections.push([r1.id, r2.id]);
+        $scope.reloadView();
       }
     } else {
       console.log(selectedRanges.length + " range(s) selected: refusing to create connection.");
@@ -233,6 +234,7 @@ function EditorController($scope, storage, render) {
         if (connection.indexOf(selectedRanges[0].id) !== -1 
           && connection.indexOf(selectedRanges[1].id) !== -1) {
           $scope.connections.splice(i, 1);
+          $scope.reloadView();
           break;
         }
       }

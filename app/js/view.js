@@ -80,7 +80,7 @@ function recursiveSpans(sel, controllerScope) {
           else {
             return d.start + ":" + d.end;
           }
-        }).order();
+        });
 
       span.enter()
         .append("span");
@@ -103,6 +103,8 @@ function recursiveSpans(sel, controllerScope) {
         });
 
       span.exit().remove();
+
+      span.order();
 
     } else if (selected.content) {
       d3.select(this)
