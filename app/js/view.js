@@ -187,14 +187,23 @@ function render(controllerScope) {
     .each(function (artifact) { 
       // differentiate between images and text
       if ("imageSrc" in artifact) {
-        d3.select(this)
+        var img = d3.select(this)
           .selectAll("img")
-          .data([artifact.imageSrc])
-          .enter()
+          .data([artifact.imageSrc]);
+      
+        img.enter()
           .append("img")
           .attr("src", artifact.imageSrc);
 
-        var className = "imageBox"+artifact.id;
+        // FIXME: add click handler on images that selects an image box
+        // if one is under the mouse and otherwise creates a new 0x0 
+        // image box and updates it as the mouse drags, letting it go
+        // when the drag ends
+        img.on("click", function (d) {
+          console.log("image click");
+        });
+
+        var className = "imageBox imageBox"+artifact.id;
         var imageBox = svg.selectAll("."+className)
           .data(makeImageBoxes(this, artifact));
         imageBox.enter()
@@ -205,9 +214,10 @@ function render(controllerScope) {
           .attr("width", function (d) { return d.width })
           .attr("height", function (d) { return d.height })
           .on("click", function (d) { 
-            console.log("clicked");
+            console.log("ker-clicked");
             controllerScope.updateSelection(d.id);
             rangy.getSelection().removeAllRanges();
+            d3.event.stopPropagation();
           });
 
         imageBox
@@ -240,8 +250,8 @@ function render(controllerScope) {
   // FIXME:
   // X draw connections
   // X render images
-  // * allow for selection
-  // * allow for range creation
-  // * allow for connection creation
+  // X allow for selection
+  // X allow for range creation
+  // X allow for connection creation
   // * allow for image area creation
 }
