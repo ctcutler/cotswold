@@ -68,20 +68,23 @@ describe("The makeSpanTree() method", function() {
         if (content !== this.actual.content) return false;
         return true;
       },
-      toBeASpanNodeWith: function(id, style, nodeCount) {
+      toBeASpanNodeWith: function(id, truncation, selected, nodeCount) {
         var notText = this.isNot ? " not" : "";
         this.message = function () {
           return "Expected " + stringify(this.actual) + notText 
             + " to be a span node with id: "
             + id
-            + " style: "
-            + style
+            + " and truncation: "
+            + truncation
+            + " and selected: "
+            + selected
             + " and node count: "
             + nodeCount;
         }
-        if (!hasKeys(["nodes", "style", "id"], this.actual)) return false;
+        if (!hasKeys(["nodes", "id"], this.actual)) return false;
+        if (truncation !== this.actual.truncation) return false;
+        if (selected !== this.actual.selected) return false;
         if (id !== this.actual.id) return false;
-        if (style !== this.actual.style) return false;
         if (nodeCount !== this.actual.nodes.length) return false;
         return true;
       },
@@ -125,7 +128,7 @@ describe("The makeSpanTree() method", function() {
     var content = "Foo bar baz";
     var tree = makeSpanTree(
       [
-        {start: 0, end: 3, id: "range1", style: "style1", selected: false}
+        {start: 0, end: 3, id: "range1", selected: false}
       ], 
       content
     );
@@ -133,10 +136,11 @@ describe("The makeSpanTree() method", function() {
     expect(tree).toCoverTheContent(content);
     expect(tree).toCoverTheRange(0, content.length);
 
-    expect(tree).toBeASpanNodeWith("", "", 3)
+    expect(tree).toBeASpanNodeWith("", "none", false, 3)
     expect(tree.nodes[0]).toBeAContentNodeWith(0, 0, "");
 
-    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 1);
+    // truncation
+    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 1);
     expect(tree.nodes[1].nodes[0]).toBeAContentNodeWith(0, 3, "Foo");
 
     expect(tree.nodes[2]).toBeAContentNodeWith(3, 11, " bar baz");
@@ -146,8 +150,8 @@ describe("The makeSpanTree() method", function() {
     var content = "Foo bar baz";
     var tree = makeSpanTree(
       [
-        {start: 0, end: 3, id: "range1", style: "style1", selected: false},
-        {start: 4, end: 7, id: "range2", style: "style2", selected: false},
+        {start: 0, end: 3, id: "range1", selected: false},
+        {start: 4, end: 7, id: "range2", selected: false},
       ], 
       content
     );
@@ -155,15 +159,15 @@ describe("The makeSpanTree() method", function() {
     expect(tree).toCoverTheContent(content);
     expect(tree).toCoverTheRange(0, content.length);
 
-    expect(tree).toBeASpanNodeWith("", "", 5)
+    expect(tree).toBeASpanNodeWith("", "none", false, 5)
     expect(tree.nodes[0]).toBeAContentNodeWith(0, 0, "");
 
-    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 1);
+    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 1);
     expect(tree.nodes[1].nodes[0]).toBeAContentNodeWith(0, 3, "Foo");
 
     expect(tree.nodes[2]).toBeAContentNodeWith(3, 4, " ");
 
-    expect(tree.nodes[3]).toBeASpanNodeWith("range2", "style2 "+ALLBORDERS_STYLE, 1);
+    expect(tree.nodes[3]).toBeASpanNodeWith("range2", "none", false, 1);
     expect(tree.nodes[3].nodes[0]).toBeAContentNodeWith(4, 7, "bar");
 
     expect(tree.nodes[4]).toBeAContentNodeWith(7, 11, " baz");
@@ -173,8 +177,8 @@ describe("The makeSpanTree() method", function() {
     var content = "Foo bar baz";
     var tree = makeSpanTree(
       [
-        {start: 1, end: 10, id: "range1", style: "style1", selected: false},
-        {start: 4, end: 7, id: "range2", style: "style2", selected: false},
+        {start: 1, end: 10, id: "range1", selected: false},
+        {start: 4, end: 7, id: "range2", selected: false},
       ], 
       content
     );
@@ -182,14 +186,14 @@ describe("The makeSpanTree() method", function() {
     expect(tree).toCoverTheContent(content);
     expect(tree).toCoverTheRange(0, content.length);
 
-    expect(tree).toBeASpanNodeWith("", "", 3)
+    expect(tree).toBeASpanNodeWith("", "none", false, 3)
     expect(tree.nodes[0]).toBeAContentNodeWith(0, 1, "F");
 
-    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 3);
+    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 3);
 
     expect(tree.nodes[1].nodes[0]).toBeAContentNodeWith(1, 4, "oo ");
 
-    expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "style2 "+ALLBORDERS_STYLE, 1);
+    expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "none", false, 1);
     expect(tree.nodes[1].nodes[1].nodes[0]).toBeAContentNodeWith(4, 7, "bar");
 
     expect(tree.nodes[1].nodes[2]).toBeAContentNodeWith(7, 10, " ba");
@@ -201,9 +205,9 @@ describe("The makeSpanTree() method", function() {
     var content = "Foo bar baz";
     var tree = makeSpanTree(
       [
-        {start: 1, end: 10, id: "range1", style: "style1", selected: false},
-        {start: 3, end: 8, id: "range2", style: "style2", selected: false},
-        {start: 5, end: 6, id: "range3", style: "style3", selected: false},
+        {start: 1, end: 10, id: "range1", selected: false},
+        {start: 3, end: 8, id: "range2", selected: false},
+        {start: 5, end: 6, id: "range3", selected: false},
       ], 
       content
     );
@@ -211,13 +215,13 @@ describe("The makeSpanTree() method", function() {
     expect(tree).toCoverTheContent(content);
     expect(tree).toCoverTheRange(0, content.length);
 
-    expect(tree).toBeASpanNodeWith("", "", 3)
+    expect(tree).toBeASpanNodeWith("", "none", false, 3)
     expect(tree.nodes[0]).toBeAContentNode();
-    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 3);
+    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 3);
     expect(tree.nodes[1].nodes[0]).toBeAContentNode();
-    expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "style2 "+ALLBORDERS_STYLE, 3);
+    expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "none", false, 3);
     expect(tree.nodes[1].nodes[1].nodes[0]).toBeAContentNode();
-    expect(tree.nodes[1].nodes[1].nodes[1]).toBeASpanNodeWith("range3", "style3 "+ALLBORDERS_STYLE, 1);
+    expect(tree.nodes[1].nodes[1].nodes[1]).toBeASpanNodeWith("range3", "none", false, 1);
     expect(tree.nodes[1].nodes[1].nodes[1].nodes[0]).toBeAContentNode();
     expect(tree.nodes[1].nodes[1].nodes[2]).toBeAContentNode();
     expect(tree.nodes[1].nodes[2]).toBeAContentNode();
@@ -228,9 +232,9 @@ describe("The makeSpanTree() method", function() {
     var content = "Foo bar baz";
     var tree = makeSpanTree(
       [
-        {start: 1, end: 10, id: "range1", style: "style1", selected: false},
-        {start: 3, end: 5, id: "range2", style: "style2", selected: false},
-        {start: 7, end: 9, id: "range3", style: "style3", selected: false},
+        {start: 1, end: 10, id: "range1", selected: false},
+        {start: 3, end: 5, id: "range2", selected: false},
+        {start: 7, end: 9, id: "range3", selected: false},
       ], 
       content
     );
@@ -238,18 +242,18 @@ describe("The makeSpanTree() method", function() {
     expect(tree).toCoverTheContent(content);
     expect(tree).toCoverTheRange(0, content.length);
 
-    expect(tree).toBeASpanNodeWith("", "", 3)
+    expect(tree).toBeASpanNodeWith("", "none", false, 3)
     expect(tree.nodes[0]).toBeAContentNode();
-    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 5);
+    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 5);
 
     expect(tree.nodes[1].nodes[0]).toBeAContentNode();
 
-    expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "style2 "+ALLBORDERS_STYLE, 1);
+    expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "none", false, 1);
     expect(tree.nodes[1].nodes[1].nodes[0]).toBeAContentNode();
 
     expect(tree.nodes[1].nodes[2]).toBeAContentNode();
 
-    expect(tree.nodes[1].nodes[3]).toBeASpanNodeWith("range3", "style3 "+ALLBORDERS_STYLE, 1);
+    expect(tree.nodes[1].nodes[3]).toBeASpanNodeWith("range3", "none", false, 1);
     expect(tree.nodes[1].nodes[3].nodes[0]).toBeAContentNode();
 
     expect(tree.nodes[1].nodes[4]).toBeAContentNode();
@@ -265,8 +269,8 @@ describe("The makeSpanTree() method", function() {
       it("and the shorter one comes first.", function() {
         var tree = makeSpanTree(
           [
-            {start: 1, end: 4, id: "range1", style: "style1", selected: false},
-            {start: 1, end: 7, id: "range2", style: "style2", selected: false},
+            {start: 1, end: 4, id: "range1", selected: false},
+            {start: 1, end: 7, id: "range2", selected: false},
           ], 
           content
         );
@@ -277,13 +281,13 @@ describe("The makeSpanTree() method", function() {
         // FIXME: this expects the code to treat these ranges as overlapping
         // but really we'd prefer nested spans like the "and the longer one
         // comes first" case below
-        expect(tree).toBeASpanNodeWith("", "", 4)
+        expect(tree).toBeASpanNodeWith("", "none", false, 4)
         expect(tree.nodes[0]).toBeAContentNode();
 
-        expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 1);
+        expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 1);
         expect(tree.nodes[1].nodes[0]).toBeAContentNode();
 
-        expect(tree.nodes[2]).toBeASpanNodeWith("range2", "style2 "+TRUNC_LEFT_STYLE, 1);
+        expect(tree.nodes[2]).toBeASpanNodeWith("range2", "left", false, 1);
         expect(tree.nodes[2].nodes[0]).toBeAContentNode();
 
         expect(tree.nodes[3]).toBeAContentNode();
@@ -292,8 +296,8 @@ describe("The makeSpanTree() method", function() {
       it("and the longer one comes first.", function() {
         var tree = makeSpanTree(
           [
-            {start: 1, end: 7, id: "range1", style: "style1", selected: false},
-            {start: 1, end: 4, id: "range2", style: "style2", selected: false},
+            {start: 1, end: 7, id: "range1", selected: false},
+            {start: 1, end: 4, id: "range2", selected: false},
           ], 
           content
         );
@@ -301,15 +305,15 @@ describe("The makeSpanTree() method", function() {
         expect(tree).toCoverTheContent(content);
         expect(tree).toCoverTheRange(0, content.length);
 
-        expect(tree).toBeASpanNodeWith("", "", 3)
+        expect(tree).toBeASpanNodeWith("", "none", false, 3)
         expect(tree.nodes[0]).toBeAContentNode();
 
-        expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 3);
+        expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 3);
 
         // FIXME: this expects an empty, unnecessary content node: not optimal
         expect(tree.nodes[1].nodes[0]).toBeAContentNode();
 
-        expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "style2 "+ALLBORDERS_STYLE, 1);
+        expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "none", false, 1);
         expect(tree.nodes[1].nodes[1].nodes[0]).toBeAContentNode();
         expect(tree.nodes[1].nodes[2]).toBeAContentNode();
 
@@ -323,8 +327,8 @@ describe("The makeSpanTree() method", function() {
       it("and the shorter one comes first.", function() {
         var tree = makeSpanTree(
           [
-            {start: 4, end: 7, id: "range1", style: "style1", selected: false},
-            {start: 1, end: 7, id: "range2", style: "style2", selected: false},
+            {start: 4, end: 7, id: "range1", selected: false},
+            {start: 1, end: 7, id: "range2", selected: false},
           ], 
           content
         );
@@ -335,13 +339,13 @@ describe("The makeSpanTree() method", function() {
         // FIXME: this expects the code to treat these ranges as overlapping
         // but really we'd prefer nested spans like the "and the longer one
         // comes first" case below
-        expect(tree).toBeASpanNodeWith("", "", 4)
+        expect(tree).toBeASpanNodeWith("", "none", false, 4)
         expect(tree.nodes[0]).toBeAContentNode();
 
-        expect(tree.nodes[1]).toBeASpanNodeWith("range2", "style2 "+TRUNC_RIGHT_STYLE, 1);
+        expect(tree.nodes[1]).toBeASpanNodeWith("range2", "right", false, 1);
         expect(tree.nodes[1].nodes[0]).toBeAContentNode();
 
-        expect(tree.nodes[2]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 1);
+        expect(tree.nodes[2]).toBeASpanNodeWith("range1", "none", false, 1);
         expect(tree.nodes[2].nodes[0]).toBeAContentNode();
 
         expect(tree.nodes[3]).toBeAContentNode();
@@ -350,8 +354,8 @@ describe("The makeSpanTree() method", function() {
       it("and the longer one comes first.", function() {
         var tree = makeSpanTree(
           [
-            {start: 1, end: 7, id: "range1", style: "style1", selected: false},
-            {start: 4, end: 7, id: "range2", style: "style2", selected: false},
+            {start: 1, end: 7, id: "range1", selected: false},
+            {start: 4, end: 7, id: "range2", selected: false},
           ], 
           content
         );
@@ -359,15 +363,15 @@ describe("The makeSpanTree() method", function() {
         expect(tree).toCoverTheContent(content);
         expect(tree).toCoverTheRange(0, content.length);
 
-        expect(tree).toBeASpanNodeWith("", "", 3)
+        expect(tree).toBeASpanNodeWith("", "none", false, 3)
         expect(tree.nodes[0]).toBeAContentNode();
 
-        expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 3);
+        expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 3);
 
         // FIXME: this expects an empty, unnecessary content node: not optimal
         expect(tree.nodes[1].nodes[0]).toBeAContentNode();
 
-        expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "style2 "+ALLBORDERS_STYLE, 1);
+        expect(tree.nodes[1].nodes[1]).toBeASpanNodeWith("range2", "none", false, 1);
         expect(tree.nodes[1].nodes[1].nodes[0]).toBeAContentNode();
         expect(tree.nodes[1].nodes[2]).toBeAContentNode();
 
@@ -383,21 +387,21 @@ describe("The makeSpanTree() method", function() {
     it("where the top range comes first", function() {
       var tree = makeSpanTree(
         [
-          {start: 1, end: 6, id: "range1", style: "style1", selected: false},
-          {start: 3, end: 9, id: "range2", style: "style2", selected: false},
+          {start: 1, end: 6, id: "range1", selected: false},
+          {start: 3, end: 9, id: "range2", selected: false},
         ], 
         content
       );
       expect(tree).toCoverTheContent(content);
       expect(tree).toCoverTheRange(0, content.length);
 
-      expect(tree).toBeASpanNodeWith("", "", 4)
+      expect(tree).toBeASpanNodeWith("", "none", false, 4)
       expect(tree.nodes[0]).toBeAContentNodeWith(0, 1, "F");
 
-      expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 1);
+      expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 1);
       expect(tree.nodes[1].nodes[0]).toBeAContentNodeWith(1, 6, "oo ba");
 
-      expect(tree.nodes[2]).toBeASpanNodeWith("range2", "style2 "+TRUNC_LEFT_STYLE, 1);
+      expect(tree.nodes[2]).toBeASpanNodeWith("range2", "left", false, 1);
       expect(tree.nodes[2].nodes[0]).toBeAContentNodeWith(6, 9, "r b");
 
       expect(tree.nodes[3]).toBeAContentNodeWith(9, 11, "az");
@@ -405,21 +409,21 @@ describe("The makeSpanTree() method", function() {
     it("where the top range comes last", function() {
       var tree = makeSpanTree(
         [
-          {start: 3, end: 9, id: "range2", style: "style2", selected: false},
-          {start: 1, end: 6, id: "range1", style: "style1", selected: false},
+          {start: 3, end: 9, id: "range2", selected: false},
+          {start: 1, end: 6, id: "range1", selected: false},
         ], 
         content
       );
       expect(tree).toCoverTheContent(content);
       expect(tree).toCoverTheRange(0, content.length);
 
-      expect(tree).toBeASpanNodeWith("", "", 4)
+      expect(tree).toBeASpanNodeWith("", "none", false, 4)
       expect(tree.nodes[0]).toBeAContentNodeWith(0, 1, "F");
 
-      expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+TRUNC_RIGHT_STYLE, 1);
+      expect(tree.nodes[1]).toBeASpanNodeWith("range1", "right", false, 1);
       expect(tree.nodes[1].nodes[0]).toBeAContentNodeWith(1, 3, "oo");
 
-      expect(tree.nodes[2]).toBeASpanNodeWith("range2", "style2 "+ALLBORDERS_STYLE, 1);
+      expect(tree.nodes[2]).toBeASpanNodeWith("range2", "none", false, 1);
       expect(tree.nodes[2].nodes[0]).toBeAContentNodeWith(3, 9, " bar b");
 
       expect(tree.nodes[3]).toBeAContentNodeWith(9, 11, "az");
@@ -430,8 +434,8 @@ describe("The makeSpanTree() method", function() {
     var content = "Foo bar baz";
     var tree = makeSpanTree(
       [
-        {start: 1, end: 4, id: "range1", style: "style1", selected: false},
-        {start: 4, end: 7, id: "range2", style: "style2", selected: false},
+        {start: 1, end: 4, id: "range1", selected: false},
+        {start: 4, end: 7, id: "range2", selected: false},
       ], 
       content
     );
@@ -439,16 +443,16 @@ describe("The makeSpanTree() method", function() {
     expect(tree).toCoverTheContent(content);
     expect(tree).toCoverTheRange(0, content.length);
 
-    expect(tree).toBeASpanNodeWith("", "", 5)
+    expect(tree).toBeASpanNodeWith("", "none", false, 5)
     expect(tree.nodes[0]).toBeAContentNode();
 
-    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "style1 "+ALLBORDERS_STYLE, 1);
+    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", false, 1);
     expect(tree.nodes[1].nodes[0]).toBeAContentNode();
 
     // FIXME: this expects an empty, unnecessary content node: not optimal
     expect(tree.nodes[2]).toBeAContentNode();
 
-    expect(tree.nodes[3]).toBeASpanNodeWith("range2", "style2 "+ALLBORDERS_STYLE, 1);
+    expect(tree.nodes[3]).toBeASpanNodeWith("range2", "none", false, 1);
     expect(tree.nodes[3].nodes[0]).toBeAContentNode();
 
     expect(tree.nodes[4]).toBeAContentNode();
@@ -458,7 +462,7 @@ describe("The makeSpanTree() method", function() {
     var content = "Foo bar baz";
     var tree = makeSpanTree(
       [
-        {start: 0, end: 3, id: "range1", style: "style1", selected: true}
+        {start: 0, end: 3, id: "range1", selected: true}
       ], 
       content
     );
@@ -466,10 +470,10 @@ describe("The makeSpanTree() method", function() {
     expect(tree).toCoverTheContent(content);
     expect(tree).toCoverTheRange(0, content.length);
 
-    expect(tree).toBeASpanNodeWith("", "", 3)
+    expect(tree).toBeASpanNodeWith("", "none", false, 3)
     expect(tree.nodes[0]).toBeAContentNode();
 
-    expect(tree.nodes[1]).toBeASpanNodeWith("range1", SELECTED_STYLE+" style1 "+ALLBORDERS_STYLE, 1);
+    expect(tree.nodes[1]).toBeASpanNodeWith("range1", "none", true, 1);
     expect(tree.nodes[1].nodes[0]).toBeAContentNode();
 
     expect(tree.nodes[2]).toBeAContentNode();

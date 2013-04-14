@@ -1,18 +1,12 @@
 "use strict";
 
-var SELECTED_STYLE = "selected";
-var ALLBORDERS_STYLE = "allborders";
-var TRUNC_LEFT_STYLE = "truncatedLeft";
-var TRUNC_RIGHT_STYLE = "truncatedRight";
-var TRUNC_BOTH_STYLE = "truncatedBoth";
-
 function makeSpanTree (ranges, content) {
   if (!content || !ranges) {
     return {};
   }
 
   var contentNodes = [makeContentNode(0, content.length, null, content)]; 
-  var tree = makeSpanNode("", false, "", false, [contentNodes[0]], null); // must not be contentNodes array
+  var tree = makeSpanNode("", false, false, [contentNodes[0]], null); // must not be contentNodes array
 
   angular.forEach(ranges, function(range) {
     var nodes = [];
@@ -125,7 +119,7 @@ function makeSpanTree (ranges, content) {
 
         // make new span node
         var spanNode = makeSpanNode(
-          range.id, range.dominant, range.style, range.selected, 
+          range.id, range.dominant, range.selected, 
           spanChildren, lca, truncatedLeft, truncatedRight
         );
 
@@ -234,26 +228,20 @@ function makeContentNode(start, end, parentNode, content) {
   };
 }
 
-function makeSpanNode(id, dominant, style, selected, nodes, parentNode, truncatedLeft, truncatedRight) {
-  if (selected) {
-    style = SELECTED_STYLE + " " + style;
-  }
-
-  if (style) {
-    if (truncatedRight && truncatedLeft) {
-      style += " " + TRUNC_BOTH_STYLE;
-    } else if (truncatedLeft) {
-      style += " " + TRUNC_LEFT_STYLE;
-    } else if (truncatedRight) {
-      style += " " + TRUNC_RIGHT_STYLE;
-    } else {
-      style += " " + ALLBORDERS_STYLE;
-    }
-  }
+function makeSpanNode(id, dominant, selected, nodes, parentNode, truncatedLeft, truncatedRight) {
+  var truncation = "none";
+  if (truncatedRight && truncatedLeft) {
+    truncation = "both";
+  } else if (truncatedLeft) {
+    truncation = "left";
+  } else if (truncatedRight) {
+    truncation = "right";
+  } 
 
   var spanNode = {
+      selected: selected,
       dominant: dominant,
-      style: style,
+      truncation: truncation,
       nodes: nodes,
       parentNode: parentNode,
       id: id

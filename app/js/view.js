@@ -85,16 +85,27 @@ function recursiveSpans(sel) {
       span.enter()
         .append("span");
 
-      // this works the first time the tree of spans is 
-      // displayed but the second time something goes wrong
-
+      // FIXME: span gets a little x when you mouse over it
       span
-        .attr("class", function (d) { return d.style })
-        .call(recursiveSpans)
+        .attr("class", function (d) { 
+          if (d.id === undefined) return "";
+
+          var klass = "allborders green";
+          if (d.truncation === "left") {
+            klass += " truncatedLeft";
+          } else if (d.truncation === "right") {
+            klass += " truncatedRight";
+          } else if (d.truncation === "both") {
+            klass += " truncatedBoth";
+          } 
+          if (d.selected) {
+            klass += " selected";
+          }
+          return klass;
+        }).call(recursiveSpans)
         .filter(function (d) { return "id" in d; })
         .attr("id", function (d) { return d.id })
         .on("click", function (d) {
-          console.log("click");
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
 
