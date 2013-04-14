@@ -318,13 +318,4 @@ function render(scope) {
     .attr("y2", function (d) { return d.y2 });
   line.exit()
     .remove();
-
-
-  // FIXME:
-  // X draw connections
-  // X render images
-  // X allow for selection
-  // X allow for range creation
-  // X allow for connection creation
-  // * allow for image area creation
 }

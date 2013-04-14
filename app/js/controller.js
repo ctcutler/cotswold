@@ -158,23 +158,6 @@ function EditorController($scope, storage, render) {
 
   $scope.shiftDown = false;
 
-    /*
-  $scope.clickHandler = function (clickEvent) {
-    // look at event target and its ancestors 
-    var node = clickEvent.target;
-    while (node && node.nodeName == "SPAN" && !node.id) {
-      node = node.parentNode;
-    }
-    
-    if (!node.id) {
-      return;
-    }
-
-    $scope.updateSelection(node.id);
-    rangy.getSelection().removeAllRanges();
-  };
-    */
-
   $scope.previousSelection = null;
   $scope.updateSelection = function(rangeIdToSelect, clearPrevious) {
     var newlySelected = null;
@@ -297,28 +280,6 @@ function EditorController($scope, storage, render) {
       }
     }
     return null;
-  };
-
-  $scope.toggleZoom = function () {
-    /*
-    FIXME: reimplement in view.js
-
-    var width = $scope.expanded ? ARTIFACT_WIDTH_NORMAL : ARTIFACT_WIDTH_EXPANDED;
-    var maxHeight = $scope.expanded ? ARTIFACT_MAX_HEIGHT_NORMAL : ARTIFACT_MAX_HEIGHT_EXPANDED;
-
-    $scope.expanded = !$scope.expanded;
-    storage["expanded"] = stringify($scope.expanded);
-
-    for (var i=0; i<$scope.timepoints.length; i++) {
-      var timepoint = $scope.timepoints[i];
-      for (var j=0; j<timepoint.artifacts.length; j++) {
-        var artifact = timepoint.artifacts[j];
-        artifact.width = width;
-        artifact.maxHeight = maxHeight;
-      }
-    }
-    storage["timepoints"] = stringify($scope.timepoints);
-    */
   };
 
   $scope.reloadAllNodes();
