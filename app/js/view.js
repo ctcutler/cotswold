@@ -214,7 +214,9 @@ function updateArtifacts(artifact, svg) {
         });
 
       imageBox
-        .attr("class", className);
+        .attr("class", function (d) { 
+          return d.selected ? className + " imageBoxSelected" : className
+        });
 
       imageBox.exit()
         .remove();
