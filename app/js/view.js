@@ -172,8 +172,8 @@ function makeDragBehavior(svg, artifact, img) {
       var bbox = dragBox[0][0].getBBox();
       controllerScope.makeImageRange(
         artifact.id,
-        bbox.x,
-        bbox.y,
+        bbox.x - $img.offset().left,
+        bbox.y - $img.offset().top,
         bbox.width,
         bbox.height
       );
@@ -196,9 +196,9 @@ function updateArtifacts(artifact, svg) {
       // img[0] assumes there will only be one image per artifact
       img.call(makeDragBehavior(svg, artifact, img[0]));
 
-      var className = "imageBox imageBox"+artifact.id;
+      var className = "imageBox";
       var imageBox = svg.selectAll("."+className)
-        .data(makeImageBoxes(this, artifact));
+        .data(makeImageBoxes(this, artifact), function (d) { return d.id; });
       imageBox.enter()
         .append("rect")
         .attr("id", function (d) { return d.id })
