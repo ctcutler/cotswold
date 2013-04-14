@@ -107,6 +107,10 @@ rect.imageBox {
   pointer-events: auto;
 }
 
+rect.dragBox {
+  pointer-events: auto;
+}
+
 html, body {
   margin: 0px;
   padding: 0px;

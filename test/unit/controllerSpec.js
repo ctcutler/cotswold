@@ -130,10 +130,22 @@ describe("The EditorController", function() {
       expect(ranges).toContain(scope.timepoints[0].artifacts[1].ranges[0]);
     });
 
-    it("should create a range", function() {
-      // FIXME: refactor makeRange method to make it testable here
-      // (inject rangy object?. . . or just separate rangy interaction
-      // from model manipulation)
+    describe("connection logic", function() {
+      it("should create a text range", function() {
+        // FIXME: refactor makeRange method to make it testable here
+        // (inject rangy object?. . . or just separate rangy interaction
+        // from model manipulation)
+      });
+      it("should create a image range", function() {
+        scope.makeImageRange("1.3", 1, 2, 3, 4);
+        expect(scope.timepoints[0].artifacts[2].ranges.length).toBe(2);
+        expect(scope.timepoints[0].artifacts[2].ranges[1].id).toBe("box1.32");
+        expect(scope.timepoints[0].artifacts[2].ranges[1].left).toBe(1);
+        expect(scope.timepoints[0].artifacts[2].ranges[1].top).toBe(2);
+        expect(scope.timepoints[0].artifacts[2].ranges[1].width).toBe(3);
+        expect(scope.timepoints[0].artifacts[2].ranges[1].height).toBe(4);
+        expect(scope.timepoints[0].artifacts[2].ranges[1].selected).toBe(true);
+      });
     });
 
     it("should remove a range", function() {

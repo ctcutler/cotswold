@@ -48,6 +48,31 @@ function EditorController($scope, storage, render) {
     $scope.reloadView();
   }
 
+  $scope.makeImageRange = function (artifactId, x, y, width, height) {
+    var artifact = $scope.getArtifactById(artifactId);
+    var newRangeId = null;
+    if (artifact) {
+      newRangeId = "box"+artifact.id+(artifact.ranges.length+1);
+      artifact.ranges.push(
+        {
+          left: x,
+          top: y,
+          width: width,
+          height: height,
+          id: newRangeId,
+          selected: true
+        }
+      );
+      $scope.reloadArtifactNodes(artifact);
+    }
+
+    if (newRangeId) {
+      // even though new range is already selected, 
+      // need to make sure everything else is unselected
+      $scope.updateSelection(newRangeId, true);
+    }
+  }
+
   $scope.makeRange = function () {
     var sel = rangy.getSelection();
     var startArtifact = getArtifactAncestor(sel.anchorNode);

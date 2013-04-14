@@ -61,7 +61,7 @@ function getBestConnection(box1, box2) {
 }
 
 
-function recursiveSpans(sel, controllerScope) {
+function recursiveSpans(sel) {
   // this wraps _everything_ in a span, including
   // content nodes that don't require it. . . to
   // work around this we would need a way to 
@@ -90,7 +90,7 @@ function recursiveSpans(sel, controllerScope) {
 
       span
         .attr("class", function (d) { return d.style })
-        .call(recursiveSpans, controllerScope)
+        .call(recursiveSpans)
         .filter(function (d) { return "id" in d; })
         .attr("id", function (d) { return d.id })
         .on("click", function (d) {
@@ -109,6 +109,117 @@ function recursiveSpans(sel, controllerScope) {
     } else if (selected.content) {
       d3.select(this)
         .text(selected.content)
+    }
+  });
+}
+
+function smallerWithMin(a, b, min) {
+  return Math.max(min, Math.min(a, b));
+}
+
+function largerWithMax(a, b, max) {
+  return Math.min(max, Math.max(a, b));
+}
+
+function getDragBoxX(d) {
+  var curX = d3.mouse(jQuery("#svgLayer")[0])[0];
+  return smallerWithMin(curX, d.originX, d.minX);
+}
+function getDragBoxY(d) {
+  var curY = d3.mouse(jQuery("#svgLayer")[0])[1];
+  return smallerWithMin(curY, d.originY, d.minY);
+}
+function getDragBoxWidth(d) {
+  var curX = d3.mouse(jQuery("#svgLayer")[0])[0];
+  return largerWithMax(curX, d.originX, d.maxX) 
+    - smallerWithMin(curX, d.originX, d.minX);
+}
+function getDragBoxHeight(d) {
+  var curY = d3.mouse(jQuery("#svgLayer")[0])[1];
+  return largerWithMax(curY, d.originY, d.maxY) 
+    - smallerWithMin(curY, d.originY, d.minY);
+}
+
+function makeDragBehavior(svg, artifact, img) {
+  var $img = jQuery(img);
+  return d3.behavior.drag()
+    .on("dragstart", function(d,i) {
+      // add rect
+      var coords = d3.mouse(jQuery("#svgLayer")[0]);
+      svg.append("rect")
+        .data([{
+          originX: coords[0], 
+          originY: coords[1],
+          minX: $img.offset().left,
+          minY: $img.offset().top,
+          maxX: $img.offset().left + $img.width(),
+          maxY: $img.offset().top + $img.height(),
+        }])
+        .attr("class", "dragBox")
+        .attr("x", coords[0])
+        .attr("y", coords[1]);
+    }).on("drag", function(d,i) {
+      // resize rect
+      var dragBox = svg.select("rect.dragBox");
+      dragBox
+        .attr("x", getDragBoxX)
+        .attr("y", getDragBoxY)
+        .attr("width", getDragBoxWidth)
+        .attr("height", getDragBoxHeight);
+    }).on("dragend", function(d,i) {
+      // remove rect
+      var dragBox = svg.select("rect.dragBox");
+      var bbox = dragBox[0][0].getBBox();
+      controllerScope.makeImageRange(
+        artifact.id,
+        bbox.x,
+        bbox.y,
+        bbox.width,
+        bbox.height
+      );
+      dragBox.remove();
+    });
+}
+
+function updateArtifacts(artifact, svg) {
+  artifact.each(function (artifact) { 
+    // differentiate between images and text
+    if ("imageSrc" in artifact) {
+      var img = d3.select(this)
+        .selectAll("img")
+        .data([artifact.imageSrc]);
+    
+      img.enter()
+        .append("img")
+        .attr("src", artifact.imageSrc);
+
+      // img[0] assumes there will only be one image per artifact
+      img.call(makeDragBehavior(svg, artifact, img[0]));
+
+      var className = "imageBox imageBox"+artifact.id;
+      var imageBox = svg.selectAll("."+className)
+        .data(makeImageBoxes(this, artifact));
+      imageBox.enter()
+        .append("rect")
+        .attr("id", function (d) { return d.id })
+        .attr("x", function (d) { return d.left })
+        .attr("y", function (d) { return d.top })
+        .attr("width", function (d) { return d.width })
+        .attr("height", function (d) { return d.height })
+        .on("click", function (d) { 
+          console.log("ker-clicked");
+          controllerScope.updateSelection(d.id);
+          rangy.getSelection().removeAllRanges();
+          d3.event.stopPropagation();
+        });
+
+      imageBox
+        .attr("class", className);
+
+      imageBox.exit()
+        .remove();
+    } else {
+      d3.select(this).call(recursiveSpans);
     }
   });
 }
@@ -158,7 +269,12 @@ function makeConnectionCoords(connections) {
   return connectionCoords;
 }
 
-function render(controllerScope) {
+var controllerScope;
+
+function render(scope) {
+  if (scope) {
+    controllerScope = scope;
+  }
 
   var htmlLayer = d3.select("#htmlLayer");
 
@@ -183,52 +299,7 @@ function render(controllerScope) {
     .append("div")
     .attr("class", "artifact")
     .attr("id", function (d) { return d.id });
-  artifact
-    .each(function (artifact) { 
-      // differentiate between images and text
-      if ("imageSrc" in artifact) {
-        var img = d3.select(this)
-          .selectAll("img")
-          .data([artifact.imageSrc]);
-      
-        img.enter()
-          .append("img")
-          .attr("src", artifact.imageSrc);
-
-        // FIXME: add click handler on images that selects an image box
-        // if one is under the mouse and otherwise creates a new 0x0 
-        // image box and updates it as the mouse drags, letting it go
-        // when the drag ends
-        img.on("click", function (d) {
-          console.log("image click");
-        });
-
-        var className = "imageBox imageBox"+artifact.id;
-        var imageBox = svg.selectAll("."+className)
-          .data(makeImageBoxes(this, artifact));
-        imageBox.enter()
-          .append("rect")
-          .attr("id", function (d) { return d.id })
-          .attr("x", function (d) { return d.left })
-          .attr("y", function (d) { return d.top })
-          .attr("width", function (d) { return d.width })
-          .attr("height", function (d) { return d.height })
-          .on("click", function (d) { 
-            console.log("ker-clicked");
-            controllerScope.updateSelection(d.id);
-            rangy.getSelection().removeAllRanges();
-            d3.event.stopPropagation();
-          });
-
-        imageBox
-          .attr("class", className);
-
-        imageBox.exit()
-          .remove();
-      } else {
-        d3.select(this).call(recursiveSpans, controllerScope);
-      }
-    });
+  updateArtifacts(artifact, svg);
   artifact.exit()
     .remove();
 
