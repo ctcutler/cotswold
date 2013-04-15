@@ -112,43 +112,50 @@ function EditorController($scope, storage, render) {
     }
   };
 
-  $scope.removeRange = function () {
-    var selectedRanges = $scope.getSelectedRanges();
-    if (selectedRanges.length === 1) {
-      var selectedRange = selectedRanges[0];
-      for (var i=0; i<$scope.timepoints.length; i++) {
-        var timepoint = $scope.timepoints[i];
-        for (var j=0; j<timepoint.artifacts.length; j++) {
-          var artifact = timepoint.artifacts[j];
-          if (artifact.ranges) {
-            for (var k=0; k<artifact.ranges.length; k++) {
-              var range = artifact.ranges[k];
-              if (range === selectedRange) {
+  $scope.removeRange = function (rangeId) {
+    var selectedRange;
+    if (rangeId === undefined) {
+      var selectedRanges = $scope.getSelectedRanges();
+      if (selectedRanges.length === 1) {
+        selectedRange = selectedRanges[0];
+      } else {
+        console.log(selectedRanges.length + " range(s) selected: refusing to remove range.");
+        return;
+      }
+    } else {
+      selectedRange = $scope.getRangeById(rangeId);
+    }
+    
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      for (var j=0; j<timepoint.artifacts.length; j++) {
+        var artifact = timepoint.artifacts[j];
+        if (artifact.ranges) {
+          for (var k=0; k<artifact.ranges.length; k++) {
+            var range = artifact.ranges[k];
+            if (range === selectedRange) {
 
-                var rangeIsConnected = false;
-                for (var i=0; i<$scope.connections.length; i++) {
-                  var connection = $scope.connections[i];
-                  if (connection.indexOf(range.id) != -1) {
-                    rangeIsConnected = true;
-                    break;
-                  }
+              var rangeIsConnected = false;
+              for (var i=0; i<$scope.connections.length; i++) {
+                var connection = $scope.connections[i];
+                if (connection.indexOf(range.id) != -1) {
+                  rangeIsConnected = true;
+                  break;
                 }
-
-                if (rangeIsConnected) {
-                  console.log("Range is connected: refusing to remove");
-                } else {
-                  artifact.ranges.splice(k, 1);
-                  $scope.reloadArtifactNodes(artifact);
-                }
-
-                break;
               }
+
+              if (rangeIsConnected) {
+                console.log("Range is connected: refusing to remove");
+              } else {
+                artifact.ranges.splice(k, 1);
+                $scope.reloadArtifactNodes(artifact);
+              }
+
+              break;
             }
           }
         }
       }
-    } else {
-      console.log(selectedRanges.length + " range(s) selected: refusing to remove range.");
     }
   };
 

@@ -65,6 +65,11 @@ rect.dragBox {
   pointer-events: auto;
 }
 
+.removeRangeButton {
+  pointer-events: auto;
+  fill: #f00;
+}
+
 html, body {
   margin: 0px;
   padding: 0px;

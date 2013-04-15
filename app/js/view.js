@@ -61,6 +61,24 @@ function getBestConnection(box1, box2) {
 }
 
 
+
+function makeSpanClass(d) { 
+  if (d.id === undefined) return "";
+
+  var klass = "allborders green";
+  if (d.truncation === "left") {
+    klass += " truncatedLeft";
+  } else if (d.truncation === "right") {
+    klass += " truncatedRight";
+  } else if (d.truncation === "both") {
+    klass += " truncatedBoth";
+  } 
+  if (d.selected) {
+    klass += " selected";
+  }
+  return klass;
+}
+
 function recursiveSpans(sel) {
   // this wraps _everything_ in a span, including
   // content nodes that don't require it. . . to
@@ -85,30 +103,61 @@ function recursiveSpans(sel) {
       span.enter()
         .append("span");
 
-      // FIXME: span gets a little x when you mouse over it
+      // FIXME: in nested ranges, the delete button
+      // appears for both
+      // FIXME: if you mouse over something then move
+      // your mouse on to the delete button, then mouse out
+      // of the delete button, the delete button does not get
+      // removed. . . maybe just add a mouse out handler for
+      // the delete button?
+      // FIXME: generalize this pattern for mouseover buttons
+      // so that it can be used elsewhere
       span
-        .attr("class", function (d) { 
-          if (d.id === undefined) return "";
-
-          var klass = "allborders green";
-          if (d.truncation === "left") {
-            klass += " truncatedLeft";
-          } else if (d.truncation === "right") {
-            klass += " truncatedRight";
-          } else if (d.truncation === "both") {
-            klass += " truncatedBoth";
-          } 
-          if (d.selected) {
-            klass += " selected";
-          }
-          return klass;
-        }).call(recursiveSpans)
+        .attr("class", makeSpanClass)
+        .call(recursiveSpans)
         .filter(function (d) { return "id" in d; })
         .attr("id", function (d) { return d.id })
-        .on("click", function (d) {
+        .on("mouseout", function (d) {
+          var overRemoveButton = false;
+          var mouseCoords = d3.mouse(jQuery("#svgLayer")[0]);
+          var removeButton = svg.selectAll(".removeRangeButton")
+            .each(function (selected) {
+              var bbox = this.getBBox();
+              var x1 = bbox.x;
+              var x2 = bbox.width + x1;
+              var y1 = bbox.y;
+              var y2 = bbox.height + y1;
+              if (overRemoveButton || (mouseCoords[0] >= x1 
+                && mouseCoords[0] <= x2  
+                && mouseCoords[1] >= y1  
+                && mouseCoords[1] <= y2)) {
+                overRemoveButton = true;
+              }
+            });
+          if (!overRemoveButton) {
+            removeButton.remove();
+          }
+          console.log("out");
+        }).on("mouseover", function (d) {
+          var $span = jQuery("#"+d.id);
+          var rangeId = d.id;
+          var deleteButtonSide = 10;
+          console.log("over");
+          svg.append("rect")
+            .attr("class", "removeRangeButton")
+            .attr("x", $span.offset().left + $span.outerWidth() - deleteButtonSide)
+            .attr("y", $span.offset().top)
+            .attr("width", deleteButtonSide)
+            .attr("height", deleteButtonSide)
+            .on("click", function (d) { 
+              console.log("clicked red box");
+              controllerScope.removeRange(rangeId);
+              svg.selectAll(".removeRangeButton")
+                .remove();
+            });
+        }).on("click", function (d) {
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
-
           // in case spans are nested, only select this one
           d3.event.stopPropagation();
         });
@@ -151,7 +200,7 @@ function getDragBoxHeight(d) {
     - smallerWithMin(curY, d.originY, d.minY);
 }
 
-function makeDragBehavior(svg, artifact, img) {
+function makeDragBehavior(artifact, img) {
   var $img = jQuery(img);
   return d3.behavior.drag()
     .on("dragstart", function(d,i) {
@@ -192,7 +241,7 @@ function makeDragBehavior(svg, artifact, img) {
     });
 }
 
-function updateArtifacts(artifact, svg) {
+function updateArtifacts(artifact) {
   artifact.each(function (artifact) { 
     // differentiate between images and text
     if ("imageSrc" in artifact) {
@@ -205,7 +254,7 @@ function updateArtifacts(artifact, svg) {
         .attr("src", artifact.imageSrc);
 
       // img[0] assumes there will only be one image per artifact
-      img.call(makeDragBehavior(svg, artifact, img[0]));
+      img.call(makeDragBehavior(artifact, img[0]));
 
       var className = "imageBox";
       var imageBox = svg.selectAll("."+className)
@@ -283,6 +332,7 @@ function makeConnectionCoords(connections) {
 }
 
 var controllerScope;
+var svg;
 
 function render(scope) {
   if (scope) {
@@ -291,7 +341,7 @@ function render(scope) {
 
   var htmlLayer = d3.select("#htmlLayer");
 
-  var svg = d3.select("#mainSvg")
+  svg = d3.select("#mainSvg")
     .attr("width", htmlLayer.style("width"))
     .attr("height", htmlLayer.style("height"));
 
@@ -312,7 +362,7 @@ function render(scope) {
     .append("div")
     .attr("class", "artifact")
     .attr("id", function (d) { return d.id });
-  updateArtifacts(artifact, svg);
+  updateArtifacts(artifact);
   artifact.exit()
     .remove();
 

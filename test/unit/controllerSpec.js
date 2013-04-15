@@ -148,6 +148,11 @@ describe("The EditorController", function() {
       });
     });
 
+    it("should remove a range by id", function() {
+      scope.removeRange("range1");
+      expect(scope.timepoints[0].artifacts[0].ranges.length).toBe(0);
+    });
+
     it("should remove a range", function() {
       scope.updateSelection("range1", true);
       scope.removeRange();

@@ -1,6 +1,7 @@
 Basic Functionality
 X Create/delete connections
-* Image region selection
+X Image region selection
+* take a more object oriented approach to code organization
 * Create/delete tags
 * Create/edit connection tags and comments
 * Create/delete timepoints
