@@ -103,8 +103,6 @@ function recursiveSpans(sel) {
       span.enter()
         .append("span");
 
-      // FIXME: in nested ranges, the delete button
-      // appears for both
       // FIXME: if you mouse over something then move
       // your mouse on to the delete button, then mouse out
       // of the delete button, the delete button does not get
@@ -155,6 +153,8 @@ function recursiveSpans(sel) {
               svg.selectAll(".removeRangeButton")
                 .remove();
             });
+          // in case spans are nested, only add delete button to this one
+          d3.event.stopPropagation();
         }).on("click", function (d) {
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
