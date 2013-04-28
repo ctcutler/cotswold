@@ -103,11 +103,6 @@ function recursiveSpans(sel) {
       span.enter()
         .append("span");
 
-      // FIXME: if you mouse over something then move
-      // your mouse on to the delete button, then mouse out
-      // of the delete button, the delete button does not get
-      // removed. . . maybe just add a mouse out handler for
-      // the delete button?
       // FIXME: generalize this pattern for mouseover buttons
       // so that it can be used elsewhere
       span
@@ -147,7 +142,11 @@ function recursiveSpans(sel) {
             .attr("y", $span.offset().top)
             .attr("width", deleteButtonSide)
             .attr("height", deleteButtonSide)
-            .on("click", function (d) { 
+            .on("mouseout", function (d) {
+              // remove remove button
+              svg.selectAll(".removeRangeButton")
+                .remove();
+            }).on("click", function (d) { 
               console.log("clicked red box");
               controllerScope.removeRange(rangeId);
               svg.selectAll(".removeRangeButton")
