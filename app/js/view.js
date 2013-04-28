@@ -103,58 +103,19 @@ function recursiveSpans(sel) {
       span.enter()
         .append("span");
 
-      // FIXME: generalize this pattern for mouseover buttons
-      // so that it can be used elsewhere
       span
         .attr("class", makeSpanClass)
         .call(recursiveSpans)
         .filter(function (d) { return "id" in d; })
         .attr("id", function (d) { return d.id })
-        .on("mouseout", function (d) {
-          var overRemoveButton = false;
-          var mouseCoords = d3.mouse(jQuery("#svgLayer")[0]);
-          var removeButton = svg.selectAll(".removeRangeButton")
-            .each(function (selected) {
-              var bbox = this.getBBox();
-              var x1 = bbox.x;
-              var x2 = bbox.width + x1;
-              var y1 = bbox.y;
-              var y2 = bbox.height + y1;
-              if (overRemoveButton || (mouseCoords[0] >= x1 
-                && mouseCoords[0] <= x2  
-                && mouseCoords[1] >= y1  
-                && mouseCoords[1] <= y2)) {
-                overRemoveButton = true;
-              }
-            });
-          if (!overRemoveButton) {
-            removeButton.remove();
-          }
-          console.log("out");
-        }).on("mouseover", function (d) {
-          var $span = jQuery("#"+d.id);
-          var rangeId = d.id;
-          var deleteButtonSide = 10;
-          console.log("over");
-          svg.append("rect")
-            .attr("class", "removeRangeButton")
-            .attr("x", $span.offset().left + $span.outerWidth() - deleteButtonSide)
-            .attr("y", $span.offset().top)
-            .attr("width", deleteButtonSide)
-            .attr("height", deleteButtonSide)
-            .on("mouseout", function (d) {
-              // remove remove button
-              svg.selectAll(".removeRangeButton")
-                .remove();
-            }).on("click", function (d) { 
-              console.log("clicked red box");
-              controllerScope.removeRange(rangeId);
-              svg.selectAll(".removeRangeButton")
-                .remove();
-            });
-          // in case spans are nested, only add delete button to this one
-          d3.event.stopPropagation();
-        }).on("click", function (d) {
+        .on("mouseover", 
+          makeMouseOverHandler(
+            10, 
+            "removeRangeButton", 
+            function (rangeId) { controllerScope.removeRange(rangeId) }
+          )
+        ).on("mouseout", makeMouseOutHandler("removeRangeButton"))
+        .on("click", function (d) {
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
           // in case spans are nested, only select this one
@@ -238,6 +199,54 @@ function makeDragBehavior(artifact, img) {
       );
       dragBox.remove();
     });
+}
+
+function makeMouseOverHandler(buttonSideLength, buttonClass, clickHandler) {
+  return function (d) {
+    var $span = jQuery("#"+d.id);
+    var rangeId = d.id;
+    svg.append("rect")
+      .attr("class", buttonClass)
+      .attr("x", $span.offset().left + $span.outerWidth() - buttonSideLength)
+      .attr("y", $span.offset().top)
+      .attr("width", buttonSideLength)
+      .attr("height", buttonSideLength)
+      .on("mouseout", function (d) {
+        // remove button
+        svg.selectAll("."+buttonClass)
+          .remove();
+      }).on("click", function (d) { 
+        clickHandler(rangeId);
+        svg.selectAll("."+buttonClass)
+          .remove();
+      });
+    // in case spans are nested, only add delete button to this one
+    d3.event.stopPropagation();
+  };
+}
+
+function makeMouseOutHandler(buttonClass) {
+  return function (d) {
+    var overButton = false;
+    var mouseCoords = d3.mouse(jQuery("#svgLayer")[0]);
+    var button = svg.selectAll("."+buttonClass)
+      .each(function (selected) {
+        var bbox = this.getBBox();
+        var x1 = bbox.x;
+        var x2 = bbox.width + x1;
+        var y1 = bbox.y;
+        var y2 = bbox.height + y1;
+        if (overButton || (mouseCoords[0] >= x1 
+          && mouseCoords[0] <= x2  
+          && mouseCoords[1] >= y1  
+          && mouseCoords[1] <= y2)) {
+          overButton = true;
+        }
+      });
+    if (!overButton) {
+      button.remove();
+    }
+  };
 }
 
 function updateArtifacts(artifact) {

@@ -136,8 +136,8 @@ function EditorController($scope, storage, render) {
             if (range === selectedRange) {
 
               var rangeIsConnected = false;
-              for (var i=0; i<$scope.connections.length; i++) {
-                var connection = $scope.connections[i];
+              for (var l=0; l<$scope.connections.length; l++) {
+                var connection = $scope.connections[l];
                 if (connection.indexOf(range.id) != -1) {
                   rangeIsConnected = true;
                   break;
@@ -145,7 +145,7 @@ function EditorController($scope, storage, render) {
               }
 
               if (rangeIsConnected) {
-                console.log("Range is connected: refusing to remove");
+                console.log("Range "+rangeId+" is connected: refusing to remove")
               } else {
                 artifact.ranges.splice(k, 1);
                 $scope.reloadArtifactNodes(artifact);
