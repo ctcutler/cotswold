@@ -205,22 +205,20 @@ function makeMouseOverHandler(buttonSideLength, buttonClass, clickHandler) {
   return function (d) {
     var $span = jQuery("#"+d.id);
     var rangeId = d.id;
-    svg.append("rect")
-      .attr("class", buttonClass)
-      .attr("x", $span.offset().left + $span.outerWidth() - buttonSideLength)
-      .attr("y", $span.offset().top)
-      .attr("width", buttonSideLength)
-      .attr("height", buttonSideLength)
+    htmlLayer.append("div")
+      .attr("class", "rangeMenu")
+      .style("left", $span.offset().left + $span.outerWidth()+"px")
+      .style("top", $span.offset().top+"px")
+      .text("Remove")
       .on("mouseout", function (d) {
-        // remove button
-        svg.selectAll("."+buttonClass)
+        htmlLayer.selectAll(".rangeMenu")
           .remove();
       }).on("click", function (d) { 
         clickHandler(rangeId);
-        svg.selectAll("."+buttonClass)
+        htmlLayer.selectAll(".rangeMenu")
           .remove();
       });
-    // in case spans are nested, only add delete button to this one
+    // in case spans are nested, only add button to this one
     d3.event.stopPropagation();
   };
 }
@@ -229,13 +227,13 @@ function makeMouseOutHandler(buttonClass) {
   return function (d) {
     var overButton = false;
     var mouseCoords = d3.mouse(jQuery("#svgLayer")[0]);
-    var button = svg.selectAll("."+buttonClass)
+    var button = htmlLayer.selectAll(".rangeMenu")
       .each(function (selected) {
-        var bbox = this.getBBox();
-        var x1 = bbox.x;
-        var x2 = bbox.width + x1;
-        var y1 = bbox.y;
-        var y2 = bbox.height + y1;
+        var $node = jQuery(this);
+        var x1 = $node.offset().left;
+        var x2 = $node.width() + x1;
+        var y1 = $node.offset().top;
+        var y2 = $node.height() + y1;
         if (overButton || (mouseCoords[0] >= x1 
           && mouseCoords[0] <= x2  
           && mouseCoords[1] >= y1  
@@ -341,13 +339,14 @@ function makeConnectionCoords(connections) {
 
 var controllerScope;
 var svg;
+var htmlLayer;
 
 function render(scope) {
   if (scope) {
     controllerScope = scope;
   }
 
-  var htmlLayer = d3.select("#htmlLayer");
+  htmlLayer = d3.select("#htmlLayer");
 
   svg = d3.select("#mainSvg")
     .attr("width", htmlLayer.style("width"))
