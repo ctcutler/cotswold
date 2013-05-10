@@ -110,11 +110,9 @@ function recursiveSpans(sel) {
         .attr("id", function (d) { return d.id })
         .on("mouseover", 
           makeMouseOverHandler(
-            10, 
-            "removeRangeButton", 
             function (rangeId) { controllerScope.removeRange(rangeId) }
           )
-        ).on("mouseout", makeMouseOutHandler("removeRangeButton"))
+        ).on("mouseout", removeMenu)
         .on("click", function (d) {
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
@@ -201,7 +199,7 @@ function makeDragBehavior(artifact, img) {
     });
 }
 
-function makeMouseOverHandler(buttonSideLength, buttonClass, clickHandler) {
+function makeMouseOverHandler(clickHandler) {
   return function (d) {
     var $span = jQuery("#"+d.id);
     var rangeId = d.id;
@@ -209,42 +207,45 @@ function makeMouseOverHandler(buttonSideLength, buttonClass, clickHandler) {
       .attr("class", "rangeMenu")
       .style("left", $span.offset().left + $span.outerWidth()+"px")
       .style("top", $span.offset().top+"px")
-      .text("Remove")
       .on("mouseout", function (d) {
-        htmlLayer.selectAll(".rangeMenu")
-          .remove();
+        removeMenu();
       }).on("click", function (d) { 
         clickHandler(rangeId);
         htmlLayer.selectAll(".rangeMenu")
           .remove();
-      });
+      }).selectAll("div")
+      .data(["Remove", "Connect"])
+      .enter()
+      .append("div")
+      .text(function (d) { return d });
     // in case spans are nested, only add button to this one
     d3.event.stopPropagation();
   };
 }
 
-function makeMouseOutHandler(buttonClass) {
-  return function (d) {
-    var overButton = false;
-    var mouseCoords = d3.mouse(jQuery("#svgLayer")[0]);
-    var button = htmlLayer.selectAll(".rangeMenu")
-      .each(function (selected) {
-        var $node = jQuery(this);
-        var x1 = $node.offset().left;
-        var x2 = $node.width() + x1;
-        var y1 = $node.offset().top;
-        var y2 = $node.height() + y1;
-        if (overButton || (mouseCoords[0] >= x1 
-          && mouseCoords[0] <= x2  
-          && mouseCoords[1] >= y1  
-          && mouseCoords[1] <= y2)) {
-          overButton = true;
-        }
-      });
-    if (!overButton) {
-      button.remove();
-    }
-  };
+function removeMenu() {
+  // remove menu if mouse isn't still over it
+  var overMenu = false;
+  var mouseCoords = d3.mouse(jQuery("#svgLayer")[0]);
+  var button = htmlLayer.selectAll(".rangeMenu")
+    .each(function (selected) {
+      var $node = jQuery(this);
+      var x1 = $node.offset().left;
+      var x2 = $node.width() + x1;
+      var y1 = $node.offset().top;
+      var y2 = $node.height() + y1;
+      if (overMenu || (mouseCoords[0] >= x1 
+        && mouseCoords[0] <= x2  
+        && mouseCoords[1] >= y1  
+        && mouseCoords[1] <= y2)) {
+        overMenu = true;
+      }
+    });
+  if (!overMenu) {
+    button.remove();
+  } else {
+    console.log("over button");
+  }
 }
 
 function updateArtifacts(artifact) {
@@ -273,7 +274,6 @@ function updateArtifacts(artifact) {
         .attr("width", function (d) { return d.width })
         .attr("height", function (d) { return d.height })
         .on("click", function (d) { 
-          console.log("ker-clicked");
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
           d3.event.stopPropagation();
