@@ -222,14 +222,20 @@ function createMenu(d) {
     .style("top", $span.offset().top+"px")
     .on("mouseout", function (d) {
       removeMenu();
-    }).on("click", function (d) { 
-      controllerScope.removeRange(rangeId);
-      htmlLayer.selectAll(".rangeMenu")
-        .remove();
     }).selectAll("div")
     .data(menuLabels)
     .enter()
     .append("div")
+    .on("click", function (d) { 
+      if (d === removeLabel) {
+        controllerScope.removeRange(rangeId);
+      } else if (d === connectLabel) {
+        controllerScope.updateSelection(rangeId, false);
+        controllerScope.makeConnection();
+      }
+      htmlLayer.selectAll(".rangeMenu")
+        .remove();
+    })
     .text(function (d) { return d });
   // in case spans are nested, only add button to this one
   d3.event.stopPropagation();

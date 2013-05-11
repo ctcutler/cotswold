@@ -167,6 +167,10 @@ function EditorController($scope, storage, render) {
 
   $scope.previousSelection = null;
   $scope.updateSelection = function(rangeIdToSelect, clearPrevious) {
+    if ($scope.previousSelection === rangeIdToSelect) {
+      return;
+    }
+
     var newlySelected = null;
     if (clearPrevious == null) clearPrevious = !$scope.shiftDown;
     for (var i=0; i<$scope.timepoints.length; i++) {
