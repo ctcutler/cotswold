@@ -108,11 +108,8 @@ function recursiveSpans(sel) {
         .call(recursiveSpans)
         .filter(function (d) { return "id" in d; })
         .attr("id", function (d) { return d.id })
-        .on("mouseover", 
-          makeMouseOverHandler(
-            function (rangeId) { controllerScope.removeRange(rangeId) }
-          )
-        ).on("mouseout", removeMenu)
+        .on("mouseover", createMenu)
+        .on("mouseout", removeMenu)
         .on("click", function (d) {
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
@@ -199,28 +196,26 @@ function makeDragBehavior(artifact, img) {
     });
 }
 
-function makeMouseOverHandler(clickHandler) {
-  return function (d) {
-    var $span = jQuery("#"+d.id);
-    var rangeId = d.id;
-    htmlLayer.append("div")
-      .attr("class", "rangeMenu")
-      .style("left", $span.offset().left + $span.outerWidth()+"px")
-      .style("top", $span.offset().top+"px")
-      .on("mouseout", function (d) {
-        removeMenu();
-      }).on("click", function (d) { 
-        clickHandler(rangeId);
-        htmlLayer.selectAll(".rangeMenu")
-          .remove();
-      }).selectAll("div")
-      .data(["Remove", "Connect"])
-      .enter()
-      .append("div")
-      .text(function (d) { return d });
-    // in case spans are nested, only add button to this one
-    d3.event.stopPropagation();
-  };
+function createMenu(d) {
+  var $span = jQuery("#"+d.id);
+  var rangeId = d.id;
+  htmlLayer.append("div")
+    .attr("class", "rangeMenu")
+    .style("left", $span.offset().left + $span.outerWidth()+"px")
+    .style("top", $span.offset().top+"px")
+    .on("mouseout", function (d) {
+      removeMenu();
+    }).on("click", function (d) { 
+      controllerScope.removeRange(rangeId);
+      htmlLayer.selectAll(".rangeMenu")
+        .remove();
+    }).selectAll("div")
+    .data(["Remove", "Connect"])
+    .enter()
+    .append("div")
+    .text(function (d) { return d });
+  // in case spans are nested, only add button to this one
+  d3.event.stopPropagation();
 }
 
 function removeMenu() {
