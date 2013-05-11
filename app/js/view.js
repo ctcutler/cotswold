@@ -199,6 +199,23 @@ function makeDragBehavior(artifact, img) {
 function createMenu(d) {
   var $span = jQuery("#"+d.id);
   var rangeId = d.id;
+  var removeLabel = "Remove";
+  var connectLabel = "Connect";
+  var menuLabels = [];
+
+  if (controllerScope.rangeIsConnectable(d.id)) {
+    menuLabels.push(connectLabel);
+  }
+
+  if (!controllerScope.rangeIsConnected(d.id)) {
+    menuLabels.push(removeLabel);
+  }
+
+  if (menuLabels.length == 0) {
+    // no point making an empty menu
+    return;
+  }
+  
   htmlLayer.append("div")
     .attr("class", "rangeMenu")
     .style("left", $span.offset().left + $span.outerWidth()+"px")
@@ -210,7 +227,7 @@ function createMenu(d) {
       htmlLayer.selectAll(".rangeMenu")
         .remove();
     }).selectAll("div")
-    .data(["Remove", "Connect"])
+    .data(menuLabels)
     .enter()
     .append("div")
     .text(function (d) { return d });

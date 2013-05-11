@@ -134,17 +134,7 @@ function EditorController($scope, storage, render) {
           for (var k=0; k<artifact.ranges.length; k++) {
             var range = artifact.ranges[k];
             if (range === selectedRange) {
-
-              var rangeIsConnected = false;
-              for (var l=0; l<$scope.connections.length; l++) {
-                var connection = $scope.connections[l];
-                if (connection.indexOf(range.id) != -1) {
-                  rangeIsConnected = true;
-                  break;
-                }
-              }
-
-              if (rangeIsConnected) {
+              if ($scope.rangeIsConnected(range.id)) {
                 console.log("Range "+rangeId+" is connected: refusing to remove")
               } else {
                 artifact.ranges.splice(k, 1);
@@ -157,6 +147,16 @@ function EditorController($scope, storage, render) {
         }
       }
     }
+  };
+
+  $scope.rangeIsConnected = function(rangeId) {
+    for (var l=0; l<$scope.connections.length; l++) {
+      var connection = $scope.connections[l];
+      if (connection.indexOf(rangeId) != -1) {
+        return true;
+      }
+    }
+    return false;
   };
 
   $scope.dumpSpanTree = function() {
@@ -217,20 +217,52 @@ function EditorController($scope, storage, render) {
     }
   };
 
+  $scope.rangeIsConnectable = function(rangeId) {
+    var selectedRanges = $scope.getSelectedRanges();
+    var thisSelectedRange = null;
+    var otherSelectedRange = null;
+
+    // there must be one or two ranges selected
+    if (selectedRanges.length > 2 
+      || selectedRanges.length === 0) {
+      return false;
+    }
+
+    // if there are two selected, one must match rangeId
+    // and they must not be connected
+    if (selectedRanges.length === 2
+      && ((selectedRanges[0].id !== rangeId && selectedRanges[1].id !== rangeId)
+        || $scope.rangesAreConnected(selectedRanges[0].id, selectedRanges[1].id))) {
+      return false;
+    }
+ 
+    // if there is one selected, it must not match rangeId
+    if (selectedRanges.length === 1
+      && (selectedRanges[0].id === rangeId
+        || $scope.rangesAreConnected(selectedRanges[0].id, rangeId))) {
+      return false;
+    }
+
+    return true;
+  }
+
+  $scope.rangesAreConnected = function (rangeId1, rangeId2) {
+    for (var i=0; i<$scope.connections.length; i++) {
+      var connection = $scope.connections[i];
+      if (connection.indexOf(rangeId1) != -1 && connection.indexOf(rangeId2) != -1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   $scope.makeConnection = function() {
     var selectedRanges = $scope.getSelectedRanges();
     if (selectedRanges.length === 2) {
       var r1 = selectedRanges[0];
       var r2 = selectedRanges[1];
-      var foundDup = false;
-      for (var i=0; i<$scope.connections.length; i++) {
-        var connection = $scope.connections[i];
-        if (connection.indexOf(r1.id) != -1 && connection.indexOf(r2.id) != -1) {
-          foundDup = true;
-        }
-      }
       
-      if (foundDup) {
+      if ($scope.rangesAreConnected(r1.id, r2.id)) {
         console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create connection");
       } else {
         $scope.connections.push([r1.id, r2.id]);

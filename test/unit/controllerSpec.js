@@ -191,7 +191,6 @@ describe("The EditorController", function() {
     });
   });
 
-
   describe("connection logic", function() {
     it("should connect the two selected ranges.", function() {
       scope.updateSelection("range1", true);
@@ -206,6 +205,54 @@ describe("The EditorController", function() {
       expect(scope.connections.length).toBe(1);
       expect(scope.connections[0]).toContain("range1");
       expect(scope.connections[0]).toContain("range2");
+    });
+
+    it("should check if a range is connected", function() {
+      expect(scope.rangeIsConnected("range1")).toBe(false);
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
+      scope.makeConnection();
+      expect(scope.rangeIsConnected("range1")).toBe(true);
+    });
+
+    it("should check if a range is connectable when there is one selection", function() {
+      scope.updateSelection("range1", true);
+      expect(scope.rangeIsConnectable("range1")).toBe(false);
+      expect(scope.rangeIsConnectable("range2")).toBe(true);
+
+      scope.updateSelection("range2", false);
+      scope.makeConnection();
+
+      scope.updateSelection("range1", true);
+      expect(scope.rangeIsConnectable("range2")).toBe(false);
+    });
+
+    it("should check if a range is connectable when there are two selections", function() {
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
+      scope.updateSelection("range3", false);
+
+      // 2 and 3 are selected
+      expect(scope.rangeIsConnectable("range1")).toBe(false);
+      expect(scope.rangeIsConnectable("range2")).toBe(true);
+      expect(scope.rangeIsConnectable("range3")).toBe(true);
+
+      // connect 2 and 3
+      scope.makeConnection();
+      expect(scope.rangeIsConnectable("range2")).toBe(false);
+      expect(scope.rangeIsConnectable("range3")).toBe(false);
+    });
+
+    it("should check if two ranges are connected", function() {
+      // select 1 and 2 
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
+
+      // connect 1 and 2 
+      scope.makeConnection();
+
+      expect(scope.rangesAreConnected("range1", "range2")).toBe(true);
+      expect(scope.rangesAreConnected("range2", "range3")).toBe(false);
     });
 
     it("should remove a connection", function() {
