@@ -197,11 +197,11 @@ function makeDragBehavior(artifact, img) {
 }
 
 function createMenu(d) {
-  var $span = jQuery("#"+d.id);
   var rangeId = d.id;
   var removeLabel = "Remove";
   var connectLabel = "Connect";
   var menuLabels = [];
+  var boundingBox = makeBox(d.id);
 
   if (controllerScope.rangeIsConnectable(d.id)) {
     menuLabels.push(connectLabel);
@@ -218,8 +218,8 @@ function createMenu(d) {
   
   htmlLayer.append("div")
     .attr("class", "rangeMenu")
-    .style("left", $span.offset().left + $span.outerWidth()+"px")
-    .style("top", $span.offset().top+"px")
+    .style("left", boundingBox.x + boundingBox.width+"px")
+    .style("top", boundingBox.y+"px")
     .on("mouseout", function (d) {
       removeMenu();
     }).selectAll("div")
@@ -291,6 +291,8 @@ function updateArtifacts(artifact) {
         .attr("y", function (d) { return d.top })
         .attr("width", function (d) { return d.width })
         .attr("height", function (d) { return d.height })
+        .on("mouseover", createMenu)
+        .on("mouseout", removeMenu)
         .on("click", function (d) { 
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
