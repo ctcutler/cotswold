@@ -344,14 +344,15 @@ function makeBox(id) {
 function makeConnectionCoords(connections) {
   var connectionCoords = [];
   for (var i=0; i<connections.length; i++) {
-    var leftBox = makeBox(connections[i][0]);
-    var rightBox = makeBox(connections[i][1]);
+    var leftBox = makeBox(connections[i].rangeIds[0]);
+    var rightBox = makeBox(connections[i].rangeIds[1]);
     var best = getBestConnection(leftBox, rightBox);
     connectionCoords.push({
       x1: best[0].x,
       y1: best[0].y,
       x2: best[1].x,
       y2: best[1].y,
+      connection: connections[i],
     });
   }
   return connectionCoords;
@@ -398,12 +399,15 @@ function render(scope) {
   line.enter()
     .append("line")
     .attr("class", "connection")
-    .attr("stroke", "green")
-    .attr("stroke-width", "1")
-    .attr("x1", function (d) { return d.x1 })
+    .attr("stroke-width", 3)
+    .on("click", function (d) {
+      console.log("clicked");
+      controllerScope.selectConnection(d.connection.id);
+    }).attr("x1", function (d) { return d.x1 })
     .attr("y1", function (d) { return d.y1 })
     .attr("x2", function (d) { return d.x2 })
     .attr("y2", function (d) { return d.y2 });
+  line.attr("stroke", function (d) { return d.connection.selected ? "orange": "green"});
   line.exit()
     .remove();
 }

@@ -67,7 +67,7 @@ describe("The EditorController", function() {
       controller = new EditorController(scope, storage, reload);
   });
 
-  describe("range logic", function() {
+  describe("range selection logic", function() {
     it("should select a single range and clear the others", function() {
       scope.updateSelection("range1", true);
       expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(true);
@@ -136,7 +136,7 @@ describe("The EditorController", function() {
       expect(ranges).toContain(scope.timepoints[0].artifacts[1].ranges[0]);
     });
 
-    describe("connection logic", function() {
+    describe("range logic", function() {
       it("should create a text range", function() {
         // FIXME: refactor makeRange method to make it testable here
         // (inject rangy object?. . . or just separate rangy interaction
@@ -197,20 +197,43 @@ describe("The EditorController", function() {
     });
   });
 
+  describe("connection selection logic", function() {
+    it("should select a connection.", function() {
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
+      scope.makeConnection();
+      scope.selectConnection(scope.connections[0].id);
+      expect(scope.connections[0].selected).toBe(true);
+    });
+
+    it("should select at most one connection.", function() {
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
+      scope.makeConnection();
+      scope.updateSelection("range3", false);
+      scope.makeConnection();
+      scope.selectConnection(scope.connections[0].id);
+      expect(scope.connections[0].selected).toBe(true);
+      scope.selectConnection(scope.connections[1].id);
+      expect(scope.connections[0].selected).toBe(false);
+      expect(scope.connections[1].selected).toBe(true);
+    });
+  });
+
   describe("connection logic", function() {
     it("should connect the two selected ranges.", function() {
       scope.updateSelection("range1", true);
       scope.updateSelection("range2", false);
       scope.makeConnection();
       expect(scope.connections.length).toBe(1);
-      expect(scope.connections[0]).toContain("range1");
-      expect(scope.connections[0]).toContain("range2");
+      expect(scope.connections[0].rangeIds).toContain("range1");
+      expect(scope.connections[0].rangeIds).toContain("range2");
 
       // confirm that it won't create duplicate
       scope.makeConnection();
       expect(scope.connections.length).toBe(1);
-      expect(scope.connections[0]).toContain("range1");
-      expect(scope.connections[0]).toContain("range2");
+      expect(scope.connections[0].rangeIds).toContain("range1");
+      expect(scope.connections[0].rangeIds).toContain("range2");
     });
 
     it("should check if a range is connected", function() {

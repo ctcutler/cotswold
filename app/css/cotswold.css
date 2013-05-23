@@ -62,6 +62,11 @@ rect.imageBox {
   pointer-events: auto;
 }
 
+line.connection {
+  pointer-events: auto;
+}
+
+
 rect.imageBoxSelected {
   fill: #0f0;
 }

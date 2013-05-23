@@ -152,7 +152,7 @@ function EditorController($scope, storage, render) {
   $scope.rangeIsConnected = function(rangeId) {
     for (var l=0; l<$scope.connections.length; l++) {
       var connection = $scope.connections[l];
-      if (connection.indexOf(rangeId) != -1) {
+      if (connection.rangeIds.indexOf(rangeId) != -1) {
         return true;
       }
     }
@@ -253,7 +253,7 @@ function EditorController($scope, storage, render) {
   $scope.rangesAreConnected = function (rangeId1, rangeId2) {
     for (var i=0; i<$scope.connections.length; i++) {
       var connection = $scope.connections[i];
-      if (connection.indexOf(rangeId1) != -1 && connection.indexOf(rangeId2) != -1) {
+      if (connection.rangeIds.indexOf(rangeId1) != -1 && connection.rangeIds.indexOf(rangeId2) != -1) {
         return true;
       }
     }
@@ -269,7 +269,7 @@ function EditorController($scope, storage, render) {
       if ($scope.rangesAreConnected(r1.id, r2.id)) {
         console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create connection");
       } else {
-        $scope.connections.push([r1.id, r2.id]);
+        $scope.connections.push({ rangeIds: [r1.id, r2.id], selected: false, id: r1.id+"-"+r2.id});
         $scope.reloadView();
       }
     } else {
@@ -282,8 +282,8 @@ function EditorController($scope, storage, render) {
     if (selectedRanges.length === 2) {
       for (var i=0; i<$scope.connections.length; i++) {
         var connection = $scope.connections[i];
-        if (connection.indexOf(selectedRanges[0].id) !== -1 
-          && connection.indexOf(selectedRanges[1].id) !== -1) {
+        if (connection.rangeIds.indexOf(selectedRanges[0].id) !== -1 
+          && connection.rangeIds.indexOf(selectedRanges[1].id) !== -1) {
           $scope.connections.splice(i, 1);
           $scope.reloadView();
           break;
@@ -293,6 +293,14 @@ function EditorController($scope, storage, render) {
       console.log(selectedRanges.length + " range(s) selected: refusing to remove connection.");
     }
   };
+
+  $scope.selectConnection = function (connectionId) {
+    for (var i=0; i<$scope.connections.length; i++) {
+      var connection = $scope.connections[i];
+      connection.selected = (connection.id === connectionId)
+    }
+    $scope.reloadView();
+  }
 
   $scope.getArtifactById = function (artifactId) {
     for (var i=0; i<$scope.timepoints.length; i++) {
