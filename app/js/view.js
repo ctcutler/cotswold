@@ -395,7 +395,12 @@ function render(scope) {
     .remove();
 
   var line = svg.selectAll(".connection")
-    .data(makeConnectionCoords(controllerScope.connections));
+    .data(
+      makeConnectionCoords(controllerScope.connections), 
+      function(d) {
+        return d.connection.id;
+      }
+    );
   line.enter()
     .append("line")
     .attr("class", "connection")
@@ -403,11 +408,18 @@ function render(scope) {
     .on("click", function (d) {
       console.log("clicked");
       controllerScope.selectConnection(d.connection.id);
-    }).attr("x1", function (d) { return d.x1 })
+    })
+    .attr("x1", function (d) { return d.x1 })
+    .attr("y1", function (d) { return d.y1 })
+    .attr("x2", function (d) { return d.x1 })
+    .attr("y2", function (d) { return d.y1 });
+  line.transition()
+    .duration(500)
+    .attr("x1", function (d) { return d.x1 })
     .attr("y1", function (d) { return d.y1 })
     .attr("x2", function (d) { return d.x2 })
-    .attr("y2", function (d) { return d.y2 });
-  line.attr("stroke", function (d) { return d.connection.selected ? "orange": "green"});
+    .attr("y2", function (d) { return d.y2 })
+    .attr("stroke", function (d) { return d.connection.selected ? "orange": "green"});
   line.exit()
     .remove();
 }
