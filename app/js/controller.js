@@ -219,6 +219,11 @@ function EditorController($scope, storage, render) {
     for (var i=0; i<selectedRanges.length; i++) {
       selectedRanges[i].selected = false;
     }
+    for (var i=0; i<$scope.connections.length; i++) {
+      var connection = $scope.connections[i];
+      connection.selected = false;
+    }
+    $scope.reloadAllNodes();
   };
 
   $scope.rangeIsConnectable = function(rangeId) {
@@ -297,7 +302,7 @@ function EditorController($scope, storage, render) {
   $scope.selectConnection = function (connectionId) {
     for (var i=0; i<$scope.connections.length; i++) {
       var connection = $scope.connections[i];
-      connection.selected = (connection.id === connectionId)
+      connection.selected = (connection.id === connectionId);
     }
     $scope.reloadView();
   }

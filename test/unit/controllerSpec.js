@@ -218,6 +218,17 @@ describe("The EditorController", function() {
       expect(scope.connections[0].selected).toBe(false);
       expect(scope.connections[1].selected).toBe(true);
     });
+
+    it("should clear all connection selections.", function() {
+      scope.updateSelection("range1", true);
+      scope.updateSelection("range2", false);
+      scope.makeConnection();
+      scope.updateSelection("range3", false);
+      scope.makeConnection();
+      scope.clearAllSelections();
+      expect(scope.connections[0].selected).toBe(false);
+      expect(scope.connections[1].selected).toBe(false);
+    });
   });
 
   describe("connection logic", function() {

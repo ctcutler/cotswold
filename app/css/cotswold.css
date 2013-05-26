@@ -41,10 +41,11 @@
   overflow: hidden;
 }
 
-.rangeMenu {
+.popUp {
   position: absolute;
   background-color: #00FF00;
 }
+
 
 .timepoint {
   float: left;
