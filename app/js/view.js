@@ -230,7 +230,7 @@ function createPopUp(d) {
   }
   */
 
-  htmlLayer.append("div")
+  popUpLayer.append("div")
     .attr("class", "popUp")
     .style("left", getPopUpLeft(d))
     .style("top", getPopUpTop(d))
@@ -245,7 +245,7 @@ function createPopUp(d) {
 }
 
 function removePopUp() {
-  htmlLayer.selectAll(".popUp").remove();
+  popUpLayer.selectAll(".popUp").remove();
 }
 
 function updateArtifacts(artifact) {
@@ -342,6 +342,7 @@ function addConnectionCoords(connections) {
 var controllerScope;
 var svg;
 var htmlLayer;
+var popUpLayer;
 
 function render(scope) {
   if (scope) {
@@ -357,6 +358,8 @@ function render(scope) {
   svg = d3.select("#mainSvg")
     .attr("width", htmlLayer.style("width"))
     .attr("height", htmlLayer.style("height"));
+
+  popUpLayer = d3.select("#popUpLayer")
 
   var timepoints = htmlLayer.selectAll(".timepoint")
     .data(controllerScope.timepoints);

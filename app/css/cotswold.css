@@ -44,6 +44,7 @@
 .popUp {
   position: absolute;
   background-color: #00FF00;
+  pointer-events: auto;
 }
 
 
@@ -53,6 +54,13 @@
 }
 
 #svgLayer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+}
+
+#popUpLayer {
   position: absolute;
   top: 0px;
   left: 0px;
