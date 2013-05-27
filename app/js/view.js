@@ -110,6 +110,7 @@ function recursiveSpans(sel) {
         .attr("id", function (d) { return d.id })
         .on("click", function (d) {
           createPopUp(d);
+          controllerScope.clearAllSelectedConnections(true);
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
           // in case spans are nested, only select this one
@@ -396,6 +397,7 @@ function render(scope) {
     .attr("id", function (d) { return d.id })
     .on("click", function (d) {
       createPopUp(d);
+      controllerScope.clearAllSelectedRanges(true);
       controllerScope.selectConnection(d.id);
     })
     .attr("x1", function (d) { return d.coords.x1 })

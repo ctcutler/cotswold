@@ -167,10 +167,6 @@ function EditorController($scope, storage, render) {
 
   $scope.previousSelection = null;
   $scope.updateSelection = function(rangeIdToSelect, clearPrevious) {
-    if ($scope.previousSelection === rangeIdToSelect) {
-      return;
-    }
-
     var newlySelected = null;
     if (clearPrevious == null) clearPrevious = !$scope.shiftDown;
     for (var i=0; i<$scope.timepoints.length; i++) {
@@ -214,15 +210,27 @@ function EditorController($scope, storage, render) {
     return selectedRanges;
   };
  
-  $scope.clearAllSelections = function() {
-    var selectedRanges = $scope.getSelectedRanges();
-    for (var i=0; i<selectedRanges.length; i++) {
-      selectedRanges[i].selected = false;
-    }
+  $scope.clearAllSelectedConnections = function(reload) {
     for (var i=0; i<$scope.connections.length; i++) {
       var connection = $scope.connections[i];
       connection.selected = false;
     }
+    if (reload)
+      $scope.reloadAllNodes();
+  };
+
+  $scope.clearAllSelectedRanges = function(reload) {
+    var selectedRanges = $scope.getSelectedRanges();
+    for (var i=0; i<selectedRanges.length; i++) {
+      selectedRanges[i].selected = false;
+    }
+    if (reload)
+      $scope.reloadAllNodes();
+  };
+
+  $scope.clearAllSelections = function() {
+    $scope.clearAllSelectedRanges(false);
+    $scope.clearAllSelectedConnections(false);
     $scope.reloadAllNodes();
   };
 

@@ -115,12 +115,6 @@ describe("The EditorController", function() {
       expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(false);
       expect(scope.timepoints[0].artifacts[1].ranges[0].selected).toBe(true);
       expect(scope.timepoints[0].artifacts[2].ranges[0].selected).toBe(true);
-
-      // should be repeatable
-      scope.updateSelection("range3", false);
-      expect(scope.timepoints[0].artifacts[0].ranges[0].selected).toBe(false);
-      expect(scope.timepoints[0].artifacts[1].ranges[0].selected).toBe(true);
-      expect(scope.timepoints[0].artifacts[2].ranges[0].selected).toBe(true);
     });
 
     it("should return all selected ranges", function() {
