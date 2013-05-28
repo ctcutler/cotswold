@@ -337,6 +337,10 @@ describe("The EditorController", function() {
       expect(scope.connections.length).toBe(2);
       scope.removeConnection();
       expect(scope.connections.length).toBe(2);
+
+      // remove connection by id
+      scope.removeConnection(scope.connections[0].id);
+      expect(scope.connections.length).toBe(1);
     });
   });
 

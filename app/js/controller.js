@@ -210,6 +210,16 @@ function EditorController($scope, storage, render) {
     return selectedRanges;
   };
  
+  $scope.rangeIsSelected = function(rangeId) {
+    var selectedRanges = $scope.getSelectedRanges();
+    for (var i=0; i<selectedRanges; i++) {
+      var selectedRange = selectedRanges[i];
+      if (selectedRange.id === rangeId) {
+        return true;
+      }
+    }
+    return false;
+  };
   $scope.clearAllSelectedConnections = function(reload) {
     for (var i=0; i<$scope.connections.length; i++) {
       var connection = $scope.connections[i];
@@ -290,12 +300,20 @@ function EditorController($scope, storage, render) {
     }
   };
 
-  $scope.removeConnection = function () {
+  $scope.removeConnection = function (connectionId) {
     var selectedRanges = $scope.getSelectedRanges();
-    if (selectedRanges.length === 2) {
+    if (selectedRanges.length === 2 || connectionId) {
       for (var i=0; i<$scope.connections.length; i++) {
         var connection = $scope.connections[i];
-        if (connection.rangeIds.indexOf(selectedRanges[0].id) !== -1 
+        if (connectionId) {
+          // if connectionId set, don't delete connection
+          // between selected ranges even if it exists
+          if (connectionId === connection.id) {
+            $scope.connections.splice(i, 1);
+            $scope.reloadView();
+            break;
+          }
+        } else if (connection.rangeIds.indexOf(selectedRanges[0].id) !== -1 
           && connection.rangeIds.indexOf(selectedRanges[1].id) !== -1) {
           $scope.connections.splice(i, 1);
           $scope.reloadView();

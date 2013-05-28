@@ -109,9 +109,9 @@ function recursiveSpans(sel) {
         .filter(function (d) { return "id" in d; })
         .attr("id", function (d) { return d.id })
         .on("click", function (d) {
-          createPopUp(d);
           controllerScope.clearAllSelectedConnections(true);
           controllerScope.updateSelection(d.id);
+          createRangePopUp(d);
           rangy.getSelection().removeAllRanges();
           // in case spans are nested, only select this one
           d3.event.stopPropagation();
@@ -215,13 +215,12 @@ function getPopUpTop(d) {
     : boundingBox.y+"px"
 }
 
-function createPopUp(d) {
-  var menuLabels = ["Foo", "Bar"];
-  removePopUp();
-
-  /*
-  FIXME: add logic (perhaps list of divs that gets passed in here?)
-  to provide contents of the popup, not "Foo", "Bar"
+function createRangePopUp(d) {
+  var popUp = createPopUp(d);
+  var rangeId = d.id;
+  var menuLabels = [];
+  var removeLabel = "Remove";
+  var connectLabel = "Connect";
 
   if (controllerScope.rangeIsConnectable(d.id)) {
     menuLabels.push(connectLabel);
@@ -229,20 +228,54 @@ function createPopUp(d) {
   if (!controllerScope.rangeIsConnected(d.id)) {
     menuLabels.push(removeLabel);
   }
-  */
 
-  popUpLayer.append("div")
-    .attr("class", "popUp")
-    .style("left", getPopUpLeft(d))
-    .style("top", getPopUpTop(d))
+  popUp
     .selectAll("div")
     .data(menuLabels)
     .enter()
     .append("div")
-    .text(function (d) { return d });
+    .text(function (d) { return d })
+    .on("click", function (d) { 
+      if (d === removeLabel) {
+        controllerScope.removeRange(rangeId);
+      } else if (d === connectLabel) {
+        // FIXME: new click-based range selection 
+        // makes it impossible to actually connect things
+        if (!controllerScope.rangeIsSelected(rangeId)) {
+          controllerScope.updateSelection(rangeId, false);
+        }
+        controllerScope.makeConnection();
+      }
+      removePopUp();
+    });
+}
 
-  // in case spans are nested, only add button to this one
+function createConnectionPopUp(d) {
+  var popUp = createPopUp(d);
+  var connectionId = d.id;
+  popUp
+    .selectAll("div")
+    .data(["Remove"])
+    .enter()
+    .append("div")
+    .text(function (d) { return d })
+    .on("click", function (d) { 
+      controllerScope.removeConnection(connectionId);
+      removePopUp();
+    });
+}
+
+function createPopUp(d) {
+  // in case something's nested, only create one popup
   d3.event.stopPropagation();
+
+  removePopUp();
+
+  return popUpLayer.append("div")
+    .attr("class", "popUp")
+    .style("left", getPopUpLeft(d))
+    .style("top", getPopUpTop(d));
+
 }
 
 function removePopUp() {
@@ -275,8 +308,8 @@ function updateArtifacts(artifact) {
         .attr("width", function (d) { return d.width })
         .attr("height", function (d) { return d.height })
         .on("click", function (d) {
-          createPopUp(d);
           controllerScope.updateSelection(d.id);
+          createRangePopUp(d);
           rangy.getSelection().removeAllRanges();
           d3.event.stopPropagation();
         });
@@ -352,6 +385,8 @@ function render(scope) {
 
   htmlLayer = d3.select("#htmlLayer")
     .on("click", function(d) {
+      // FIXME: can't seem to select text, think it 
+      // might have something to do with this
       removePopUp();
       controllerScope.clearAllSelections();
     });
@@ -396,7 +431,7 @@ function render(scope) {
     .attr("stroke-width", 3)
     .attr("id", function (d) { return d.id })
     .on("click", function (d) {
-      createPopUp(d);
+      createConnectionPopUp(d);
       controllerScope.clearAllSelectedRanges(true);
       controllerScope.selectConnection(d.id);
     })
