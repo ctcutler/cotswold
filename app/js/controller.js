@@ -11,8 +11,16 @@ function EditorController($scope, storage, render) {
     var files = e.target.files; // FileList object
 
     for (var i = 0, f; f = files[i]; i++) {
-      // FIXME: load as artifacts instead
-      alert(f.size);
+      var reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+          jQuery("#fileContents").text(e.target.result);
+        };
+      })(f);
+
+      // Read in the image file as a data URL.
+      reader.readAsText(f);
     }
   });
 
