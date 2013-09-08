@@ -2,20 +2,19 @@
 
 function EditorController($scope, storage, render) {
 
-  var timepoints = JSON.parse(storage["timepoints"]);
-
-  $scope.timepoints = timepoints;
-  $scope.expanded = JSON.parse(storage["expanded"]);
-  $scope.connections = JSON.parse(storage["connections"]);
-
-  $scope.reloadView = function () {
-    render($scope);
-  };
-
+  /* event handlers */
   angular.element(window).bind('load', function() {
     $scope.reloadView();
   });
 
+  jQuery('#files').bind('change', function(e) {
+    var files = e.target.files; // FileList object
+
+    for (var i = 0, f; f = files[i]; i++) {
+      // FIXME: load as artifacts instead
+      alert(f.size);
+    }
+  });
 
   jQuery('body').bind('keydown', function(e) {
     if (e.keyCode === 16) {
@@ -34,6 +33,18 @@ function EditorController($scope, storage, render) {
       $scope.shiftDown = false;
     }
   });
+
+  /* scope methods */
+  var timepoints = JSON.parse(storage["timepoints"]);
+
+  $scope.timepoints = timepoints;
+  $scope.expanded = JSON.parse(storage["expanded"]);
+  $scope.connections = JSON.parse(storage["connections"]);
+
+  $scope.reloadView = function () {
+    render($scope);
+  };
+
 
   $scope.reloadArtifactNodes = function(artifact, reloadView) {
     artifact.nodes = makeSpanTree(artifact.ranges, artifact.content).nodes;

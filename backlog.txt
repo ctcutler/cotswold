@@ -1,0 +1,7 @@
+* import artifacts
+* save artifacts
+* find differences between artifacts
+* style the whole thing
+* line opacity (selected line is opaque. . . different colors are not necessary)
+* label/color different kinds of connections and ranges
+* annotations for connections and ranges
