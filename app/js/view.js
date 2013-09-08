@@ -111,7 +111,6 @@ function recursiveSpans(sel) {
         .on("click", function (d) {
           controllerScope.clearAllSelectedConnections(true);
           controllerScope.updateSelection(d.id);
-          createRangePopUp(d);
           rangy.getSelection().removeAllRanges();
           // in case spans are nested, only select this one
           d3.event.stopPropagation();
@@ -196,92 +195,6 @@ function makeDragBehavior(artifact, img) {
     });
 }
 
-function getPopUpLeft(d) {
-  var node = document.getElementById(d.id);
-  var boundingBox = makeBox(d.id);
-
-  return node.nodeName === "line" 
-    ? (boundingBox.x + (boundingBox.width/2))+"px"
-    : boundingBox.x + boundingBox.width+"px";
-}
-
-function getPopUpTop(d) {
-  var node = document.getElementById(d.id);
-  var boundingBox = makeBox(d.id);
-  var rv = (boundingBox.y + (boundingBox.height/2))+"px"
-
-  return node.nodeName === "line" 
-    ? (boundingBox.y + (boundingBox.height/2))+"px"
-    : boundingBox.y+"px"
-}
-
-function createRangePopUp(d) {
-  var popUp = createPopUp(d);
-  var rangeId = d.id;
-  var menuLabels = [];
-  var removeLabel = "Remove";
-  var connectLabel = "Connect";
-
-  if (controllerScope.rangeIsConnectable(d.id)) {
-    menuLabels.push(connectLabel);
-  }
-  if (!controllerScope.rangeIsConnected(d.id)) {
-    menuLabels.push(removeLabel);
-  }
-
-  popUp
-    .selectAll("div")
-    .data(menuLabels)
-    .enter()
-    .append("div")
-    .text(function (d) { return d })
-    .on("click", function (d) { 
-      if (d === removeLabel) {
-        controllerScope.removeRange(rangeId);
-      } else if (d === connectLabel) {
-        // FIXME: new click-based range selection 
-        // makes it impossible to actually connect things
-        if (!controllerScope.rangeIsSelected(rangeId)) {
-          controllerScope.updateSelection(rangeId, false);
-        }
-        controllerScope.makeConnection();
-      }
-      removePopUp();
-    });
-}
-
-function createConnectionPopUp(d) {
-  var popUp = createPopUp(d);
-  var connectionId = d.id;
-  popUp
-    .selectAll("div")
-    .data(["Remove"])
-    .enter()
-    .append("div")
-    .text(function (d) { return d })
-    .on("click", function (d) { 
-      controllerScope.removeConnection(connectionId);
-      removePopUp();
-    });
-}
-
-function createPopUp(d) {
-  // in case something's nested, only create one popup
-  d3.event.stopPropagation();
-
-  removePopUp();
-
-  return popUpLayer.append("div")
-    .attr("class", "popUp")
-    .style("left", getPopUpLeft(d))
-    .style("top", getPopUpTop(d));
-
-}
-
-function removePopUp() {
-  popUpLayer.selectAll(".popUp").remove();
-}
-
 function updateArtifacts(artifact) {
   artifact.each(function (artifact) { 
     // differentiate between images and text
@@ -309,7 +222,6 @@ function updateArtifacts(artifact) {
         .attr("height", function (d) { return d.height })
         .on("click", function (d) {
           controllerScope.updateSelection(d.id);
-          createRangePopUp(d);
           rangy.getSelection().removeAllRanges();
           d3.event.stopPropagation();
         });
@@ -383,13 +295,7 @@ function render(scope) {
     controllerScope = scope;
   }
 
-  htmlLayer = d3.select("#htmlLayer")
-    .on("click", function(d) {
-      // FIXME: can't seem to select text, think it 
-      // might have something to do with this
-      removePopUp();
-      controllerScope.clearAllSelections();
-    });
+  htmlLayer = d3.select("#htmlLayer");
 
   svg = d3.select("#mainSvg")
     .attr("width", htmlLayer.style("width"))
@@ -431,7 +337,6 @@ function render(scope) {
     .attr("stroke-width", 3)
     .attr("id", function (d) { return d.id })
     .on("click", function (d) {
-      createConnectionPopUp(d);
       controllerScope.clearAllSelectedRanges(true);
       controllerScope.selectConnection(d.id);
     })

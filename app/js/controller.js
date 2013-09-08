@@ -20,6 +20,12 @@ function EditorController($scope, storage, render) {
   jQuery('body').bind('keydown', function(e) {
     if (e.keyCode === 16) {
       $scope.shiftDown = true;
+    } else if (e.keyCode === 82) { // 'r'
+      $scope.makeRange();
+    } else if (e.keyCode === 67) { // 'c'
+      $scope.makeConnection();
+    } else if (e.keyCode === 88) { // 'x'
+      $scope.removeSelected();
     }
   });
 
@@ -112,18 +118,23 @@ function EditorController($scope, storage, render) {
     }
   };
 
-  $scope.removeRange = function (rangeId) {
-    var selectedRange;
-    if (rangeId === undefined) {
-      var selectedRanges = $scope.getSelectedRanges();
-      if (selectedRanges.length === 1) {
-        selectedRange = selectedRanges[0];
-      } else {
-        console.log(selectedRanges.length + " range(s) selected: refusing to remove range.");
-        return;
-      }
+  $scope.removeSelected = function () {
+    var selectedConnection = $scope.getSelectedConnection();
+    if (selectedConnection) {
+      $scope.removeConnection(selectedConnection.id);
     } else {
-      selectedRange = $scope.getRangeById(rangeId);
+      $scope.removeRange();
+    }
+  }
+
+  $scope.removeRange = function () {
+    var selectedRange;
+    var selectedRanges = $scope.getSelectedRanges();
+    if (selectedRanges.length === 1) {
+      selectedRange = selectedRanges[0];
+    } else {
+      console.log(selectedRanges.length + " range(s) selected: refusing to remove range.");
+      return;
     }
     
     for (var i=0; i<$scope.timepoints.length; i++) {
@@ -135,7 +146,7 @@ function EditorController($scope, storage, render) {
             var range = artifact.ranges[k];
             if (range === selectedRange) {
               if ($scope.rangeIsConnected(range.id)) {
-                console.log("Range "+rangeId+" is connected: refusing to remove")
+                console.log("Range "+range.id+" is connected: refusing to remove")
               } else {
                 artifact.ranges.splice(k, 1);
                 $scope.reloadArtifactNodes(artifact);
@@ -190,6 +201,14 @@ function EditorController($scope, storage, render) {
     }
     $scope.previousSelection = newlySelected;
   };
+
+  $scope.getSelectedConnection = function() {
+    for (var i=0; i<$scope.connections.length; i++) {
+      if ($scope.connections[i].selected) 
+        return $scope.connections[i];
+    }
+    return null;
+  }
 
   $scope.getSelectedRanges = function() {
     var selectedRanges = [];
