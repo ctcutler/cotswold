@@ -9,11 +9,11 @@ var hardCodedConnections = [
 ];
 var hardCodedTimepoints = [
   { 
-    id: "1",
+    id: "t1",
     name: "Tuesday Class",
     artifacts: [
       { 
-        id: "aa",
+        id: "a1",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -25,7 +25,7 @@ var hardCodedTimepoints = [
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
       },
       { 
-        id: "ab",
+        id: "a2",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -37,7 +37,7 @@ var hardCodedTimepoints = [
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
       },
       { 
-        id: "ac",
+        id: "a3",
         imageSrc: "img/baa.jpeg",
         ranges: [
           { id: "box1", left: 150, top: 135, width: 40, height: 40, selected: false},
@@ -50,11 +50,11 @@ var hardCodedTimepoints = [
     ]
   },
   { 
-    id: "2",
+    id: "t2",
     name: "Wednesday Feedback",
     artifacts: [
       { 
-        id: "ba",
+        id: "a4",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -68,11 +68,11 @@ var hardCodedTimepoints = [
     ]
   },
   { 
-    id: "3",
+    id: "t3",
     name: "Thursday Class",
     artifacts: [
       { 
-        id: "ca",
+        id: "a5",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -93,7 +93,7 @@ var hardCodedTimepoints = [
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL, 
       },
       { 
-        id: "cb",
+        id: "a6",
         imageDisplay: "none",
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",

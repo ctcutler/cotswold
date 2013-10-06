@@ -307,6 +307,9 @@ function render(scope) {
     .data(controllerScope.timepoints);
   timepoints.enter()
     .append("div")
+    .html(function(d) {
+        return "<b>"+d.name+"</b><p/>";
+      })
     .attr("class", "timepoint");
   timepoints.exit()
     .remove();

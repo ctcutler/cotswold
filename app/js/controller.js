@@ -12,21 +12,36 @@ function EditorController($scope, storage, render) {
 
     for (var i = 0, f; f = files[i]; i++) {
       var reader = new FileReader();
+      var isImage = isImageFile(f.name);
 
       reader.onload = (function(theFile) {
         return function(e) {
-          jQuery("#fileContents").text(e.target.result);
+          var artifact;
+          if (isImage) {
+            artifact = $scope.makeImageArtifact(e.target.result);
+            //jQuery("#uploadedImage").attr("src", e.target.result);
+          } else {
+            artifact = $scope.makeTextArtifact(e.target.result);
+            //jQuery("#fileContents").text(e.target.result);
+          }
+          $scope.timepoints[$scope.timepoints.length-1].artifacts.push(artifact);
+          $scope.reloadAllNodes();
         };
       })(f);
 
-      // Read in the image file as a data URL.
-      reader.readAsText(f);
+      if (isImage) {
+        reader.readAsDataURL(f);
+      } else {
+        reader.readAsText(f);
+      }
     }
   });
 
   jQuery('body').bind('keydown', function(e) {
     if (e.keyCode === 16) {
       $scope.shiftDown = true;
+    } else if (e.keyCode === 84) { // 't'
+      $scope.makeTimepoint();
     } else if (e.keyCode === 82) { // 'r'
       $scope.makeRange();
     } else if (e.keyCode === 67) { // 'c'
@@ -64,8 +79,8 @@ function EditorController($scope, storage, render) {
   }
 
   $scope.reloadAllNodes = function(artifact) {
-    for (var i=0; i<timepoints.length; i++) {
-      var timepoint = timepoints[i];
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
       for (var j=0; j<timepoint.artifacts.length; j++) {
         $scope.reloadArtifactNodes(timepoint.artifacts[j], false);
       }
@@ -96,6 +111,16 @@ function EditorController($scope, storage, render) {
       // need to make sure everything else is unselected
       $scope.updateSelection(newRangeId, true);
     }
+  }
+
+  $scope.makeTimepoint = function () {
+    // for now, just append a new timepoint to the end
+    var nextId = $scope.getNextTimepointId();
+    $scope.timepoints.push({
+      id: nextId, name: "Timepoint "+nextId, artifacts: []
+    });
+
+    $scope.reloadAllNodes();
   }
 
   $scope.makeRange = function () {
@@ -402,6 +427,46 @@ function EditorController($scope, storage, render) {
     return null;
   };
 
+  $scope.getNextArtifactId = function () {
+    var nextId = 1;
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      for (var j=0; j<timepoint.artifacts.length; j++) {
+        var aId = parseInt(timepoint.artifacts[j].id.slice(1), 10);
+        if (nextId < aId) {
+          nextId = aId;
+        }
+      }
+    }
+    return "a"+(nextId+1);
+  };
+
+  $scope.getNextTimepointId = function () {
+    var nextId = 1;
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var tId = parseInt($scope.timepoints[i].id.slice(1), 10);
+      if (nextId < tId) {
+        nextId = tId;
+      }
+    }
+    return "t"+(nextId+1);
+  };
+
+  $scope.makeTextArtifact = function (text) {
+    return { 
+      id: $scope.getNextArtifactId(),
+      imageDisplay: "none",
+      contentDisplay: "block",
+      content: text,
+      ranges: [],
+      width: ARTIFACT_WIDTH_NORMAL,
+      maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
+    };
+  };
+
+  $scope.makeImageArtifact = function (text) {
+  };
+
   $scope.reloadAllNodes();
   
 }
@@ -455,5 +520,18 @@ function stringify(obj) {
       return val;
     }
   );
+}
+
+
+function isImageFile(fileName) {
+  var lcName = fileName.toLowerCase();
+  return endsWith(lcName, ".png") ||
+    endsWith(lcName, ".gif") ||
+    endsWith(lcName, ".jpg") ||
+    endsWith(lcName, ".jpeg");
+}
+
+function endsWith(s, suffix) {
+    return s.indexOf(suffix, s.length - suffix.length) !== -1;
 }
 
