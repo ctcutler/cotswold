@@ -464,7 +464,16 @@ function EditorController($scope, storage, render) {
     };
   };
 
-  $scope.makeImageArtifact = function (text) {
+  $scope.makeImageArtifact = function (imageSrc) {
+    return { 
+      id: $scope.getNextArtifactId(),
+      imageDisplay: "block",
+      contentDisplay: "none",
+      imageSrc: imageSrc,
+      ranges: [],
+      width: ARTIFACT_WIDTH_NORMAL,
+      maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
+    };
   };
 
   $scope.reloadAllNodes();
