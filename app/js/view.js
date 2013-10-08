@@ -211,7 +211,8 @@ function updateArtifacts(artifact) {
       img.call(makeDragBehavior(artifact, img[0]));
 
       var className = "imageBox";
-      var imageBox = svg.selectAll("."+className)
+      var artifactClassName = artifact.id+"ImageBox";
+      var imageBox = svg.selectAll("."+className+"."+artifactClassName)
         .data(makeImageBoxes(this, artifact), function (d) { return d.id; });
       imageBox.enter()
         .append("rect")
@@ -228,7 +229,9 @@ function updateArtifacts(artifact) {
 
       imageBox
         .attr("class", function (d) { 
-          return d.selected ? className + " imageBoxSelected" : className
+          return d.selected 
+            ? className + " " + artifactClassName + " imageBoxSelected" 
+            : className + " " + artifactClassName
         });
 
       imageBox.exit()

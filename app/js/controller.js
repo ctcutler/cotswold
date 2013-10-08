@@ -19,10 +19,8 @@ function EditorController($scope, storage, render) {
           var artifact;
           if (isImage) {
             artifact = $scope.makeImageArtifact(e.target.result);
-            //jQuery("#uploadedImage").attr("src", e.target.result);
           } else {
             artifact = $scope.makeTextArtifact(e.target.result);
-            //jQuery("#fileContents").text(e.target.result);
           }
           $scope.timepoints[$scope.timepoints.length-1].artifacts.push(artifact);
           $scope.reloadAllNodes();
