@@ -62,8 +62,17 @@ function EditorController($scope, storage, render) {
   $scope.expanded = JSON.parse(storage["expanded"]);
   $scope.connections = JSON.parse(storage["connections"]);
 
+  $scope.save = function () {
+    storage["timepoints"] = stringifyWhenSaving($scope.timepoints);
+    storage["expanded"] = stringifyWhenSaving($scope.expanded);
+    storage["connections"] = stringifyWhenSaving($scope.connections);
+  }
+
   $scope.reloadView = function () {
     render($scope);
+    // save whenever we reload on the theory that if we're showing the 
+    // change to the user we should probably remember it
+    $scope.save();
   };
 
 
@@ -509,6 +518,7 @@ function getCaretCharacterOffsetWithin(element, start) {
     }
     return caretOffset;
 }
+
 function stringify(obj) {
   // http://stackoverflow.com/questions/9382167/serializing-object-that-contains-cyclic-object-value
   var seen = []
@@ -525,6 +535,21 @@ function stringify(obj) {
         seen.push(val);
       }
       return val;
+    }
+  );
+}
+
+// ignores keys called "nodes" since these contain cycles and are 
+// ephemeral anyway (used for hierarchical text range handling)
+function stringifyWhenSaving(obj) {
+  return JSON.stringify(
+    obj,
+    function(key, val) {
+      if (key == "nodes") {
+        return undefined;
+      } else {
+        return val;
+      }
     }
   );
 }

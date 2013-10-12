@@ -213,12 +213,17 @@ function updateArtifacts(artifact) {
       var className = "imageBox";
       var artifactClassName = artifact.id+"ImageBox";
       var imageBox = svg.selectAll("."+className+"."+artifactClassName)
-        .data(makeImageBoxes(this, artifact), function (d) { return d.id; });
+        .data(artifact.ranges, function (d) { return d.id; });
+      var boxParent = this;
       imageBox.enter()
         .append("rect")
         .attr("id", function (d) { return d.id })
-        .attr("x", function (d) { return d.left })
-        .attr("y", function (d) { return d.top })
+        .attr("x", function (d) { 
+          return d.left + jQuery(boxParent).offset().left
+        })
+        .attr("y", function (d) { 
+          return d.top + jQuery(boxParent).offset().top
+        })
         .attr("width", function (d) { return d.width })
         .attr("height", function (d) { return d.height })
         .on("click", function (d) {
@@ -240,18 +245,6 @@ function updateArtifacts(artifact) {
       d3.select(this).call(recursiveSpans);
     }
   });
-}
-
-function makeImageBoxes(node, artifact) {
-  var artifactOffset = jQuery(node).offset();
-  var imageBoxes = [];
-  for (var i=0; i < artifact.ranges.length; i++) {
-    var range = artifact.ranges[i];
-    range.left += artifactOffset.left;
-    range.top += artifactOffset.top;
-    imageBoxes.push(range);
-  }
-  return imageBoxes;
 }
 
 function makeBox(id) {
