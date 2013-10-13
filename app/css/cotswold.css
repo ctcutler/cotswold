@@ -1,6 +1,15 @@
+.detailBox {
+  position: absolute;
+  background-color: #00FF00;
+}
+
 .highlighted {
   background-color: #ff0;
   border: 1px solid #ff0;
+}
+
+.hidden {
+  display: none;
 }
 
 .red {

@@ -281,6 +281,23 @@ function addConnectionCoords(connections) {
   return connections;
 }
 
+function getMidpoint(a, b) {
+  if (a > b) {
+    return ((a - b)/2)+b;
+  } else {
+    return ((b - a)/2)+a;
+  }
+}
+
+function makeDetailBoxStyle(d) {
+  var coords = d.coords;
+  return "left: "
+    + getMidpoint(coords.x1, coords.x2)
+    + "px; top: "
+    + getMidpoint(coords.y1, coords.y2)
+    + "px";
+}
+
 var controllerScope;
 var svg;
 var htmlLayer;
@@ -323,13 +340,9 @@ function render(scope) {
   artifact.exit()
     .remove();
 
+  var connections = addConnectionCoords(controllerScope.connections);
   var line = svg.selectAll(".connection")
-    .data(
-      addConnectionCoords(controllerScope.connections), 
-      function(d) {
-        return d.id;
-      }
-    );
+    .data(connections, function(d) { return d.id; });
   line.enter()
     .append("line")
     .attr("class", "connection")
@@ -352,4 +365,17 @@ function render(scope) {
     .attr("stroke", function (d) { return d.selected ? "orange": "green"});
   line.exit()
     .remove();
+
+  // select detailBox from the HTML, but use connections for data
+  // FIXME: detail box should be on top of line. . . may need to use separate layer
+  // (maybe popup layer?)
+  var detailBox = htmlLayer.selectAll(".detailBox")
+    .data(connections, function(d) { return d.id; });
+  detailBox.enter()
+    .append("div")
+    .attr("class", "detailBox");
+  detailBox.attr("class", function (d) { return "detailBox" + (d.selected ? "" : " hidden") })
+    .attr("style", makeDetailBoxStyle)
+    .text("This is a detail box");
+  detailBox.exit();
 }
