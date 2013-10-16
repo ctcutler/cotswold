@@ -201,7 +201,7 @@ module.directive('artifact', function() {
 // make storage mechanism injectable so that we can 
 // fake it for testing, etc.
 module.factory('storage', function() {
-  //localStorage.clear();
+  localStorage.clear();
 
   if (!localStorage["expanded"]) {
     localStorage["expanded"] = JSON.stringify(hardCodedExpanded);

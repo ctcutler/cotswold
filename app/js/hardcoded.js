@@ -2,10 +2,10 @@
 
 var hardCodedExpanded = false;
 var hardCodedConnections = [
-  { rangeIds: [ "range1", "range12" ], selected: true, id: "range1-range12"},
-  { rangeIds: [ "range2", "range17"], selected: false, id: "range2-range17" },
-  { rangeIds: [ "range1", "range14"], selected: false, id: "range1-range14" },
-  { rangeIds: [ "box1", "range14"], selected: false, id: "box1-range14" },
+  { rangeIds: [ "range1", "range12" ], selected: true, id: "range1-range12", note: "foo" },
+  { rangeIds: [ "range2", "range17"], selected: false, id: "range2-range17", note: "bar"  },
+  { rangeIds: [ "range1", "range14"], selected: false, id: "range1-range14", note: "baz"  },
+  { rangeIds: [ "box1", "range14"], selected: false, id: "box1-range14", note: "buz"  },
 ];
 var hardCodedTimepoints = [
   { 

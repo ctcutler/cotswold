@@ -315,6 +315,11 @@ function render(scope) {
     .attr("height", htmlLayer.style("height"));
 
   popUpLayer = d3.select("#popUpLayer")
+    .attr("style", "width: "
+      + htmlLayer.style("width")
+      + "; height: "
+      + htmlLayer.style("height")
+      + ";");
 
   var timepoints = htmlLayer.selectAll(".timepoint")
     .data(controllerScope.timepoints);
@@ -366,16 +371,37 @@ function render(scope) {
   line.exit()
     .remove();
 
-  // select detailBox from the HTML, but use connections for data
-  // FIXME: detail box should be on top of line. . . may need to use separate layer
-  // (maybe popup layer?)
-  var detailBox = htmlLayer.selectAll(".detailBox")
+  var connectionDetail = popUpLayer.selectAll(".connectionDetail")
     .data(connections, function(d) { return d.id; });
-  detailBox.enter()
+  connectionDetail.enter()
     .append("div")
-    .attr("class", "detailBox");
-  detailBox.attr("class", function (d) { return "detailBox" + (d.selected ? "" : " hidden") })
-    .attr("style", makeDetailBoxStyle)
-    .text("This is a detail box");
-  detailBox.exit();
-}
+    .attr("class", "connectionDetail");
+  connectionDetail.attr("class", function (d) { return "connectionDetail" + (d.selected ? "" : " hidden") })
+    .attr("style", makeDetailBoxStyle);
+  connectionDetail.exit()
+    .remove();
+
+  var connectionNote = connectionDetail.selectAll(".connectionNote")
+    .data(function (d) { 
+      return [d.note];
+    });
+  connectionNote.enter()
+    .append("textarea")
+    .attr("class", "connectionNote")
+    .attr("rows", 4);
+  connectionNote.text(function (d) { return d; });
+  connectionNote.exit()
+    .remove();
+
+  var colorChooser = connectionDetail.selectAll(".colorChooser")
+    .data(function (d) { 
+      return [d.color];
+    });
+  colorChooser.enter()
+    .append("div")
+    .attr("class", "colorChooser")
+    .attr("rows", 4);
+  colorChooser.text("color chooser!");
+  colorChooser.exit()
+    .remove();
+ }

@@ -1,6 +1,7 @@
-.detailBox {
+.connectionDetail {
   position: absolute;
-  background-color: #00FF00;
+  background-color: #FFFFFF;
+  border: 3px solid green;
 }
 
 .highlighted {
