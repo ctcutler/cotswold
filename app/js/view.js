@@ -404,11 +404,14 @@ function render(scope) {
     .remove();
 
   var colorBox = connectionDetail.selectAll(".colorBox")
-    .data(["#CC0000", "#00CC00", "#0000CC"]);
+    .data(COLORS);
   colorBox.enter()
     .append("div")
-    .attr("style", function (d) { return "background-color: "+d; })
-    .attr("class", "colorBox");
+    .attr("class", function (d) { 
+      // use parentNode
+      return "colorBox " + d  +
+        (d3.select(this.parentNode).datum().color == d ? " selectedColor" : "");
+    });
   colorChooser.exit()
     .remove();
  }

@@ -1,3 +1,31 @@
+.color1 {
+  background-color: #FF0000;
+}
+
+.color2 {
+  background-color: #00FF00;
+}
+
+.color3 {
+  background-color: #0000FF;
+}
+
+.color4 {
+  background-color: #FF00FF;
+}
+
+.color5 {
+  background-color: #FFFF00;
+}
+
+.color6 {
+  background-color: #00FFFF;
+}
+
+.selectedColor {
+  border: 1px solid black;
+}
+
 .connectionDetail {
   position: absolute;
   background-color: #FFFFFF;
