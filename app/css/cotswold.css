@@ -4,6 +4,12 @@
   border: 3px solid green;
 }
 
+.colorBox {
+  width: 20px;
+  height: 20px;
+  float: left;
+}
+
 .highlighted {
   background-color: #ff0;
   border: 1px solid #ff0;

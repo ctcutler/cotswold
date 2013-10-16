@@ -399,9 +399,16 @@ function render(scope) {
     });
   colorChooser.enter()
     .append("div")
-    .attr("class", "colorChooser")
-    .attr("rows", 4);
-  colorChooser.text("color chooser!");
+    .attr("class", "colorChooser");
+  colorChooser.exit()
+    .remove();
+
+  var colorBox = connectionDetail.selectAll(".colorBox")
+    .data(["#CC0000", "#00CC00", "#0000CC"]);
+  colorBox.enter()
+    .append("div")
+    .attr("style", function (d) { return "background-color: "+d; })
+    .attr("class", "colorBox");
   colorChooser.exit()
     .remove();
  }
