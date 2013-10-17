@@ -253,6 +253,16 @@ function EditorController($scope, storage, render) {
     $scope.previousSelection = newlySelected;
   };
 
+  $scope.setConnectionColor = function(connectionId, color) {
+    for (var i=0; i<$scope.connections.length; i++) {
+      if ($scope.connections[i].id == connectionId) {
+        $scope.connections[i].color = color;
+        $scope.reloadView();
+        break;
+      }
+    }
+  }
+
   $scope.getSelectedConnection = function() {
     for (var i=0; i<$scope.connections.length; i++) {
       if ($scope.connections[i].selected) 

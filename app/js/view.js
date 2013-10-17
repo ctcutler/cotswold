@@ -298,6 +298,10 @@ function makeDetailBoxStyle(d) {
     + "px";
 }
 
+function getParentData(node) {
+  return d3.select(node.parentNode).datum();
+}
+
 var controllerScope;
 var svg;
 var htmlLayer;
@@ -407,10 +411,12 @@ function render(scope) {
     .data(COLORS);
   colorBox.enter()
     .append("div")
-    .attr("class", function (d) { 
-      // use parentNode
+    .on("click", function (d) {
+      controllerScope.setConnectionColor(getParentData(this).id, d);
+    });
+  colorBox.attr("class", function (d) { 
       return "colorBox " + d  +
-        (d3.select(this.parentNode).datum().color == d ? " selectedColor" : "");
+        (getParentData(this).color == d ? " selectedColor" : "");
     });
   colorChooser.exit()
     .remove();
