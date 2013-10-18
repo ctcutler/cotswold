@@ -372,7 +372,7 @@ function EditorController($scope, storage, render) {
       if ($scope.rangesAreConnected(r1.id, r2.id)) {
         console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create connection");
       } else {
-        $scope.connections.push({ rangeIds: [r1.id, r2.id], selected: false, id: r1.id+"-"+r2.id});
+        $scope.connections.push({ rangeIds: [r1.id, r2.id], selected: false, id: r1.id+"-"+r2.id, note:"", color: "color1"});
         $scope.reloadView();
       }
     } else {

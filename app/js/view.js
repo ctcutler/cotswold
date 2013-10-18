@@ -371,7 +371,7 @@ function render(scope) {
     .attr("y1", function (d) { return d.coords.y1 })
     .attr("x2", function (d) { return d.coords.x2 })
     .attr("y2", function (d) { return d.coords.y2 })
-    .attr("stroke", function (d) { return d.selected ? "orange": "green"});
+    .attr("class", function (d) { return "connection "+d.color });
   line.exit()
     .remove();
 

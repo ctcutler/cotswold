@@ -1,25 +1,49 @@
-.color1 {
+div.color1 {
   background-color: #FF0000;
 }
 
-.color2 {
+div.color2 {
   background-color: #00FF00;
 }
 
-.color3 {
+div.color3 {
   background-color: #0000FF;
 }
 
-.color4 {
+div.color4 {
   background-color: #FF00FF;
 }
 
-.color5 {
+div.color5 {
   background-color: #FFFF00;
 }
 
-.color6 {
+div.color6 {
   background-color: #00FFFF;
+}
+
+line.color1 {
+  stroke: #FF0000;
+}
+
+line.color2 {
+  stroke: #00FF00;
+}
+
+line.color3 {
+  stroke: #0000FF;
+}
+
+line.color4 {
+  stroke: #FF00FF;
+}
+
+line.color5 {
+  stroke: #FFFF00;
+}
+
+line.color6 {
+  stroke: #00FFFF;
 }
 
 .selectedColor {

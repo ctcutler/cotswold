@@ -3,9 +3,9 @@
 var hardCodedExpanded = false;
 var hardCodedConnections = [
   { rangeIds: [ "range1", "range12" ], selected: true, id: "range1-range12", note: "foo", color: "color4" },
-  { rangeIds: [ "range2", "range17"], selected: false, id: "range2-range17", note: "bar"  },
-  { rangeIds: [ "range1", "range14"], selected: false, id: "range1-range14", note: "baz"  },
-  { rangeIds: [ "box1", "range14"], selected: false, id: "box1-range14", note: "buz"  },
+  { rangeIds: [ "range2", "range17"], selected: false, id: "range2-range17", note: "bar", color: "color2"  },
+  { rangeIds: [ "range1", "range14"], selected: false, id: "range1-range14", note: "baz", color: "color1" },
+  { rangeIds: [ "box1", "range14"], selected: false, id: "box1-range14", note: "buz", color: "color6"  },
 ];
 var hardCodedTimepoints = [
   { 
