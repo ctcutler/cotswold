@@ -365,8 +365,7 @@ function render(scope) {
     .attr("y1", function (d) { return d.coords.y1 })
     .attr("x2", function (d) { return d.coords.x1 })
     .attr("y2", function (d) { return d.coords.y1 });
-  line.transition()
-    .duration(500)
+  line
     .attr("x1", function (d) { return d.coords.x1 })
     .attr("y1", function (d) { return d.coords.y1 })
     .attr("x2", function (d) { return d.coords.x2 })
@@ -392,6 +391,10 @@ function render(scope) {
   connectionNote.enter()
     .append("textarea")
     .attr("class", "connectionNote")
+    .on("input", function (d) {
+      getParentData(this).note = this.value;
+      controllerScope.save();
+    })
     .attr("rows", 4);
   connectionNote.text(function (d) { return d; });
   connectionNote.exit()
