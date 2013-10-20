@@ -60,12 +60,10 @@ function getBestConnection(box1, box2) {
   return shortestPair;
 }
 
-
-
 function makeSpanClass(d) { 
   if (d.id === undefined) return "";
 
-  var klass = "allborders green";
+  var klass = "allborders "+d.color;
   if (d.truncation === "left") {
     klass += " truncatedLeft";
   } else if (d.truncation === "right") {
@@ -77,6 +75,33 @@ function makeSpanClass(d) {
     klass += " selected";
   }
   return klass;
+}
+
+function addColorChooser(selection, setColorFunc) {
+  var colorChooser = selection.selectAll(".colorChooser")
+    .data(function (d) { 
+      return [d.color];
+    });
+  colorChooser.enter()
+    .append("div")
+    .attr("class", "colorChooser");
+  colorChooser.exit()
+    .remove();
+
+  var colorBox = selection.selectAll(".colorBox")
+    .data(COLORS);
+  colorBox.enter()
+    .append("div")
+    .on("click", function (d) {
+      setColorFunc(getParentData(this).id, d);
+    });
+  colorBox.attr("class", function (d) { 
+      var pData = getParentData(this);
+      return "colorBox " + d  +
+        (getParentData(this).color == d ? " selectedColor" : "");
+    });
+  colorChooser.exit()
+    .remove();
 }
 
 function recursiveSpans(sel) {
@@ -119,6 +144,24 @@ function recursiveSpans(sel) {
       span.exit().remove();
 
       span.order();
+
+      var spanDetailClass = "spanDetail"+selected.id;
+      var spanDetail = popUpLayer
+        .selectAll("."+spanDetailClass)
+        .data(
+          selected.nodes.filter(function (d) { return d.selected }),
+          function (d) { return d.id; }
+        );
+      spanDetail.enter()
+        .append("div")
+        .attr("class", spanDetailClass);
+      spanDetail
+        .attr("class", function (d) { return spanDetailClass })
+        .attr("style", makeSpanDetailStyle);
+      spanDetail.exit()
+        .remove();
+
+      addColorChooser(spanDetail, controllerScope.setRangeColor);
 
     } else if (selected.content) {
       d3.select(this)
@@ -214,33 +257,58 @@ function updateArtifacts(artifact) {
       var artifactClassName = artifact.id+"ImageBox";
       var imageBox = svg.selectAll("."+className+"."+artifactClassName)
         .data(artifact.ranges, function (d) { return d.id; });
-      var boxParent = this;
+      var boxParentLeft = jQuery(this).offset().left;
+      var boxParentTop = jQuery(this).offset().top;
       imageBox.enter()
         .append("rect")
         .attr("id", function (d) { return d.id })
         .attr("x", function (d) { 
-          return d.left + jQuery(boxParent).offset().left
+          return d.left + boxParentLeft
         })
         .attr("y", function (d) { 
-          return d.top + jQuery(boxParent).offset().top
+          return d.top + boxParentTop
         })
         .attr("width", function (d) { return d.width })
         .attr("height", function (d) { return d.height })
         .on("click", function (d) {
+          controllerScope.clearAllSelectedConnections(true);
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
           d3.event.stopPropagation();
         });
 
       imageBox
+        .attr("style", function (d) { return d.color})
         .attr("class", function (d) { 
-          return d.selected 
-            ? className + " " + artifactClassName + " imageBoxSelected" 
-            : className + " " + artifactClassName
+          return className + " " + artifactClassName + " " + d.color
         });
 
       imageBox.exit()
         .remove();
+
+      var imageBoxDetailClass = "imageBoxDetail"+artifact.id;
+      var imageBoxDetail = popUpLayer
+        .selectAll("."+imageBoxDetailClass)
+        .data(
+          artifact.ranges.filter(function (d) { return d.selected }), 
+          function (d) { return d.id; }
+        );
+      imageBoxDetail.enter()
+        .append("div")
+        .attr("class", imageBoxDetailClass);
+      imageBoxDetail
+        .attr("class", function (d) { return imageBoxDetailClass })
+        .attr("style", function (d) {
+          return "left: "
+            + (boxParentLeft + d.left + d.width)
+            + "px; top: "
+            + (boxParentTop + d.top + d.height)
+            + "px";
+        });
+      imageBoxDetail.exit()
+        .remove();
+
+      addColorChooser(imageBoxDetail, controllerScope.setRangeColor);
     } else {
       d3.select(this).call(recursiveSpans);
     }
@@ -289,7 +357,24 @@ function getMidpoint(a, b) {
   }
 }
 
-function makeDetailBoxStyle(d) {
+function makeSpanDetailStyle(d) {
+  var box = makeBox(d.id);
+  return "left: "
+    + (box.x + box.width)
+    + "px; top: "
+    + (box.y + box.height)
+    + "px";
+}
+
+function makeImageBoxDetailStyle(d) {
+  return "left: "
+    + (d.left + d.width)
+    + "px; top: "
+    + (d.top + d.height)
+    + "px";
+}
+
+function makeConnectionDetailStyle(d) {
   var coords = d.coords;
   return "left: "
     + getMidpoint(coords.x1, coords.x2)
@@ -375,12 +460,15 @@ function render(scope) {
     .remove();
 
   var connectionDetail = popUpLayer.selectAll(".connectionDetail")
-    .data(connections, function(d) { return d.id; });
+    .data(
+      connections.filter(function (d) { return d.selected }), 
+      function(d) { return d.id; }
+    );
   connectionDetail.enter()
     .append("div")
     .attr("class", "connectionDetail");
-  connectionDetail.attr("class", function (d) { return "connectionDetail" + (d.selected ? "" : " hidden") })
-    .attr("style", makeDetailBoxStyle);
+  connectionDetail.attr("class", function (d) { return "connectionDetail" })
+    .attr("style", makeConnectionDetailStyle);
   connectionDetail.exit()
     .remove();
 
@@ -400,27 +488,6 @@ function render(scope) {
   connectionNote.exit()
     .remove();
 
-  var colorChooser = connectionDetail.selectAll(".colorChooser")
-    .data(function (d) { 
-      return [d.color];
-    });
-  colorChooser.enter()
-    .append("div")
-    .attr("class", "colorChooser");
-  colorChooser.exit()
-    .remove();
+  addColorChooser(connectionDetail, controllerScope.setConnectionColor);
 
-  var colorBox = connectionDetail.selectAll(".colorBox")
-    .data(COLORS);
-  colorBox.enter()
-    .append("div")
-    .on("click", function (d) {
-      controllerScope.setConnectionColor(getParentData(this).id, d);
-    });
-  colorBox.attr("class", function (d) { 
-      return "colorBox " + d  +
-        (getParentData(this).color == d ? " selectedColor" : "");
-    });
-  colorChooser.exit()
-    .remove();
  }

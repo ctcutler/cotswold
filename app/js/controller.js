@@ -156,6 +156,7 @@ function EditorController($scope, storage, render) {
           end: endOffset, 
           id: newRangeId,
           style: "red",
+          color: "color1",
           selected: true
         }
       );
@@ -260,6 +261,14 @@ function EditorController($scope, storage, render) {
         $scope.reloadView();
         break;
       }
+    }
+  }
+
+  $scope.setRangeColor = function(rangeId, color) {
+    var range = $scope.getRangeById(rangeId);
+    if (range) {
+      range.color = color;
+      $scope.reloadAllNodes();
     }
   }
 

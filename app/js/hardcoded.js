@@ -18,8 +18,8 @@ var hardCodedTimepoints = [
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         ranges: [
-          { start: 6, end: 26, id: "range1", style: "red", selected: false },
-          { start: 18, end: 21, id: "range2", style: "blue", selected: false },
+          { start: 6, end: 26, id: "range1", color: "color1", selected: false },
+          { start: 18, end: 21, id: "range2", color: "color1", selected: false },
         ],
         width: ARTIFACT_WIDTH_NORMAL,
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
@@ -30,8 +30,8 @@ var hardCodedTimepoints = [
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         ranges: [
-          { start: 0, end: 11, id: "range11", style: "red", selected: false },
-          { start: 18, end: 21, id: "range12", style: "blue", selected: false },
+          { start: 0, end: 11, id: "range11", color: "color1", selected: false },
+          { start: 18, end: 21, id: "range12", color: "color1", selected: false },
         ],
         width: ARTIFACT_WIDTH_NORMAL,
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
@@ -40,7 +40,7 @@ var hardCodedTimepoints = [
         id: "a3",
         imageSrc: "img/baa.jpeg",
         ranges: [
-          { id: "box1", left: 150, top: 135, width: 40, height: 40, selected: false},
+          { id: "box1", left: 150, top: 135, width: 40, height: 40, selected: false, color: "color2"},
         ],
         imageDisplay: "block",
         contentDisplay: "none",
@@ -59,8 +59,8 @@ var hardCodedTimepoints = [
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         ranges: [
-          { start: 6, end: 11, id: "range13", style: "red", selected: false },
-          { start: 18, end: 21, id: "range14", style: "blue", selected: false },
+          { start: 6, end: 11, id: "range13", color: "color1", selected: false },
+          { start: 18, end: 21, id: "range14", color: "color1", selected: false },
         ],
         width: ARTIFACT_WIDTH_NORMAL,
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,
@@ -77,8 +77,8 @@ var hardCodedTimepoints = [
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         ranges: [
-          { start: 6, end: 11, id: "range15", style: "red", selected: false },
-          { start: 18, end: 21, id: "range16", style: "blue", selected: false },
+          { start: 6, end: 11, id: "range15", color: "color1", selected: false },
+          { start: 18, end: 21, id: "range16", color: "color1", selected: false },
         ],
         /***
         FIXME: translate these into ranges
@@ -98,8 +98,8 @@ var hardCodedTimepoints = [
         contentDisplay: "block",
         content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         ranges: [
-          { start: 6, end: 11, id: "range17", style: "red", selected: false },
-          { start: 18, end: 21, id: "range18", style: "blue", selected: false },
+          { start: 6, end: 11, id: "range17", color: "color1", selected: false },
+          { start: 18, end: 21, id: "range18", color: "color1", selected: false },
         ],
         width: ARTIFACT_WIDTH_NORMAL,
         maxHeight: ARTIFACT_MAX_HEIGHT_NORMAL,

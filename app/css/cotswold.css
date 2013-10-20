@@ -1,24 +1,24 @@
-div.color1 {
+div.color1,span.color1 {
   background-color: #FF0000;
 }
 
-div.color2 {
+div.color2,span.color2 {
   background-color: #00FF00;
 }
 
-div.color3 {
+div.color3,span.color3 {
   background-color: #0000FF;
 }
 
-div.color4 {
+div.color4,span.color4 {
   background-color: #FF00FF;
 }
 
-div.color5 {
+div.color5,span.color5 {
   background-color: #FFFF00;
 }
 
-div.color6 {
+div.color6,span.color6 {
   background-color: #00FFFF;
 }
 
@@ -46,8 +46,48 @@ line.color6 {
   stroke: #00FFFF;
 }
 
+rect.color1 {
+  fill: #FF0000;
+}
+
+rect.color2 {
+  fill: #00FF00;
+}
+
+rect.color3 {
+  fill: #0000FF;
+}
+
+rect.color4 {
+  fill: #FF00FF;
+}
+
+rect.color5 {
+  fill: #FFFF00;
+}
+
+rect.color6 {
+  fill: #00FFFF;
+}
+
 .selectedColor {
   border: 1px solid black;
+}
+
+/* matches anything with class that starts with spanDetail */
+[class^="spanDetail"] {
+  position: absolute;
+  background-color: #FFFFFF;
+  border: 3px solid green;
+  pointer-events: auto;
+}
+
+/* matches anything with class that starts with imageBoxDetail */
+[class^="imageBoxDetail"] {
+  position: absolute;
+  background-color: #FFFFFF;
+  border: 3px solid green;
+  pointer-events: auto;
 }
 
 .connectionDetail {
@@ -144,10 +184,6 @@ line.connection {
   pointer-events: auto;
 }
 
-
-rect.imageBoxSelected {
-  fill: #0f0;
-}
 
 rect.dragBox {
   pointer-events: auto;
