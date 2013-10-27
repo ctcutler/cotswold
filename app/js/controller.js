@@ -7,7 +7,7 @@ function EditorController($scope, storage, render) {
     $scope.reloadView();
   });
 
-  jQuery('#files').bind('change', function(e) {
+  jQuery('#artifactFiles').bind('change', function(e) {
     var files = e.target.files; // FileList object
 
     for (var i = 0, f; f = files[i]; i++) {
@@ -39,6 +39,30 @@ function EditorController($scope, storage, render) {
     $scope.clearAllData();
   });
 
+  jQuery('#downloadDataButton').bind('click', function(e) {
+    var s = "data:application/octet-stream,"+ 
+      encodeURIComponent(
+        stringify({
+          timepoints: $scope.timepoints,
+          expanded: $scope.expanded,
+          connections: $scope.connections,
+        })
+      );
+    document.location = s;
+  });
+
+  jQuery('#dataFile').bind('change', function(e) {
+    var files = e.target.files; // FileList object
+
+    var reader = new FileReader();
+    reader.onload = (function(theFile) {
+      return function(e) {
+        $scope.loadData(e.target.result);
+      };
+    })(files[0]);
+    reader.readAsText(files[0]);
+  });
+
   jQuery('body').bind('keydown', function(e) {
     if (e.keyCode === 16) {
       $scope.shiftDown = true;
@@ -60,28 +84,35 @@ function EditorController($scope, storage, render) {
   });
 
   /* scope methods */
-  if ("timepoints" in storage) {
-    $scope.timepoints = JSON.parse(storage["timepoints"]);
-  } else {
-    $scope.timepoints = [];
-  }
-
-  if ("expanded" in storage) {
-    $scope.expanded = JSON.parse(storage["expanded"]);
-  } else {
-    $scope.expanded = false;
-  }
-
-  if ("connections" in storage) {
-    $scope.connections = JSON.parse(storage["connections"]);
-  } else {
-    $scope.connections = [];
-  }
 
   $scope.clearAllData = function () {
     $scope.timepoints = [];
     $scope.expanded = false;
     $scope.connections = [];
+    $scope.reloadView();
+  }
+
+  // loads data whether it is JSON stringified or not
+  $scope.loadData = function (data) {
+    $scope.timepoints = [];
+    $scope.expanded = false;
+    $scope.connections = [];
+    if (typeof data == 'string' || data instanceof String) {
+      data = JSON.parse(data);
+      $scope.timepoints = data["timepoints"];
+      $scope.expanded = data["expanded"];
+      $scope.connections = data["connections"];
+    } else {
+      if ("timepoints" in data) {
+        $scope.timepoints = JSON.parse(data["timepoints"]);
+      } 
+      if ("expanded" in data) {
+        $scope.expanded = JSON.parse(data["expanded"]);
+      } 
+      if ("connections" in data) {
+        $scope.connections = JSON.parse(data["connections"]);
+      } 
+    }
     $scope.reloadView();
   }
 
@@ -525,6 +556,7 @@ function EditorController($scope, storage, render) {
     };
   };
 
+  $scope.loadData(storage);
   $scope.reloadAllNodes();
   
 }
