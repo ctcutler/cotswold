@@ -35,6 +35,10 @@ function EditorController($scope, storage, render) {
     }
   });
 
+  jQuery('#clearDataButton').bind('click', function(e) {
+    $scope.clearAllData();
+  });
+
   jQuery('body').bind('keydown', function(e) {
     if (e.keyCode === 16) {
       $scope.shiftDown = true;
@@ -56,11 +60,30 @@ function EditorController($scope, storage, render) {
   });
 
   /* scope methods */
-  var timepoints = JSON.parse(storage["timepoints"]);
+  if ("timepoints" in storage) {
+    $scope.timepoints = JSON.parse(storage["timepoints"]);
+  } else {
+    $scope.timepoints = [];
+  }
 
-  $scope.timepoints = timepoints;
-  $scope.expanded = JSON.parse(storage["expanded"]);
-  $scope.connections = JSON.parse(storage["connections"]);
+  if ("expanded" in storage) {
+    $scope.expanded = JSON.parse(storage["expanded"]);
+  } else {
+    $scope.expanded = false;
+  }
+
+  if ("connections" in storage) {
+    $scope.connections = JSON.parse(storage["connections"]);
+  } else {
+    $scope.connections = [];
+  }
+
+  $scope.clearAllData = function () {
+    $scope.timepoints = [];
+    $scope.expanded = false;
+    $scope.connections = [];
+    $scope.reloadView();
+  }
 
   $scope.save = function () {
     storage["timepoints"] = stringifyWhenSaving($scope.timepoints);
@@ -468,7 +491,7 @@ function EditorController($scope, storage, render) {
   };
 
   $scope.getNextTimepointId = function () {
-    var nextId = 1;
+    var nextId = 0;
     for (var i=0; i<$scope.timepoints.length; i++) {
       var tId = parseInt($scope.timepoints[i].id.slice(1), 10);
       if (nextId < tId) {

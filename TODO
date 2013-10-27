@@ -1,3 +1,8 @@
+* dump current data
+* load current data
+* test with larger text blobs, confirm scrolling works
+* styling
+
 Basic Functionality
 X Create/delete connections
 X Image region selection
