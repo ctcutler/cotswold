@@ -7,34 +7,6 @@ function EditorController($scope, storage, render) {
     $scope.reloadView();
   });
 
-  jQuery('#artifactFiles').bind('change', function(e) {
-    var files = e.target.files; // FileList object
-
-    for (var i = 0, f; f = files[i]; i++) {
-      var reader = new FileReader();
-      var isImage = isImageFile(f.name);
-
-      reader.onload = (function(theFile) {
-        return function(e) {
-          var artifact;
-          if (isImage) {
-            artifact = $scope.makeImageArtifact(e.target.result);
-          } else {
-            artifact = $scope.makeTextArtifact(e.target.result);
-          }
-          $scope.timepoints[$scope.timepoints.length-1].artifacts.push(artifact);
-          $scope.reloadAllNodes();
-        };
-      })(f);
-
-      if (isImage) {
-        reader.readAsDataURL(f);
-      } else {
-        reader.readAsText(f);
-      }
-    }
-  });
-
   jQuery('#clearDataButton').bind('click', function(e) {
     $scope.clearAllData();
   });
@@ -51,19 +23,8 @@ function EditorController($scope, storage, render) {
     document.location = s;
   });
 
-  jQuery('#dataFile').bind('change', function(e) {
-    var files = e.target.files; // FileList object
-
-    var reader = new FileReader();
-    reader.onload = (function(theFile) {
-      return function(e) {
-        $scope.loadData(e.target.result);
-      };
-    })(files[0]);
-    reader.readAsText(files[0]);
-  });
-
   jQuery('body').bind('keydown', function(e) {
+    if ( $("*:focus").is("textarea, input") ) return;
     if (e.keyCode === 16) {
       $scope.shiftDown = true;
     } else if (e.keyCode === 84) { // 't'
@@ -84,6 +45,55 @@ function EditorController($scope, storage, render) {
   });
 
   /* scope methods */
+
+  $scope.handleLoadDataFromFile = function (e) {
+    var files = e.target.files; // FileList object
+
+    var reader = new FileReader();
+    reader.onload = (function(theFile) {
+      return function(e) {
+        $scope.loadData(e.target.result);
+      };
+    })(files[0]);
+    reader.readAsText(files[0]);
+
+    initFileInput("dataFile", $scope.handleLoadDataFromFile);
+  };
+
+  $scope.handleLoadArtifactFromFile = function (e) {
+    if ($scope.timepoints === null || $scope.timepoints.length === 0) {
+      alert("At least one timepoint must exist before an artifact can be added.");
+    } else {
+      var files = e.target.files; // FileList object
+
+      for (var i = 0, f; f = files[i]; i++) {
+        var reader = new FileReader();
+        var isImage = isImageFile(f.name);
+
+        reader.onload = (function(theFile) {
+          return function(e) {
+            var artifact;
+            if (isImage) {
+              artifact = $scope.makeImageArtifact(e.target.result);
+            } else {
+              artifact = $scope.makeTextArtifact(e.target.result);
+            }
+            $scope.timepoints[$scope.timepoints.length-1].artifacts.push(artifact);
+            $scope.reloadAllNodes();
+          };
+        })(f);
+
+        if (isImage) {
+          reader.readAsDataURL(f);
+        } else {
+          reader.readAsText(f);
+        }
+      }
+    }
+
+    initFileInput("artifactFiles", $scope.handleLoadArtifactFromFile);
+  };
+
 
   $scope.clearAllData = function () {
     $scope.timepoints = [];
@@ -113,6 +123,7 @@ function EditorController($scope, storage, render) {
         $scope.connections = JSON.parse(data["connections"]);
       } 
     }
+    $scope.reloadAllNodes(); 
     $scope.reloadView();
   }
 
@@ -556,11 +567,13 @@ function EditorController($scope, storage, render) {
     };
   };
 
+  initFileInput("dataFile", $scope.handleLoadDataFromFile);
+  initFileInput("artifactFiles", $scope.handleLoadArtifactFromFile);
+
   $scope.loadData(storage);
   $scope.reloadAllNodes();
   
 }
-
 
 function getArtifactAncestor(node) {
   while (node && node.className != "artifact") {
@@ -568,6 +581,20 @@ function getArtifactAncestor(node) {
   }
   return node;
 }
+
+// adapted from: http://aspnetupload.com/Clear-HTML-File-Input.aspx
+function initFileInput(elementId, changeHandler) {
+  var oldInput = document.getElementById(elementId); 
+  var newInput = document.createElement("input"); 
+  newInput.type = "file"; 
+  newInput.id = oldInput.id; 
+  newInput.name = oldInput.name; 
+  newInput.className = oldInput.className; 
+  newInput.style.cssText = oldInput.style.cssText; 
+  oldInput.parentNode.replaceChild(newInput, oldInput); 
+  jQuery('#'+elementId).bind('change', changeHandler);
+}
+
 
 // Adapted from: http://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container
 // Thanks, Tim Down!

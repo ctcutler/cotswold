@@ -118,9 +118,9 @@ function recursiveSpans(sel) {
       var span = d3.select(this)
         .selectAll(selector)
         .data(selected.nodes, function (d) { 
-          if (d.id != undefined)
+          if (d.id != undefined) {
             return d.id;
-          else {
+          } else {
             return d.start + ":" + d.end;
           }
         });
@@ -165,7 +165,7 @@ function recursiveSpans(sel) {
 
     } else if (selected.content) {
       d3.select(this)
-        .text(selected.content)
+        .html(selected.content.replace(/\n/g, "<br />"));
     }
   });
 }
@@ -421,15 +421,19 @@ function render(scope) {
   timepoints.exit()
     .remove();
 
-
   var artifact = timepoints.selectAll(".artifact")
     .data(function (d) { 
       return d.artifacts 
+    }, 
+    function (d) { 
+      return d.id 
     });
   artifact.enter()
     .append("div")
     .attr("class", "artifact")
-    .attr("id", function (d) { return d.id });
+    .attr("id", function (d) { 
+      return d.id 
+    });
   updateArtifacts(artifact);
   artifact.exit()
     .remove();
