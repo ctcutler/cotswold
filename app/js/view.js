@@ -77,7 +77,23 @@ function makeSpanClass(d) {
   return klass;
 }
 
-function addColorChooser(selection, setColorFunc) {
+function addDetailBoxContents(selection, setNoteFunc, setColorFunc) {
+  var note = selection.selectAll(".note")
+    .data(function (d) { 
+      return [d.note];
+    });
+  note.enter()
+    .append("textarea")
+    .attr("class", "note")
+    .on("input", function (d) {
+      setNoteFunc(getParentData(this).id, this.value);
+      controllerScope.save();
+    })
+    .attr("rows", 4);
+  note.text(function (d) { return d; });
+  note.exit()
+    .remove();
+
   var colorChooser = selection.selectAll(".colorChooser")
     .data(function (d) { 
       return [d.color];
@@ -161,23 +177,7 @@ function recursiveSpans(sel) {
       spanDetail.exit()
         .remove();
 
-      var spanNote = spanDetail.selectAll(".spanNote")
-        .data(function (d) { 
-          return [d.note];
-        });
-      spanNote.enter()
-        .append("textarea")
-        .attr("class", "spanNote")
-        .on("input", function (d) {
-          controllerScope.setRangeNote(getParentData(this).id, this.value);
-          controllerScope.save();
-        })
-        .attr("rows", 4);
-      spanNote.text(function (d) { return d; });
-      spanNote.exit()
-        .remove();
-
-      addColorChooser(spanDetail, controllerScope.setRangeColor);
+      addDetailBoxContents(spanDetail, controllerScope.setRangeNote, controllerScope.setRangeColor);
 
     } else if (selected.content) {
       d3.select(this)
@@ -324,23 +324,7 @@ function updateArtifacts(artifact) {
       imageBoxDetail.exit()
         .remove();
 
-      var imageBoxNote = imageBoxDetail.selectAll(".imageBoxNote")
-        .data(function (d) { 
-          return [d.note];
-        });
-      imageBoxNote.enter()
-        .append("textarea")
-        .attr("class", "imageBoxNote")
-        .on("input", function (d) {
-          controllerScope.setRangeNote(getParentData(this).id, this.value);
-          controllerScope.save();
-        })
-        .attr("rows", 4);
-      imageBoxNote.text(function (d) { return d; });
-      imageBoxNote.exit()
-        .remove();
-
-      addColorChooser(imageBoxDetail, controllerScope.setRangeColor);
+      addDetailBoxContents(imageBoxDetail, controllerScope.setRangeNote, controllerScope.setRangeColor);
     } else {
       d3.select(this).call(recursiveSpans);
     }
@@ -508,22 +492,6 @@ function render(scope) {
   connectionDetail.exit()
     .remove();
 
-  var connectionNote = connectionDetail.selectAll(".connectionNote")
-    .data(function (d) { 
-      return [d.note];
-    });
-  connectionNote.enter()
-    .append("textarea")
-    .attr("class", "connectionNote")
-    .on("input", function (d) {
-      controllerScope.setConnectionNote(getParentData(this).id, this.value);
-      controllerScope.save();
-    })
-    .attr("rows", 4);
-  connectionNote.text(function (d) { return d; });
-  connectionNote.exit()
-    .remove();
-
-  addColorChooser(connectionDetail, controllerScope.setConnectionColor);
+  addDetailBoxContents(connectionDetail, controllerScope.setConnectionNote, controllerScope.setConnectionColor);
 
  }
