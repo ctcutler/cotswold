@@ -1,6 +1,6 @@
 
-* render line breaks right
-* bug: when entering text into annotation, key commands still register
+X render line breaks right
+X bug: when entering text into annotation, key commands still register
 
 * styling
 * more and different colors
@@ -10,10 +10,10 @@
 
 ***
 
+click to unselect
 arrows on connections
 
 ***
-
 * remove timepoints/edit existing timepoints
 * can't reload same data file name twice
 * user-adjustable column width
@@ -22,6 +22,7 @@ arrows on connections
 * test with larger text blobs, confirm scrolling works
 * put the color selector somewhere else so it is not part of the popup
 * drag and drop timepoints, artifacts, connections
+* clone timelines and take them in different directions
 
 Basic Functionality
 X Create/delete connections

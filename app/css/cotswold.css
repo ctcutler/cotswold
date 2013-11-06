@@ -1,73 +1,73 @@
 div.color1,span.color1 {
-  background-color: #FF0000;
+  background-color: #FF6666;
 }
 
 div.color2,span.color2 {
-  background-color: #00FF00;
+  background-color: #33FF99;
 }
 
 div.color3,span.color3 {
-  background-color: #0000FF;
+  background-color: #3399FF;
 }
 
 div.color4,span.color4 {
-  background-color: #FF00FF;
-}
-
-div.color5,span.color5 {
-  background-color: #FFFF00;
-}
-
-div.color6,span.color6 {
   background-color: #00FFFF;
 }
 
+div.color5,span.color5 {
+  background-color: #FFFF66;
+}
+
+div.color6,span.color6 {
+  background-color: #99CCFF;
+}
+
 line.color1 {
-  stroke: #FF0000;
+  stroke: #FF6666;
 }
 
 line.color2 {
-  stroke: #00FF00;
+  stroke: #33FF99;
 }
 
 line.color3 {
-  stroke: #0000FF;
+  stroke: #3399FF;
 }
 
 line.color4 {
-  stroke: #FF00FF;
-}
-
-line.color5 {
-  stroke: #FFFF00;
-}
-
-line.color6 {
   stroke: #00FFFF;
 }
 
+line.color5 {
+  stroke: #FFFF66;
+}
+
+line.color6 {
+  stroke: #99CCFF;
+}
+
 rect.color1 {
-  fill: #FF0000;
+  fill: #FF6666;
 }
 
 rect.color2 {
-  fill: #00FF00;
+  fill: #33FF99;
 }
 
 rect.color3 {
-  fill: #0000FF;
+  fill: #3399FF;
 }
 
 rect.color4 {
-  fill: #FF00FF;
+  fill: #00FFFF;
 }
 
 rect.color5 {
-  fill: #FFFF00;
+  fill: #FFFF66;
 }
 
 rect.color6 {
-  fill: #00FFFF;
+  fill: #99CCFF;
 }
 
 .selectedColor {
@@ -78,23 +78,26 @@ rect.color6 {
 [class^="spanDetail"] {
   position: absolute;
   background-color: #FFFFFF;
-  border: 3px solid green;
   pointer-events: auto;
+  padding: 5px;
+  border: 1px solid black;
 }
 
 /* matches anything with class that starts with imageBoxDetail */
 [class^="imageBoxDetail"] {
   position: absolute;
   background-color: #FFFFFF;
-  border: 3px solid green;
   pointer-events: auto;
+  padding: 5px;
+  border: 1px solid black;
 }
 
 .connectionDetail {
   position: absolute;
   background-color: #FFFFFF;
-  border: 3px solid green;
   pointer-events: auto;
+  padding: 5px;
+  border: 1px solid black;
 }
 
 .colorBox {
@@ -104,50 +107,47 @@ rect.color6 {
 }
 
 .highlighted {
+  /*
   background-color: #ff0;
   border: 1px solid #ff0;
+  */
 }
 
 .hidden {
   display: none;
 }
 
-.red {
-  background-color: #FFC0CB;
-  border-color: #8B0000;
-}
-
-.blue {
-  background-color: #ADD8E6;
-  border-color: #00008B;
-}
-
-.green {
-  background-color: #90EE90;
-  border-color: #008B00;
-}
-
 .allborders {
   border-style: solid;
-  /*border-style: none;*/
+  border-width: 1px;
 }
 
 .truncatedLeft {
   border-style: solid solid solid none;
-  /*border-style: none;*/
+  border-width: 1px;
 }
 
 .truncatedRight {
   border-style: solid none solid solid;
-  /*border-style: none;*/
+  border-width: 1px;
 }
 
 .truncatedBoth {
+  border-width: 1px;
   border-style: solid none solid none;
 }
 
 #htmlLayer {
   overflow: hidden;
+  padding: 10px;
+}
+
+/* put 10px of space between htmlLayer children */
+#htmlLayer > * {
+    margin-left: 10px;
+}
+#htmlLayer > *:first-child {
+    margin-left: 0px;
 }
 
 .popUp {
@@ -159,7 +159,14 @@ rect.color6 {
 
 .timepoint {
   float: left;
-  width: 300px;
+  width: 400px;
+  padding: 10px;
+  border: 1px solid black;
+}
+
+.artifact {
+  border-top: 1px solid black;
+  padding: 5px 0px 5px 0px;
 }
 
 #svgLayer {
@@ -178,6 +185,7 @@ rect.color6 {
 
 rect.imageBox {
   pointer-events: auto;
+  opacity: .5;
 }
 
 line.connection {
@@ -202,8 +210,8 @@ html, body {
 
 /* declare this last so that it takes precedence over other styles */
 .selected {
-  background-color: #FFFF00;
-  font-weight: bold;
+  /*background-color: #FFFF00;
+  font-weight: bold;*/
 }
 
 
