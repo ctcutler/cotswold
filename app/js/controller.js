@@ -172,6 +172,8 @@ function EditorController($scope, storage, render) {
           width: width,
           height: height,
           id: newRangeId,
+          color: "color1",
+          note: "",
           selected: true
         }
       );
@@ -222,6 +224,7 @@ function EditorController($scope, storage, render) {
           id: newRangeId,
           style: "red",
           color: "color1",
+          note: "",
           selected: true
         }
       );
@@ -320,12 +323,10 @@ function EditorController($scope, storage, render) {
   };
 
   $scope.setConnectionColor = function(connectionId, color) {
-    for (var i=0; i<$scope.connections.length; i++) {
-      if ($scope.connections[i].id == connectionId) {
-        $scope.connections[i].color = color;
-        $scope.reloadView();
-        break;
-      }
+    var connection = $scope.getConnectionById(connectionId);
+    if (connection) {
+      connection.color = color;
+      $scope.reloadView();
     }
   }
 
@@ -333,6 +334,22 @@ function EditorController($scope, storage, render) {
     var range = $scope.getRangeById(rangeId);
     if (range) {
       range.color = color;
+      $scope.reloadAllNodes();
+    }
+  }
+
+  $scope.setConnectionNote = function(connectionId, note) {
+    var connection = $scope.getConnectionById(connectionId);
+    if (connection) {
+      connection.note = note;
+      $scope.reloadView();
+    }
+  }
+
+  $scope.setRangeNote = function(rangeId, note) {
+    var range = $scope.getRangeById(rangeId);
+    if (range) {
+      range.note = note;
       $scope.reloadAllNodes();
     }
   }
@@ -500,6 +517,16 @@ function EditorController($scope, storage, render) {
     return null;
   };
 
+
+  $scope.getConnectionById = function (connectionId) {
+    for (var i=0; i<$scope.connections.length; i++) {
+      var connection = $scope.connections[i];
+      if (connection.id == connectionId) {
+        return connection;
+      }
+    }
+    return null;
+  }
   $scope.getRangeById = function (rangeId) {
     for (var i=0; i<$scope.timepoints.length; i++) {
       var timepoint = $scope.timepoints[i];

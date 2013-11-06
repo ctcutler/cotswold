@@ -161,6 +161,22 @@ function recursiveSpans(sel) {
       spanDetail.exit()
         .remove();
 
+      var spanNote = spanDetail.selectAll(".spanNote")
+        .data(function (d) { 
+          return [d.note];
+        });
+      spanNote.enter()
+        .append("textarea")
+        .attr("class", "spanNote")
+        .on("input", function (d) {
+          controllerScope.setRangeNote(getParentData(this).id, this.value);
+          controllerScope.save();
+        })
+        .attr("rows", 4);
+      spanNote.text(function (d) { return d; });
+      spanNote.exit()
+        .remove();
+
       addColorChooser(spanDetail, controllerScope.setRangeColor);
 
     } else if (selected.content) {
@@ -306,6 +322,22 @@ function updateArtifacts(artifact) {
             + "px";
         });
       imageBoxDetail.exit()
+        .remove();
+
+      var imageBoxNote = imageBoxDetail.selectAll(".imageBoxNote")
+        .data(function (d) { 
+          return [d.note];
+        });
+      imageBoxNote.enter()
+        .append("textarea")
+        .attr("class", "imageBoxNote")
+        .on("input", function (d) {
+          controllerScope.setRangeNote(getParentData(this).id, this.value);
+          controllerScope.save();
+        })
+        .attr("rows", 4);
+      imageBoxNote.text(function (d) { return d; });
+      imageBoxNote.exit()
         .remove();
 
       addColorChooser(imageBoxDetail, controllerScope.setRangeColor);
@@ -484,7 +516,7 @@ function render(scope) {
     .append("textarea")
     .attr("class", "connectionNote")
     .on("input", function (d) {
-      getParentData(this).note = this.value;
+      controllerScope.setConnectionNote(getParentData(this).id, this.value);
       controllerScope.save();
     })
     .attr("rows", 4);

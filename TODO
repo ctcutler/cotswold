@@ -2,11 +2,12 @@
 X render line breaks right
 X bug: when entering text into annotation, key commands still register
 
-* styling
-* more and different colors
 * annotate ranges (not just connections)
 * respect HTML in uploaded data?
 * change timepoint labels
+
+* styling
+* more and different colors
 
 ***
 

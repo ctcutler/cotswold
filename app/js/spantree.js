@@ -6,7 +6,7 @@ function makeSpanTree (ranges, content) {
   }
 
   var contentNodes = [makeContentNode(0, content.length, null, content)]; 
-  var tree = makeSpanNode("", false, false, "color1", [contentNodes[0]], null); // must not be contentNodes array
+  var tree = makeSpanNode("", false, false, "color1", "", [contentNodes[0]], null); // must not be contentNodes array
 
   angular.forEach(ranges, function(range) {
     var nodes = [];
@@ -119,7 +119,7 @@ function makeSpanTree (ranges, content) {
 
         // make new span node
         var spanNode = makeSpanNode(
-          range.id, range.dominant, range.selected, range.color,
+          range.id, range.dominant, range.selected, range.color, range.note,
           spanChildren, lca, truncatedLeft, truncatedRight
         );
 
@@ -228,7 +228,7 @@ function makeContentNode(start, end, parentNode, content) {
   };
 }
 
-function makeSpanNode(id, dominant, selected, color, nodes, parentNode, truncatedLeft, truncatedRight) {
+function makeSpanNode(id, dominant, selected, color, note, nodes, parentNode, truncatedLeft, truncatedRight) {
   var truncation = "none";
   if (truncatedRight && truncatedLeft) {
     truncation = "both";
@@ -242,6 +242,7 @@ function makeSpanNode(id, dominant, selected, color, nodes, parentNode, truncate
       selected: selected,
       dominant: dominant,
       color: color,
+      note: note,
       truncation: truncation,
       nodes: nodes,
       parentNode: parentNode,
