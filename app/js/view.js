@@ -180,8 +180,9 @@ function recursiveSpans(sel) {
       addDetailBoxContents(spanDetail, controllerScope.setRangeNote, controllerScope.setRangeColor);
 
     } else if (selected.content) {
+      // space before <br/> makes offsets come out right
       d3.select(this)
-        .html(selected.content.replace(/\n/g, "<br />"));
+        .html(selected.content.replace(/\n/g, " <br />"));
     }
   });
 }

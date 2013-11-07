@@ -1,9 +1,9 @@
-
 X render line breaks right
 X bug: when entering text into annotation, key commands still register
+X annotate ranges (not just connections)
+X respect HTML in uploaded data?
 
-* annotate ranges (not just connections)
-* respect HTML in uploaded data?
+* range selection issue with newlines (offsets are being calculated taking newlines into account)
 * change timepoint labels
 
 * styling
@@ -13,6 +13,12 @@ X bug: when entering text into annotation, key commands still register
 
 click to unselect
 arrows on connections
+* proof of concept works but:
+** arrows are hanging off the edge of the line which means they overlap the thing they point to
+** arrows are not the same color as the line
+** there is no mechanism for saying which end of the line should have the arrow or for changing
+   this
+** the marker element is hardcoded in the root svg object in index.html
 
 ***
 * remove timepoints/edit existing timepoints
