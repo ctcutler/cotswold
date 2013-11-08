@@ -180,7 +180,6 @@ function recursiveSpans(sel) {
       addDetailBoxContents(spanDetail, controllerScope.setRangeNote, controllerScope.setRangeColor);
 
     } else if (selected.content) {
-      // space before <br/> makes offsets come out right
       d3.select(this)
         .html(escapeLineBreaks(selected.content));
     }
@@ -188,6 +187,8 @@ function recursiveSpans(sel) {
 }
 
 function escapeLineBreaks(s) {
+  // space before <br/> makes offsets come out right
+
   // first replace CRLFs
   s = s.replace(/\r\n/g, " <br />");
   // then replace remaining individual CRs and LFs

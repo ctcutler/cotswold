@@ -2,8 +2,8 @@ X render line breaks right
 X bug: when entering text into annotation, key commands still register
 X annotate ranges (not just connections)
 X respect HTML in uploaded data?
+X range selection issue with newlines (offsets are being calculated taking newlines into account)
 
-* range selection issue with newlines (offsets are being calculated taking newlines into account)
 * change timepoint labels
 
 * styling
@@ -21,6 +21,8 @@ arrows on connections
 ** the marker element is hardcoded in the root svg object in index.html
 
 ***
+
+* make unselected connections/ranges less opaque and selected ones more opaque
 * remove timepoints/edit existing timepoints
 * can't reload same data file name twice
 * user-adjustable column width

@@ -198,6 +198,7 @@ function EditorController($scope, storage, render) {
   }
 
   $scope.makeRange = function () {
+    $scope.clearAllSelectedElements();
     var sel = rangy.getSelection();
     var startArtifact = getArtifactAncestor(sel.anchorNode);
     var endArtifact = getArtifactAncestor(sel.focusNode);
@@ -391,6 +392,12 @@ function EditorController($scope, storage, render) {
     }
     return false;
   };
+
+  $scope.clearAllSelectedElements = function(reload) {
+    $scope.clearAllSelectedConnections(false);
+    $scope.clearAllSelectedRanges(reload);
+  }
+
   $scope.clearAllSelectedConnections = function(reload) {
     for (var i=0; i<$scope.connections.length; i++) {
       var connection = $scope.connections[i];
