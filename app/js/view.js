@@ -182,9 +182,16 @@ function recursiveSpans(sel) {
     } else if (selected.content) {
       // space before <br/> makes offsets come out right
       d3.select(this)
-        .html(selected.content.replace(/\n/g, " <br />"));
+        .html(escapeLineBreaks(selected.content));
     }
   });
+}
+
+function escapeLineBreaks(s) {
+  // first replace CRLFs
+  s = s.replace(/\r\n/g, " <br />");
+  // then replace remaining individual CRs and LFs
+  return s.replace(/[\r\n]/g, " <br />");
 }
 
 function smallerWithMin(a, b, min) {
