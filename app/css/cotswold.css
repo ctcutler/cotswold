@@ -19,7 +19,7 @@ div.color5,span.color5 {
 }
 
 div.color6,span.color6 {
-  background-color: #99CCFF;
+  background-color: #BBBBBB;
 }
 
 line.color1 {
@@ -43,7 +43,7 @@ line.color5 {
 }
 
 line.color6 {
-  stroke: #99CCFF;
+  stroke: #BBBBBB;
 }
 
 rect.color1 {
@@ -67,7 +67,7 @@ rect.color5 {
 }
 
 rect.color6 {
-  fill: #99CCFF;
+  fill: #BBBBBB;
 }
 
 .selectedColor {
