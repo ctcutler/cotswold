@@ -643,6 +643,7 @@ function getCaretCharacterOffsetWithin(element, start) {
         } else {
           preCaretRange.setEnd(range.endContainer, range.endOffset);
         }
+        console.log(preCaretRange.toString());
         caretOffset = preCaretRange.toString().length;
     } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
         var textRange = document.selection.createRange();
