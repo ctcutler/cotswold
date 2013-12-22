@@ -77,7 +77,7 @@ function makeSpanClass(d) {
   return klass;
 }
 
-function addDetailBoxContents(selection, setNoteFunc, setColorFunc) {
+function addDetailBoxContents(selection, setNoteFunc, setColorFunc, setStyleFunc) {
   var note = selection.selectAll(".note")
     .data(function (d) { 
       return [d.note];
@@ -104,20 +104,94 @@ function addDetailBoxContents(selection, setNoteFunc, setColorFunc) {
   colorChooser.exit()
     .remove();
 
-  var colorBox = selection.selectAll(".colorBox")
+  var colorBox = colorChooser.selectAll(".colorBox")
     .data(COLORS);
   colorBox.enter()
     .append("div")
     .on("click", function (d) {
-      setColorFunc(getParentData(this).id, d);
+      setColorFunc(getGrandParentData(this).id, d);
     });
   colorBox.attr("class", function (d) { 
       var pData = getParentData(this);
       return "colorBox " + d  +
-        (getParentData(this).color == d ? " selectedColor" : "");
+        (getGrandParentData(this).color == d ? " selectedColor" : "");
     });
-  colorChooser.exit()
+  colorBox.exit()
     .remove();
+
+  if (setStyleFunc) {
+    // FIXME: try using plain old select() and datum()
+    var styleChooser = selection.selectAll(".styleChooser")
+      .data(function (d) {
+        return [d.styles ? d.styles : []];
+      });
+    styleChooser.enter()
+      .append("form")
+      .attr("class", "styleChooser");
+    styleChooser.exit()
+      .remove();
+
+    // FIXME: why am I getting this error now: "event.returnValue is deprecated. Please 
+    // use the standard event.preventDefault() instead."?
+
+    var styleOption = styleChooser.selectAll(".styleOption")
+      .data(STYLES);
+    styleOption.enter()
+      .append("label");
+    styleOption
+      .attr("class", 
+        function(d) {
+          return "styleOption " + d.name
+        })
+      .attr("style", 
+        function(d) {
+          return d.property + ": " + d.value + ";";
+        });
+    styleOption.exit()
+      .remove();
+
+    var styleCheckbox = styleOption.selectAll(".styleCheckbox")
+      .data(function(d) { return [d] });
+    styleCheckbox.enter()
+      .append("input")
+      .on("click", function (d) {
+        setStyleFunc(getGreatGrandParentData(this).id, d);
+      });
+    styleCheckbox
+      .attr("class", 
+        function(d) {
+          return "styleCheckbox " + d.name
+        })
+      .attr("checked",
+        function(d) {
+          // null omits the attribute entirely
+          var ggp = getGreatGrandParentData(this);
+          for (var i=0; i<ggp.styles.length; i++) {
+            if (ggp.styles[i].name === d.name) {
+              // it doesn't really matter what we return here as long 
+              // as it is not null. . . the checked attribute doesn't care
+              return "true";
+            }
+          }
+          return null;
+        })
+      .attr("type", "checkbox");
+    styleCheckbox.exit()
+      .remove();
+
+    var styleCheckboxLabel = styleOption.selectAll(".styleCheckboxLabel")
+      .data(function(d) { return [d] });
+    styleCheckboxLabel.enter()
+      .insert("span");
+    styleCheckboxLabel
+      .attr("class", 
+        function(d) {
+          return "styleCheckboxLabel " + d.name
+        })
+      .text(function(d) { return d.name });
+    styleCheckboxLabel.exit()
+      .remove();
+  }
 }
 
 function recursiveSpans(sel) {
@@ -146,6 +220,18 @@ function recursiveSpans(sel) {
 
       span
         .attr("class", makeSpanClass)
+        .attr("style", function(d) {
+          if (d.styles) {
+            var styleString = "";
+            for (var i=0; i<d.styles.length; i++) {
+              var s = d.styles[i];
+              styleString += s.property+": "+s.value+"; "
+            }
+            return styleString;
+          } else {
+            return null
+          }
+        })
         .call(recursiveSpans)
         .filter(function (d) { return "id" in d; })
         .attr("id", function (d) { return d.id })
@@ -177,7 +263,12 @@ function recursiveSpans(sel) {
       spanDetail.exit()
         .remove();
 
-      addDetailBoxContents(spanDetail, controllerScope.setRangeNote, controllerScope.setRangeColor);
+      addDetailBoxContents(
+        spanDetail, 
+        controllerScope.setRangeNote, 
+        controllerScope.setRangeColor, 
+        controllerScope.setRangeStyle
+      );
 
     } else if (selected.content) {
       d3.select(this)
@@ -410,6 +501,14 @@ function makeConnectionDetailStyle(d) {
 
 function getParentData(node) {
   return d3.select(node.parentNode).datum();
+}
+
+function getGrandParentData(node) {
+  return d3.select(node.parentNode.parentNode).datum();
+}
+
+function getGreatGrandParentData(node) {
+  return d3.select(node.parentNode.parentNode.parentNode).datum();
 }
 
 var controllerScope;

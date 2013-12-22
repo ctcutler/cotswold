@@ -1,9 +1,4 @@
-X render line breaks right
-X bug: when entering text into annotation, key commands still register
-X annotate ranges (not just connections)
-X respect HTML in uploaded data?
-X range selection issue with newlines (offsets are being calculated taking newlines into account)
-
+X make it possible to pile up colors and styles
 * change timepoint labels
 
 * styling

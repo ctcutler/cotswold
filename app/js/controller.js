@@ -339,6 +339,29 @@ function EditorController($scope, storage, render) {
     }
   }
 
+  $scope.setRangeStyle = function(rangeId, clickedStyle) {
+    var range = $scope.getRangeById(rangeId);
+    if (range) {
+      if (!range.styles) {
+        range.styles = [];
+      }
+      var removeThis = -1;
+      for (var i=0; i<range.styles.length; i++) {
+        var style = range.styles[i];
+        if (style.name === clickedStyle.name) {
+          removeThis = i;
+          break;
+        }
+      }
+      if (removeThis == -1) {
+        range.styles.push(clickedStyle);
+      } else {
+        range.styles.splice(removeThis, 1);
+      }
+      $scope.reloadAllNodes();
+    }
+  }
+
   $scope.setConnectionNote = function(connectionId, note) {
     var connection = $scope.getConnectionById(connectionId);
     if (connection) {

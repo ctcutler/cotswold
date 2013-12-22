@@ -106,6 +106,10 @@ rect.color6 {
   float: left;
 }
 
+.styleChooser {
+  clear: both;
+}
+
 .highlighted {
   /*
   background-color: #ff0;
