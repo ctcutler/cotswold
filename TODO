@@ -1,4 +1,6 @@
 X make it possible to pile up colors and styles
+* click to unselect
+
 * change timepoint labels
 
 * styling
@@ -6,7 +8,6 @@ X make it possible to pile up colors and styles
 
 ***
 
-click to unselect
 arrows on connections
 * proof of concept works but:
 ** arrows are hanging off the edge of the line which means they overlap the thing they point to

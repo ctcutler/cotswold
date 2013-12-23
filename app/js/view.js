@@ -131,9 +131,6 @@ function addDetailBoxContents(selection, setNoteFunc, setColorFunc, setStyleFunc
     styleChooser.exit()
       .remove();
 
-    // FIXME: why am I getting this error now: "event.returnValue is deprecated. Please 
-    // use the standard event.preventDefault() instead."?
-
     var styleOption = styleChooser.selectAll(".styleOption")
       .data(STYLES);
     styleOption.enter()
@@ -166,11 +163,13 @@ function addDetailBoxContents(selection, setNoteFunc, setColorFunc, setStyleFunc
         function(d) {
           // null omits the attribute entirely
           var ggp = getGreatGrandParentData(this);
-          for (var i=0; i<ggp.styles.length; i++) {
-            if (ggp.styles[i].name === d.name) {
-              // it doesn't really matter what we return here as long 
-              // as it is not null. . . the checked attribute doesn't care
-              return "true";
+          if (ggp.styles) {
+            for (var i=0; i<ggp.styles.length; i++) {
+              if (ggp.styles[i].name === d.name) {
+                // it doesn't really matter what we return here as long 
+                // as it is not null. . . the checked attribute doesn't care
+                return "true";
+              }
             }
           }
           return null;
@@ -534,8 +533,15 @@ function render(scope) {
       + htmlLayer.style("height")
       + ";");
 
+  htmlLayer
+    .on("click", function (d) {
+      controllerScope.clearAllSelectedElements(true);
+    });
+
   var timepoints = htmlLayer.selectAll(".timepoint")
     .data(controllerScope.timepoints);
+  // change this to a special timepoint title div that
+  // turns editable when you click on it
   timepoints.enter()
     .append("div")
     .html(function(d) {
