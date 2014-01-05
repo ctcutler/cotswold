@@ -1,7 +1,7 @@
 X make it possible to pile up colors and styles
 X click to unselect
 
-* change timepoint labels
+X change timepoint labels
 
 * styling
 * more and different colors
@@ -18,8 +18,9 @@ arrows on connections
 
 ***
 
-* make unselected connections/ranges less opaque and selected ones more opaque
 * remove timepoints/edit existing timepoints
+
+* make unselected connections/ranges less opaque and selected ones more opaque
 * can't reload same data file name twice
 * user-adjustable column width
 * paste new artifact data rather than uploading files
