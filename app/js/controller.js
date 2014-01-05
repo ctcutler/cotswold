@@ -191,11 +191,37 @@ function EditorController($scope, storage, render) {
     // for now, just append a new timepoint to the end
     var nextId = $scope.getNextTimepointId();
     $scope.timepoints.push({
-      id: nextId, name: "Timepoint "+nextId, artifacts: []
+      id: nextId, name: "Timepoint "+nextId, selected: false, artifacts: []
     });
 
     $scope.reloadAllNodes();
   }
+
+  $scope.selectTimepoint = function (timepointId) {
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      timepoint.selected = (timepoint.id === timepointId);
+    }
+    $scope.reloadView();
+  }
+
+  $scope.setTimepointTitle = function (timepointId, newTitle) {
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      if (timepoint.id === timepointId) {
+        timepoint.name = newTitle;
+      }
+    }
+  }
+
+  $scope.clearAllSelectedTimepoints = function(reload) {
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      timepoint.selected = false;
+    }
+    if (reload)
+      $scope.reloadAllNodes();
+  };
 
   $scope.makeRange = function () {
     $scope.clearAllSelectedElements();
@@ -418,8 +444,29 @@ function EditorController($scope, storage, render) {
 
   $scope.clearAllSelectedElements = function(reload) {
     $scope.clearAllSelectedConnections(false);
-    $scope.clearAllSelectedRanges(reload);
+    $scope.clearAllSelectedRanges(false);
+    $scope.clearAllSelectedTimepoints(false);
+    if (reload) {
+      $scope.reloadAllNodes();
+    }
   }
+
+  $scope.selectTimepoint = function (timepointId) {
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      timepoint.selected = (timepoint.id === timepointId);
+    }
+    $scope.reloadView();
+  }
+
+  $scope.clearAllSelectedTimepoints = function(reload) {
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      timepoint.selected = false;
+    }
+    if (reload)
+      $scope.reloadAllNodes();
+  };
 
   $scope.clearAllSelectedConnections = function(reload) {
     for (var i=0; i<$scope.connections.length; i++) {
@@ -437,12 +484,6 @@ function EditorController($scope, storage, render) {
     }
     if (reload)
       $scope.reloadAllNodes();
-  };
-
-  $scope.clearAllSelections = function() {
-    $scope.clearAllSelectedRanges(false);
-    $scope.clearAllSelectedConnections(false);
-    $scope.reloadAllNodes();
   };
 
   $scope.rangeIsConnectable = function(rangeId) {

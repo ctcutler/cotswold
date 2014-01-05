@@ -235,6 +235,7 @@ function recursiveSpans(sel) {
         .filter(function (d) { return "id" in d; })
         .attr("id", function (d) { return d.id })
         .on("click", function (d) {
+          controllerScope.clearAllSelectedTimepoints(true);
           controllerScope.clearAllSelectedConnections(true);
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
@@ -387,6 +388,7 @@ function updateArtifacts(artifact) {
         .attr("height", function (d) { return d.height })
         .on("click", function (d) {
           controllerScope.clearAllSelectedConnections(true);
+          controllerScope.clearAllSelectedTimepoints(true);
           controllerScope.updateSelection(d.id);
           rangy.getSelection().removeAllRanges();
           d3.event.stopPropagation();
@@ -538,16 +540,39 @@ function render(scope) {
       controllerScope.clearAllSelectedElements(true);
     });
 
+  // Lesson learned below: If I want to append a single child
+  // to a selection, just call append a second time.  If I want
+  // to append multiple different children, put the enter
+  // selection in a variable and call it multiple times. 
   var timepoints = htmlLayer.selectAll(".timepoint")
     .data(controllerScope.timepoints);
-  // change this to a special timepoint title div that
-  // turns editable when you click on it
   timepoints.enter()
     .append("div")
-    .html(function(d) {
-        return "<b>"+d.name+"</b><p/>";
-      })
-    .attr("class", "timepoint");
+    .attr("class", "timepoint")
+    .append("div")
+    .attr("class", "timepointTitle");
+
+  var unselectedTimepointTitles = timepoints.selectAll(".timepointTitle")
+    .filter(function (d) { return !d.selected; })
+    .html(function(d) { return "<b>"+d.name+"</b><p/>"; })
+    .on("click", function (d) {
+      if (!d.selected) {
+        controllerScope.clearAllSelectedElements(true);
+        controllerScope.selectTimepoint(d.id);
+      }
+      d3.event.stopPropagation();
+    });
+
+  var selectedTimepointTitles = timepoints.selectAll(".timepointTitle")
+    .filter(function (d) { return d.selected; })
+    .html(function(d) { return "<input value=\""+d.name+"\"><p/>"; });
+
+  selectedTimepointTitles.selectAll("input")
+    .on("input", function (d) {
+      controllerScope.setTimepointTitle(getParentData(this).id, this.value);
+      controllerScope.save();
+    });
+
   timepoints.exit()
     .remove();
 
@@ -578,6 +603,7 @@ function render(scope) {
     .attr("id", function (d) { return d.id })
     .on("click", function (d) {
       controllerScope.clearAllSelectedRanges(true);
+      controllerScope.clearAllSelectedTimepoints(true);
       controllerScope.selectConnection(d.id);
     })
     .attr("x1", function (d) { return d.coords.x1 })
