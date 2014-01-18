@@ -197,6 +197,46 @@ function EditorController($scope, storage, render) {
     $scope.reloadAllNodes();
   }
 
+  $scope.removeConnectionsForArtifacts = function (artifacts) {
+    var ranges = {};
+    if (artifacts) {
+      for (var j=0; j<artifacts.length; j++) {
+        var artifact = artifacts[j];
+        if (artifact.ranges) {
+          for (var k=0; k<artifact.ranges.length; k++) {
+            var range = artifact.ranges[k];
+            ranges[range.id] = true;
+          }
+        }
+      }
+
+      // remove all connections into this timepoint
+      for (var l=$scope.connections.length-1; l>=0; l--) {
+        var connection = $scope.connections[l];
+        if (connection.rangeIds[0] in ranges 
+          || connection.rangeIds[1] in ranges) {
+          $scope.connections.splice(l, 1);
+        }
+      }
+    }
+  }
+
+  $scope.deleteTimepoint = function (timepointId) {
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      if (timepoint.id === timepointId) {
+        // remove related connections
+        $scope.removeConnectionsForArtifacts(timepoint.artifacts);
+
+        // remove timepoint
+        $scope.timepoints.splice(i, 1);
+        break;
+      }
+    }
+
+    $scope.reloadAllNodes();
+  }
+
   $scope.selectTimepoint = function (timepointId) {
     for (var i=0; i<$scope.timepoints.length; i++) {
       var timepoint = $scope.timepoints[i];

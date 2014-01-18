@@ -546,22 +546,39 @@ function render(scope) {
   // selection in a variable and call it multiple times. 
   var timepoints = htmlLayer.selectAll(".timepoint")
     .data(controllerScope.timepoints);
-  timepoints.enter()
+  timepointsEnter = timepoints.enter()
     .append("div")
-    .attr("class", "timepoint")
+    .attr("class", "timepoint");
+  timepointsEnter
     .append("div")
     .attr("class", "timepointTitle");
 
   var unselectedTimepointTitles = timepoints.selectAll(".timepointTitle")
     .filter(function (d) { return !d.selected; })
-    .html(function(d) { return "<b>"+d.name+"</b><p/>"; })
+    .text(function(d) { return d.name; })
     .on("click", function (d) {
       if (!d.selected) {
         controllerScope.clearAllSelectedElements(true);
         controllerScope.selectTimepoint(d.id);
       }
       d3.event.stopPropagation();
-    });
+    })
+    .on("mouseover", function (d) {
+      var img = d3.select("#deleteImage-"+d.id);
+      img.style("visibility", "visible");
+    })
+    .on("mouseout", function (d) {
+      d3.select("#deleteImage-"+d.id).style("visibility", "hidden");
+    })
+    .append("img")
+    .on("click", function (d) {
+      controllerScope.deleteTimepoint(d.id);
+    })
+    .attr("id", function (d) {
+      return "deleteImage-"+d.id;
+    })
+    .style("visibility", "hidden")
+    .attr("src", "img/x.svg");
 
   var selectedTimepointTitles = timepoints.selectAll(".timepointTitle")
     .filter(function (d) { return d.selected; })
