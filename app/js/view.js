@@ -658,4 +658,22 @@ function render(scope) {
 
   addDetailBoxContents(connectionDetail, controllerScope.setConnectionNote, controllerScope.setConnectionColor);
 
- }
+  htmlLayer.select("#addTimepointDiv").remove();
+  htmlLayer
+    .append("div")
+    .attr("id", "addTimepointDiv")
+    .on("mouseover", function (d) {
+      d3.select("#addTimepointButton").style("visibility", "visible");
+    })
+    .on("mouseout", function (d) {
+      d3.select("#addTimepointButton").style("visibility", "hidden");
+    })
+    .append("img")
+    .attr("id", "addTimepointButton")
+    .on("click", function (d) {
+      controllerScope.makeTimepoint();
+    })
+    .style("visibility", "hidden")
+    .attr("src", "img/plus.svg");
+
+}
