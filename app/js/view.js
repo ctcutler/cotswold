@@ -512,6 +512,26 @@ function getGreatGrandParentData(node) {
   return d3.select(node.parentNode.parentNode.parentNode).datum();
 }
 
+function addDeleteButton(selection, cssClass, deleteFunc) {
+  selection
+    .on("mouseover", function (d) {
+      d3.select("#"+cssClass+"-"+d.id).style("visibility", "visible");
+    })
+    .on("mouseout", function (d) {
+      d3.select("#"+cssClass+"-"+d.id).style("visibility", "hidden");
+    })
+    .append("img")
+    .attr("class", cssClass)
+    .on("click", function (d) {
+      deleteFunc(d.id);
+    })
+    .attr("id", function (d) {
+      return cssClass+"-"+d.id
+    })
+    .style("visibility", "hidden")
+    .attr("src", "img/x.svg");
+}
+
 var controllerScope;
 var svg;
 var htmlLayer;
@@ -562,23 +582,8 @@ function render(scope) {
         controllerScope.selectTimepoint(d.id);
       }
       d3.event.stopPropagation();
-    })
-    .on("mouseover", function (d) {
-      var img = d3.select("#deleteImage-"+d.id);
-      img.style("visibility", "visible");
-    })
-    .on("mouseout", function (d) {
-      d3.select("#deleteImage-"+d.id).style("visibility", "hidden");
-    })
-    .append("img")
-    .on("click", function (d) {
-      controllerScope.deleteTimepoint(d.id);
-    })
-    .attr("id", function (d) {
-      return "deleteImage-"+d.id;
-    })
-    .style("visibility", "hidden")
-    .attr("src", "img/x.svg");
+    });
+  addDeleteButton(unselectedTimepointTitles, "deleteTimepoint", controllerScope.deleteTimepoint);
 
   var selectedTimepointTitles = timepoints.selectAll(".timepointTitle")
     .filter(function (d) { return d.selected; })
@@ -600,12 +605,14 @@ function render(scope) {
     function (d) { 
       return d.id 
     });
-  artifact.enter()
+  var artifactEnter = artifact.enter()
     .append("div")
     .attr("class", "artifact")
     .attr("id", function (d) { 
       return d.id 
     });
+  addDeleteButton(artifactEnter, "deleteArtifact", controllerScope.deleteArtifact);
+
   updateArtifacts(artifact);
   artifact.exit()
     .remove();

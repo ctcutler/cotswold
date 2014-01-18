@@ -705,6 +705,30 @@ function EditorController($scope, storage, render) {
     };
   };
 
+  $scope.deleteArtifact = function (artifactId) {
+    var foundArtifact = false;
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      if (timepoint.artifacts) {
+        var artifacts = timepoint.artifacts;
+        for (var j=0; j<artifacts.length; j++) {
+          var artifact = artifacts[j];
+          if (artifactId === artifact.id) {
+            // remove related connections
+            $scope.removeConnectionsForArtifacts([artifact]);
+            // remove timepoint
+            timepoint.artifacts.splice(j, 1);
+            foundArtifact = true;
+            break;
+          }
+        }
+      }
+      if (foundArtifact) break;
+    }
+
+    $scope.reloadAllNodes();
+  };
+
   initFileInput("dataFile", $scope.handleLoadDataFromFile);
   initFileInput("artifactFiles", $scope.handleLoadArtifactFromFile);
 
