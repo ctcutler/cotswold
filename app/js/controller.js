@@ -27,8 +27,6 @@ function EditorController($scope, storage, render) {
     if ( $("*:focus").is("textarea, input") ) return;
     if (e.keyCode === 16) {
       $scope.shiftDown = true;
-    } else if (e.keyCode === 84) { // 't'
-      $scope.makeTimepoint();
     } else if (e.keyCode === 82) { // 'r'
       $scope.makeRange();
     } else if (e.keyCode === 67) { // 'c'
@@ -60,7 +58,7 @@ function EditorController($scope, storage, render) {
     initFileInput("dataFile", $scope.handleLoadDataFromFile);
   };
 
-  $scope.handleLoadArtifactFromFile = function (e) {
+  $scope.handleLoadArtifactFromFile = function (e, timepointId) {
     if ($scope.timepoints === null || $scope.timepoints.length === 0) {
       alert("At least one timepoint must exist before an artifact can be added.");
     } else {
@@ -78,8 +76,11 @@ function EditorController($scope, storage, render) {
             } else {
               artifact = $scope.makeTextArtifact(e.target.result);
             }
-            $scope.timepoints[$scope.timepoints.length-1].artifacts.push(artifact);
-            $scope.reloadAllNodes();
+            var timepoint = $scope.getTimepointById(timepointId);
+            if (timepoint) {
+              timepoint.artifacts.push(artifact);
+              $scope.reloadAllNodes();
+            }
           };
         })(f);
 
@@ -90,8 +91,6 @@ function EditorController($scope, storage, render) {
         }
       }
     }
-
-    initFileInput("artifactFiles", $scope.handleLoadArtifactFromFile);
   };
 
 
@@ -705,6 +704,15 @@ function EditorController($scope, storage, render) {
     };
   };
 
+  $scope.getTimepointById = function (timepointId) {
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      if (timepoint.id === timepointId) {
+        return timepoint;
+      }
+    }
+    return null;
+  };
   $scope.deleteArtifact = function (artifactId) {
     var foundArtifact = false;
     for (var i=0; i<$scope.timepoints.length; i++) {
@@ -730,7 +738,6 @@ function EditorController($scope, storage, render) {
   };
 
   initFileInput("dataFile", $scope.handleLoadDataFromFile);
-  initFileInput("artifactFiles", $scope.handleLoadArtifactFromFile);
 
   $scope.loadData(storage);
   $scope.reloadAllNodes();
@@ -745,6 +752,7 @@ function getArtifactAncestor(node) {
 }
 
 // adapted from: http://aspnetupload.com/Clear-HTML-File-Input.aspx
+// FIXME: duplicates functionality of clearFileInput in view.js (that one is better)
 function initFileInput(elementId, changeHandler) {
   var oldInput = document.getElementById(elementId); 
   var newInput = document.createElement("input"); 

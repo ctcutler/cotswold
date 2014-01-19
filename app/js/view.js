@@ -532,6 +532,15 @@ function addDeleteButton(selection, cssClass, deleteFunc) {
     .attr("src", "img/x.svg");
 }
 
+// fancy way to clear file input from: 
+// http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
+// FIXME: duplicates functionality of initFileInput in controller.js (this one is better)
+function clearFileInput(fileInputId) {
+  var $f = $(fileInputId);
+  $f.wrap("<form>").closest('form').get(0).reset();
+  $f.unwrap();
+}
+
 var controllerScope;
 var svg;
 var htmlLayer;
@@ -606,7 +615,7 @@ function render(scope) {
       return d.id 
     });
   var artifactEnter = artifact.enter()
-    .append("div")
+    .insert("div", ".addArtifactButton")
     .attr("class", "artifact")
     .attr("id", function (d) { 
       return d.id 
@@ -616,6 +625,38 @@ function render(scope) {
   updateArtifacts(artifact);
   artifact.exit()
     .remove();
+
+  timepointsEnter
+    .on("mouseover", function (d) {
+      d3.select("#addArtifactButton-"+d.id).style("visibility", "visible");
+    })
+    .on("mouseout", function (d) {
+      d3.select("#addArtifactButton-"+d.id).style("visibility", "hidden");
+    })
+    .append("img")
+    .attr("class", "addArtifactButton")
+    .attr("id", function(d) {
+      return "addArtifactButton-"+d.id;
+    })
+    .on("click", function (d) {
+      d3.select("#addArtifactButton-"+d.id).style("visibility", "hidden");
+      d3.select("#artifactFiles-"+d.id).style("visibility", "visible");
+    })
+    .style("visibility", "hidden")
+    .attr("src", "img/plus.svg");
+  timepointsEnter 
+    .append("form")
+    .append("input")
+    .attr("type", "file")
+    .attr("id", function (d) { return "artifactFiles-"+d.id; })
+    .attr("name", "files[]")
+    .style("visibility", "hidden")
+    .on("change", function (d) {
+      controllerScope.handleLoadArtifactFromFile(d3.event, d.id);
+      d3.select("#artifactFiles-"+d.id).style("visibility", "hidden");
+      clearFileInput("#artifactFiles-"+d.id);
+    })
+    .attr("multiple", "");
 
   var connections = addConnectionCoords(controllerScope.connections);
   var line = svg.selectAll(".connection")
@@ -656,8 +697,15 @@ function render(scope) {
   connectionDetail.exit()
     .remove();
 
-  addDetailBoxContents(connectionDetail, controllerScope.setConnectionNote, controllerScope.setConnectionColor);
+  addDetailBoxContents(
+    connectionDetail, 
+    controllerScope.setConnectionNote, 
+    controllerScope.setConnectionColor
+  );
 
+  /* Not so efficient to re-create this every time but since there's 
+   * no data associated with it I'm not sure what else to do (would 
+   * it be less hack-ish to have a fake data point?). */
   htmlLayer.select("#addTimepointDiv").remove();
   htmlLayer
     .append("div")
