@@ -106,6 +106,7 @@ function EditorController($scope, storage, render) {
     $scope.timepoints = [];
     $scope.expanded = false;
     $scope.connections = [];
+
     if (typeof data == 'string' || data instanceof String) {
       data = JSON.parse(data);
       $scope.timepoints = data["timepoints"];
@@ -121,6 +122,13 @@ function EditorController($scope, storage, render) {
       if ("connections" in data) {
         $scope.connections = JSON.parse(data["connections"]);
       } 
+
+      if (!("initialized" in data)) {
+        data = GETTYSBURG;
+        $scope.timepoints = data["timepoints"];
+        $scope.expanded = data["expanded"];
+        $scope.connections = data["connections"];
+      }
     }
     $scope.reloadAllNodes(); 
     $scope.reloadView();
@@ -130,6 +138,7 @@ function EditorController($scope, storage, render) {
     storage["timepoints"] = stringifyWhenSaving($scope.timepoints);
     storage["expanded"] = stringifyWhenSaving($scope.expanded);
     storage["connections"] = stringifyWhenSaving($scope.connections);
+    storage["initialized"] = true;
   }
 
   $scope.reloadView = function () {
@@ -482,10 +491,10 @@ function EditorController($scope, storage, render) {
   };
 
   $scope.clearAllSelectedElements = function(reload) {
-    $scope.clearAllSelectedConnections(false);
-    $scope.clearAllSelectedRanges(false);
-    $scope.clearAllSelectedTimepoints(false);
-    if (reload) {
+    var cleared = $scope.clearAllSelectedConnections(false);
+    cleared = cleared || $scope.clearAllSelectedRanges(false);
+    cleared = cleared || $scope.clearAllSelectedTimepoints(false);
+    if (cleared && reload) {
       $scope.reloadAllNodes();
     }
   }
@@ -499,30 +508,39 @@ function EditorController($scope, storage, render) {
   }
 
   $scope.clearAllSelectedTimepoints = function(reload) {
+    var cleared = false;
     for (var i=0; i<$scope.timepoints.length; i++) {
       var timepoint = $scope.timepoints[i];
+      if (timepoint.selected) cleared = true;
       timepoint.selected = false;
     }
     if (reload)
       $scope.reloadAllNodes();
+    return cleared;
   };
 
   $scope.clearAllSelectedConnections = function(reload) {
+    var cleared = false;
     for (var i=0; i<$scope.connections.length; i++) {
       var connection = $scope.connections[i];
+      if (connection.selected) cleared = true;
       connection.selected = false;
     }
     if (reload)
       $scope.reloadAllNodes();
+    return cleared;
   };
 
   $scope.clearAllSelectedRanges = function(reload) {
+    var cleared = false;
     var selectedRanges = $scope.getSelectedRanges();
     for (var i=0; i<selectedRanges.length; i++) {
+      if (selectedRanges[i].selected) cleared = true;
       selectedRanges[i].selected = false;
     }
     if (reload)
       $scope.reloadAllNodes();
+    return cleared;
   };
 
   $scope.rangeIsConnectable = function(rangeId) {

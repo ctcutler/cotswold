@@ -22,6 +22,10 @@ div.color6,span.color6 {
   background-color: #BBBBBB;
 }
 
+div.controls {
+  text-align: center;
+}
+
 line.color1 {
   stroke: #FF6666;
 }
