@@ -1,9 +1,8 @@
 Cotswold
 ========
 
-A tool for bidirectional artifact analysis that runs locally in a web browser. Cotswold enables linking and tagging of multimodal data, and the construction of long-term tracings of individuals’ representational competence in a variety of creative media.
+Cotswold is a literacy research tool that facilitates a bidirectional artifact analysis.  It enables linking and tagging of multimodal data and the construction of long-term tracings of individuals’ representational competence in a variety of creative media.
 
-This project is under active developement so there are no guarantees that anything will work, but if you want to try it, check it out and load app/index.html in Google Chrome.
+The software is implemented in javascript and runs in a web browser but it runs entirely on the user's computer.  It requires no internet connectivity and stores all data locally.  
 
-To run unit tests, make sure you have node.js and testacular installed, then
-run './scripts/test.sh' from the project root directory. 
+To run it, check the project out and open app/index.html in Google Chrome.  By default, Cotswold loads some sample data for you to play with.
