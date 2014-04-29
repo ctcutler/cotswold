@@ -31,6 +31,8 @@ function EditorController($scope, storage, render) {
       $scope.makeRange();
     } else if (e.keyCode === 67) { // 'c'
       $scope.makeConnection();
+    } else if (e.keyCode === 77) { // 'm'
+      $scope.compare();
     } else if (e.keyCode === 88) { // 'x'
       $scope.removeSelected();
     }
@@ -43,6 +45,34 @@ function EditorController($scope, storage, render) {
   });
 
   /* scope methods */
+  $scope.compare = function () {
+    var artifactsToCompare = [];
+    // iterate through timepoints to see which have their compare boxes checked
+    for (var i=0; i<$scope.timepoints.length; i++) {
+      var timepoint = $scope.timepoints[i];
+      if (timepoint.checkedForComparison) {
+        for (var j=0; j<timepoint.artifacts.length; j++) {
+          var artifact = timepoint.artifacts[j];
+          if (!artifact.imageSrc) {
+            artifactsToCompare.push(artifact);
+          }
+        }
+      }
+    }
+
+    // if there are exactly two, get the first textual artifact from each
+    if (artifactsToCompare.length === 2) {
+      alert("comparing");
+    }
+
+    // run the comparison
+
+    // build the new ranges
+
+    // uncheck the boxes
+
+    // refresh
+  }
 
   $scope.handleLoadDataFromFile = function (e) {
     var files = e.target.files; // FileList object

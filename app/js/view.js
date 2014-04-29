@@ -359,11 +359,12 @@ function updateArtifacts(artifact) {
     // differentiate between images and text
     if ("imageSrc" in artifact) {
       var img = d3.select(this)
-        .selectAll("img")
+        .selectAll("img.imageArtifact")
         .data([artifact.imageSrc]);
     
       img.enter()
         .append("img")
+        .attr("class", "imageArtifact")
         .attr("src", artifact.imageSrc);
 
       // img[0] assumes there will only be one image per artifact
@@ -592,6 +593,19 @@ function render(scope) {
       }
       d3.event.stopPropagation();
     });
+
+  unselectedTimepointTitles
+    .append("input")
+    .attr("type", "checkbox")
+    .on("click", function (d) {
+      d.checkedForComparison = this.checked;
+      d3.event.stopPropagation();
+    });
+  unselectedTimepointTitles
+    .append("span")
+    .attr("class", "compareLabel")
+    .text("(compare)");
+
   addDeleteButton(unselectedTimepointTitles, "deleteTimepoint", controllerScope.deleteTimepoint);
 
   var selectedTimepointTitles = timepoints.selectAll(".timepointTitle")

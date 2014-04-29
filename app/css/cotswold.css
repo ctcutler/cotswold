@@ -219,8 +219,14 @@ html, body {
   padding: 0px;
   border: 0px;
 }
+
 .timepointTitle {
   font-weight: bold;
+}
+
+.compareLabel{
+  font-weight: normal;
+  font-size: 80%;
 }
 
 /* declare this last so that it takes precedence over other styles */

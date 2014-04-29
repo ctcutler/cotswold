@@ -1,12 +1,5 @@
-X make it possible to pile up colors and styles
-X click to unselect
 
-X change timepoint labels
-
-* styling
-* more and different colors
-
-***
+* per-timepoint comparisons (use checkboxes in headers)
 
 arrows on connections
 * proof of concept works but:
@@ -19,6 +12,8 @@ arrows on connections
 ***
 
 * remove timepoints/edit existing timepoints
+* artifact titles (be able to name the chunks of text within a timepoint)
+* per-artifact comparison checkboxes
 
 * make unselected connections/ranges less opaque and selected ones more opaque
 * can't reload same data file name twice
