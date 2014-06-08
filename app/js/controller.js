@@ -1,7 +1,6 @@
 "use strict";
 
 function EditorController($scope, storage, render) {
-
   /* event handlers */
   angular.element(window).bind('load', function() {
     $scope.reloadView();
@@ -60,18 +59,40 @@ function EditorController($scope, storage, render) {
       }
     }
 
+
     // if there are exactly two, get the first textual artifact from each
-    if (artifactsToCompare.length === 2) {
-      alert("comparing");
+    if (artifactsToCompare.length !== 2) {
+      return;
     }
 
-    // run the comparison
+    // run the comparison and create ranges for the changes
+    var a1 = artifactsToCompare[0];
+    var a2 = artifactsToCompare[1];
+    var a1Index = 0;
+    var a2Index = 0;
+    var r1, r2;
+    var diff = JsDiff.diffWords(a1["content"], a2["content"]);
+    diff.forEach(function(part){
+      var changeLength = part.value.length;
+      if (part.added) {
+        //r1 = $scope.addRangeObject(a1, a1Index, a1Index+1, "color2", false);
+        r2 = $scope.addRangeObject(a2, a2Index, a2Index + changeLength, "color2", false);
+        //$scope.addConnectionObject(r1, r2);
+        a2Index += changeLength;
+      } else if (part.removed) {
+        //r1 = $scope.addRangeObject(a2, a2Index, a2Index+1, "color1", false);
+        r2 = $scope.addRangeObject(a1, a1Index, a1Index + changeLength, "color1", false);
+        //$scope.addConnectionObject(r1, r2);
+        a1Index += changeLength;
+      } else {
+        a1Index += changeLength;
+        a2Index += changeLength;
+      }
+    });
 
-    // build the new ranges
-
-    // uncheck the boxes
-
-    // refresh
+    // if we're making connections we don't want to reload view until both artifacts have updated
+    $scope.reloadArtifactNodes(a1, false);
+    $scope.reloadArtifactNodes(a2);
   }
 
   $scope.handleLoadDataFromFile = function (e) {
@@ -321,18 +342,7 @@ function EditorController($scope, storage, render) {
     var newRangeId = null;
     var artifact = $scope.getArtifactById(startArtifact.id);
     if (artifact) {
-      newRangeId = "range"+artifact.id+(artifact.ranges.length+1);
-      artifact.ranges.push(
-        {
-          start: startOffset, 
-          end: endOffset, 
-          id: newRangeId,
-          style: "red",
-          color: "color1",
-          note: "",
-          selected: true
-        }
-      );
+      newRangeId = $scope.addRangeObject(artifact, startOffset, endOffset, "color1", true).id;
       $scope.reloadArtifactNodes(artifact);
     }
 
@@ -342,6 +352,21 @@ function EditorController($scope, storage, render) {
       $scope.updateSelection(newRangeId, true);
     }
   };
+
+  $scope.addRangeObject = function (artifact, start, end, color, selected) {
+    var newRangeId = "range"+artifact.id+(artifact.ranges.length+1);
+    var newRange = {
+      start: start, 
+      end: end, 
+      id: newRangeId,
+      style: "red", // FIXME is this used?
+      color: color,
+      note: "",
+      selected: selected
+    }
+    artifact.ranges.push(newRange);
+    return newRange;
+  }
 
   $scope.removeSelected = function () {
     var selectedConnection = $scope.getSelectedConnection();
@@ -617,17 +642,20 @@ function EditorController($scope, storage, render) {
     if (selectedRanges.length === 2) {
       var r1 = selectedRanges[0];
       var r2 = selectedRanges[1];
-      
-      if ($scope.rangesAreConnected(r1.id, r2.id)) {
-        console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create connection");
-      } else {
-        $scope.connections.push({ rangeIds: [r1.id, r2.id], selected: false, id: r1.id+"-"+r2.id, note:"", color: "color1"});
-        $scope.reloadView();
-      }
+      $scope.addConnectionObject(r1, r2);
+      $scope.reloadView();
     } else {
       console.log(selectedRanges.length + " range(s) selected: refusing to create connection.");
     }
   };
+
+  $scope.addConnectionObject = function(r1, r2) {
+    if ($scope.rangesAreConnected(r1.id, r2.id)) {
+      console.log("Connection between "+r1.id+" and "+r2.id+" already exists: refusing to create connection");
+    } else {
+      $scope.connections.push({ rangeIds: [r1.id, r2.id], selected: false, id: r1.id+"-"+r2.id, note:"", color: "color1"});
+    }
+  }
 
   $scope.removeConnection = function (connectionId) {
     var selectedRanges = $scope.getSelectedRanges();
