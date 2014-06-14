@@ -23,7 +23,28 @@ div.color6,span.color6 {
 }
 
 div.controls {
-  text-align: center;
+  position: absolute;
+  width: 50%;
+  height: 30px;
+}
+
+div.controls.left {
+  left: 0px;
+}
+
+div.controls.right {
+  text-align: right;
+  right: 0px;
+}
+
+div.content {
+  position: absolute;
+  top: 30px;
+  left: 0px;
+  right: 0px;
+  padding: 10px;
+  overflow-y: auto;
+  min-height: 600px;
 }
 
 line.color1 {
@@ -145,11 +166,6 @@ rect.color6 {
   border-style: solid none solid none;
 }
 
-#htmlLayer {
-  overflow: hidden;
-  padding: 10px;
-}
-
 /* put 10px of space between htmlLayer children */
 #htmlLayer > * {
     margin-left: 10px;
@@ -183,19 +199,16 @@ rect.color6 {
 
 #svgLayer {
   position: absolute;
-  top: 0px;
-  left: 0px;
   pointer-events: none;
 }
 
 #popUpLayer {
   position: absolute;
-  top: 0px;
-  left: 0px;
   pointer-events: none;
 }
 
 rect.imageBox {
+  fill: #FF6666;
   pointer-events: auto;
   opacity: .5;
 }
@@ -228,6 +241,25 @@ html, body {
   font-weight: normal;
   font-size: 80%;
 }
+
+#frostedGlass {
+  background-color: white;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#dialog {
+  pointer-events: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 200px;
+  width: 400px;
+  background-color: #eeeeee;
+  padding: 10px;
+  border: 1px solid black;
+}
+
 
 /* declare this last so that it takes precedence over other styles */
 .selected {

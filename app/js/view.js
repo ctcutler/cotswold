@@ -314,7 +314,7 @@ function getDragBoxHeight(d) {
 }
 
 function makeDragBehavior(artifact, img) {
-  var $img = jQuery(img);
+  var imgBox = makeBox(img);
   return d3.behavior.drag()
     .on("dragstart", function(d,i) {
       // add rect
@@ -323,10 +323,10 @@ function makeDragBehavior(artifact, img) {
         .data([{
           originX: coords[0], 
           originY: coords[1],
-          minX: $img.offset().left,
-          minY: $img.offset().top,
-          maxX: $img.offset().left + $img.width(),
-          maxY: $img.offset().top + $img.height(),
+          minX: imgBox.x,
+          minY: imgBox.y,
+          maxX: imgBox.x + imgBox.width,
+          maxY: imgBox.y + imgBox.height,
         }])
         .attr("class", "dragBox")
         .attr("x", coords[0])
@@ -345,13 +345,27 @@ function makeDragBehavior(artifact, img) {
       var bbox = dragBox[0][0].getBBox();
       controllerScope.makeImageRange(
         artifact.id,
-        bbox.x - $img.offset().left,
-        bbox.y - $img.offset().top,
+        bbox.x - imgBox.x,
+        bbox.y - imgBox.y,
         bbox.width,
         bbox.height
       );
       dragBox.remove();
     });
+}
+
+function getNodeLeft(node) {
+  var $node = jQuery(node);
+  var left = $node.position().left 
+  var padding = parseInt($node.offsetParent().css('padding-left'));
+  return left - padding;
+}
+
+function getNodeTop(node) {
+  var $node = jQuery(node);
+  var top = $node.position().top; 
+  var padding = parseInt($node.offsetParent().css('padding-top'));
+  return top - padding;
 }
 
 function updateArtifacts(artifact) {
@@ -367,23 +381,22 @@ function updateArtifacts(artifact) {
         .attr("class", "imageArtifact")
         .attr("src", artifact.imageSrc);
 
-      // img[0] assumes there will only be one image per artifact
-      img.call(makeDragBehavior(artifact, img[0]));
+      // img[0][0] assumes there will only be one image per artifact
+      img.call(makeDragBehavior(artifact, img[0][0]));
 
       var className = "imageBox";
       var artifactClassName = artifact.id+"ImageBox";
       var imageBox = svg.selectAll("."+className+"."+artifactClassName)
         .data(artifact.ranges, function (d) { return d.id; });
-      var boxParentLeft = jQuery(this).offset().left;
-      var boxParentTop = jQuery(this).offset().top;
+      var parentBox = makeBox(this);
       imageBox.enter()
         .append("rect")
         .attr("id", function (d) { return d.id })
         .attr("x", function (d) { 
-          return d.left + boxParentLeft
+          return d.left + parentBox.x
         })
         .attr("y", function (d) { 
-          return d.top + boxParentTop
+          return d.top + parentBox.y
         })
         .attr("width", function (d) { return d.width })
         .attr("height", function (d) { return d.height })
@@ -418,9 +431,9 @@ function updateArtifacts(artifact) {
         .attr("class", function (d) { return imageBoxDetailClass })
         .attr("style", function (d) {
           return "left: "
-            + (boxParentLeft + d.left + d.width)
+            + (parentBox.x + d.left + d.width)
             + "px; top: "
-            + (boxParentTop + d.top + d.height)
+            + (parentBox.y + d.top + d.height)
             + "px";
         });
       imageBoxDetail.exit()
@@ -433,17 +446,23 @@ function updateArtifacts(artifact) {
   });
 }
 
-function makeBox(id) {
-  var box = {};
+function makeBoxFromId(id) {
   var node = document.getElementById(id);
-  if (node.nodeName === "SPAN") {
+  return makeBox(node);
+}
+function makeBox(node) {
+  var box = {};
+  if (node.nodeName === "SPAN" 
+    || node.nodeName === "IMG"
+    || node.nodeName === "DIV") {
     var $node = jQuery(node);
-    box.x = $node.offset().left;
-    box.y = $node.offset().top;
+    box.x = getNodeLeft(node);
+    box.y = getNodeTop(node);
     box.width = $node.width();
     box.height = $node.height();
   } else if (node.nodeName === "rect" 
     || node.nodeName === "line") {
+    // FIXME:  may need to correct for padding here
     box = node.getBBox();
   } else {
     console.log("unknown node type: " + node.nodeName);
@@ -454,8 +473,8 @@ function makeBox(id) {
 function addConnectionCoords(connections) {
   for (var i=0; i<connections.length; i++) {
     var connection = connections[i];
-    var leftBox = makeBox(connection.rangeIds[0]);
-    var rightBox = makeBox(connection.rangeIds[1]);
+    var leftBox = makeBoxFromId(connection.rangeIds[0]);
+    var rightBox = makeBoxFromId(connection.rangeIds[1]);
     var best = getBestConnection(leftBox, rightBox);
     connection["coords"] = {
       x1: best[0].x,
@@ -476,7 +495,7 @@ function getMidpoint(a, b) {
 }
 
 function makeSpanDetailStyle(d) {
-  var box = makeBox(d.id);
+  var box = makeBoxFromId(d.id);
   return "left: "
     + (box.x + box.width)
     + "px; top: "
@@ -546,6 +565,7 @@ var controllerScope;
 var svg;
 var htmlLayer;
 var popUpLayer;
+var frostedGlass;
 
 function render(scope) {
   if (scope) {
@@ -555,15 +575,20 @@ function render(scope) {
   htmlLayer = d3.select("#htmlLayer");
 
   svg = d3.select("#mainSvg")
-    .attr("width", htmlLayer.style("width"))
-    .attr("height", htmlLayer.style("height"));
+    .style("height", htmlLayer.style("height"));
 
   popUpLayer = d3.select("#popUpLayer")
-    .attr("style", "width: "
-      + htmlLayer.style("width")
-      + "; height: "
-      + htmlLayer.style("height")
-      + ";");
+    .style("height", htmlLayer.style("height"));
+
+  frostedGlass = d3.select("#frostedGlass")
+    .style({
+      "height": htmlLayer.style("height"),
+      "opacity": scope.dialogVisible ? "0.7" : "0",
+      "pointer-events": scope.dialogVisible ? "auto" : "none",
+    });
+
+  d3.select("#dialog")
+    .style("visibility", scope.dialogVisible ? "visible" : "hidden");
 
   htmlLayer
     .on("click", function (d) {
@@ -716,6 +741,7 @@ function render(scope) {
     controllerScope.setConnectionNote, 
     controllerScope.setConnectionColor
   );
+
 
   /* Not so efficient to re-create this every time but since there's 
    * no data associated with it I'm not sure what else to do (would 

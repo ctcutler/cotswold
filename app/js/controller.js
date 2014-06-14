@@ -6,22 +6,6 @@ function EditorController($scope, storage, render) {
     $scope.reloadView();
   });
 
-  jQuery('#clearDataButton').bind('click', function(e) {
-    $scope.clearAllData();
-  });
-
-  jQuery('#downloadDataButton').bind('click', function(e) {
-    var s = "data:application/octet-stream,"+ 
-      encodeURIComponent(
-        stringify({
-          timepoints: $scope.timepoints,
-          expanded: $scope.expanded,
-          connections: $scope.connections,
-        })
-      );
-    document.location = s;
-  });
-
   jQuery('body').bind('keydown', function(e) {
     if ( $("*:focus").is("textarea, input") ) return;
     if (e.keyCode === 16) {
@@ -44,6 +28,42 @@ function EditorController($scope, storage, render) {
   });
 
   /* scope methods */
+  $scope.createDocument = function () {
+    var createNewDocument = confirm("Create a new document? (Unsaved changes will be lost.)");
+    if (createNewDocument) {
+      $scope.clearAllData();
+    }
+  }
+
+  $scope.saveDocument = function () {
+    var s = "data:application/octet-stream,"+ 
+      encodeURIComponent(
+        stringify({
+          timepoints: $scope.timepoints,
+          expanded: $scope.expanded,
+          connections: $scope.connections,
+        })
+      );
+    document.location = s;
+  }
+
+  $scope.cancelOpenDocument = function () {
+    $scope.dialogVisible = false;
+    $scope.reloadView();
+    initFileInput("dataFile", $scope.handleLoadDataFromFile);
+  }
+
+  $scope.openDocument = function () {
+    $scope.dialogVisible = false;
+    $scope.loadData($scope.documentData);
+    initFileInput("dataFile", $scope.handleLoadDataFromFile);
+  }
+
+  $scope.showOpenDocumentDialog = function () {
+    $scope.dialogVisible = true;
+    $scope.reloadView();
+  }
+
   $scope.compare = function () {
     var artifactsToCompare = [];
     // iterate through timepoints to see which have their compare boxes checked
@@ -101,12 +121,10 @@ function EditorController($scope, storage, render) {
     var reader = new FileReader();
     reader.onload = (function(theFile) {
       return function(e) {
-        $scope.loadData(e.target.result);
+        $scope.documentData = e.target.result;
       };
     })(files[0]);
     reader.readAsText(files[0]);
-
-    initFileInput("dataFile", $scope.handleLoadDataFromFile);
   };
 
   $scope.handleLoadArtifactFromFile = function (e, timepointId) {
@@ -855,7 +873,6 @@ function getCaretCharacterOffsetWithin(element, start) {
         } else {
           preCaretRange.setEnd(range.endContainer, range.endOffset);
         }
-        console.log(preCaretRange.toString());
         caretOffset = preCaretRange.toString().length;
     } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
         var textRange = document.selection.createRange();

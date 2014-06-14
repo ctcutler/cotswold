@@ -18,18 +18,56 @@
   </head>
   <body>
     <div ng-controller="EditorController">
-      <div id="htmlLayer">
+      <div class="controls left">
+        <button type="button" ng-click="makeRange()"
+                title="Create a range around the currently selected text (shortcut: r).">
+          Make Range
+        </button> 
+        <button type="button" ng-click="makeConnection()"
+                title="Connect two selected ranges (shortcut: c).">
+          Connect
+        </button> 
+        <button type="button" ng-click="removeSelected()"
+                title="Remove the selected connection or range (shortcut: x).">
+          Remove
+        </button> 
+        <button type="button" ng-click="compare()"
+                title="Compare the two selected timepoints (shortcut: m).">
+          Compare
+        </button> 
       </div>
-      <div id="svgLayer">
+      <div class="controls right">
+        <button type="button" ng-click="createDocument()"
+                title="Create a new document.">
+          New
+        </button> 
+        <button type="button" ng-click="saveDocument()"
+                title="Save the document to a file.">
+          Save 
+        </button> 
+        <button type="button" ng-click="showOpenDocumentDialog()"
+                title="Open a document from a file.">
+          Open
+        </button> 
+      </div>
+      <div id="htmlLayer" class="content">
+      </div>
+      <div id="svgLayer" class="content">
         <svg id="mainSvg"></svg>
       </div>
-      <div id="popUpLayer">
+      <div id="frostedGlass" class="content">
       </div>
-      <div class="controls">
-        r: make new range &bull; c: make new connection &bull; x: remove selected range or connection &bull; m: compare two selected timepoints <br/>
-        <button type="button" id="downloadDataButton">Download Data</button> &bull;
-        Upload Data: <input type="file" id="dataFile" name="files[]" multiple /> &bull;
-        <button type="button" id="clearDataButton">Clear Data</button> 
+      <div id="popUpLayer" class="content">
+        <div id="dialog">
+          <p>Choose a document to open.  (Unsaved changes will be lost.)</p>
+          <div>
+            <input type="file" id="dataFile" name="files[]" multiple />
+          </div>
+          <div style="text-align: right">
+            <button type="button"  ng-click="cancelOpenDocument()">Cancel</button>
+            <button type="button" ng-click="openDocument()">Open Document</button> 
+          </div>
+        </div>
       </div>
     </div>
   </body>
