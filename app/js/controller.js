@@ -6,6 +6,10 @@ function EditorController($scope, storage, render) {
     $scope.reloadView();
   });
 
+  $scope.$watch('title', function(newValue, oldValue) {
+    $scope.save();
+  });
+
   jQuery('body').bind('keydown', function(e) {
     if ( $("*:focus").is("textarea, input") ) return;
     if (e.keyCode === 16) {
@@ -32,19 +36,22 @@ function EditorController($scope, storage, render) {
     var createNewDocument = confirm("Create a new document? (Unsaved changes will be lost.)");
     if (createNewDocument) {
       $scope.clearAllData();
+      $scope.title = "New Document";
     }
   }
 
   $scope.saveDocument = function () {
-    var s = "data:application/octet-stream,"+ 
-      encodeURIComponent(
-        stringify({
-          timepoints: $scope.timepoints,
-          expanded: $scope.expanded,
-          connections: $scope.connections,
-        })
-      );
-    document.location = s;
+    var s = stringify({
+      timepoints: $scope.timepoints,
+      expanded: $scope.expanded,
+      connections: $scope.connections,
+      title: $scope.title,
+    });
+    var bb = new Blob([s], {type: "application/json"});
+    var link = document.createElement("a");
+    link.download = $scope.title;
+    link.href = window.URL.createObjectURL(bb);
+    link.click();
   }
 
   $scope.cancelOpenDocument = function () {
@@ -175,12 +182,14 @@ function EditorController($scope, storage, render) {
     $scope.timepoints = [];
     $scope.expanded = false;
     $scope.connections = [];
+    $scope.title = "";
 
     if (typeof data == 'string' || data instanceof String) {
       data = JSON.parse(data);
       $scope.timepoints = data["timepoints"];
       $scope.expanded = data["expanded"];
       $scope.connections = data["connections"];
+      $scope.title = data["title"];
     } else {
       if ("timepoints" in data) {
         $scope.timepoints = JSON.parse(data["timepoints"]);
@@ -191,12 +200,16 @@ function EditorController($scope, storage, render) {
       if ("connections" in data) {
         $scope.connections = JSON.parse(data["connections"]);
       } 
+      if ("title" in data) {
+        $scope.title = data["title"];
+      } 
 
       if (!("initialized" in data)) {
         data = GETTYSBURG;
         $scope.timepoints = data["timepoints"];
         $scope.expanded = data["expanded"];
         $scope.connections = data["connections"];
+        $scope.title = data["title"];
       }
     }
     $scope.reloadAllNodes(); 
@@ -207,6 +220,7 @@ function EditorController($scope, storage, render) {
     storage["timepoints"] = stringifyWhenSaving($scope.timepoints);
     storage["expanded"] = stringifyWhenSaving($scope.expanded);
     storage["connections"] = stringifyWhenSaving($scope.connections);
+    storage["title"] = $scope.title;
     storage["initialized"] = true;
   }
 

@@ -19,6 +19,21 @@
   <body>
     <div ng-controller="EditorController">
       <div class="controls left">
+        <input type="text" ng-model="title"></input>
+        <button type="button" ng-click="createDocument()"
+                title="Create a new document.">
+          New
+        </button> 
+        <button type="button" ng-click="saveDocument()"
+                title="Save the document to a file.">
+          Save 
+        </button> 
+        <button type="button" ng-click="showOpenDocumentDialog()"
+                title="Open a document from a file.">
+          Open
+        </button> 
+      </div>
+      <div class="controls right">
         <button type="button" ng-click="makeRange()"
                 title="Create a range around the currently selected text (shortcut: r).">
           Make Range
@@ -34,20 +49,6 @@
         <button type="button" ng-click="compare()"
                 title="Compare the two selected timepoints (shortcut: m).">
           Compare
-        </button> 
-      </div>
-      <div class="controls right">
-        <button type="button" ng-click="createDocument()"
-                title="Create a new document.">
-          New
-        </button> 
-        <button type="button" ng-click="saveDocument()"
-                title="Save the document to a file.">
-          Save 
-        </button> 
-        <button type="button" ng-click="showOpenDocumentDialog()"
-                title="Open a document from a file.">
-          Open
         </button> 
       </div>
       <div id="htmlLayer" class="content">
