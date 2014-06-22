@@ -208,7 +208,6 @@ rect.color6 {
 }
 
 rect.imageBox {
-  fill: #FF6666;
   pointer-events: auto;
   opacity: .5;
 }
@@ -220,6 +219,9 @@ line.connection {
 
 rect.dragBox {
   pointer-events: auto;
+  fill: #666;
+  stroke: #fff;
+  opacity: .5;
 }
 
 .removeRangeButton {

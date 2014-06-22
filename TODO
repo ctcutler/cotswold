@@ -1,15 +1,15 @@
 
 X (2) new timepoint button only shows up in small area
 X (1) delete the first timepoint and the titles shift down by one
-* (1) can't kill final timepoint
-* (1) image selection box is black
-* (1.5) image range box colors don't work
+X (1) image selection box is black
+X (1.5) image range box colors don't work
 * (1) new button doesn't remove image range boxes
 * (3) horizontal scrolling
 * (3) connections and images ranges don't scroll properly horizontally
 * (3) make timepoints wider when images displayed there are wider
 * (3) image range box at very right side of screen has invisible popup (page doesn't scroll for it)
 
+* (1) can't kill final timepoint
 * (2) statistics
 * (2) should tell user if refusing to remove connected range (or just remove connections)
 * (2) draggable image range boxes
