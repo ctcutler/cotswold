@@ -62,6 +62,10 @@ function EditorController($scope, storage, render) {
 
   $scope.openDocument = function () {
     $scope.dialogVisible = false;
+    // clearing the data first is necessary in case there are parts of the old
+    // data set in the new one (they could screw up the order in which things are displayed)
+    $scope.clearAllData();
+    $scope.reloadView();
     $scope.loadData($scope.documentData);
     initFileInput("dataFile", $scope.handleLoadDataFromFile);
   }

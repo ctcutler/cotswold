@@ -600,7 +600,10 @@ function render(scope) {
   // to append multiple different children, put the enter
   // selection in a variable and call it multiple times. 
   var timepoints = htmlLayer.selectAll(".timepoint")
-    .data(controllerScope.timepoints);
+    .data(
+      controllerScope.timepoints,
+      function (d) { return d.id; }
+    );
   timepointsEnter = timepoints.enter()
     .append("div")
     .attr("class", "timepoint");
