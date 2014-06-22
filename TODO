@@ -1,4 +1,30 @@
 
+* (2) new timepoint button only shows up in small area
+* (1) delete the first timepoint and the titles shift down by one
+* (1) can't kill final timepoint
+* (1) image selection box is black
+* (1.5) image range box colors don't work
+* (1) new button doesn't remove image range boxes
+* (3) horizontal scrolling
+* (3) connections and images ranges don't scroll properly horizontally
+* (3) make timepoints wider when images displayed there are wider
+* (3) image range box at very right side of screen has invisible popup (page doesn't scroll for it)
+
+* (2) statistics
+* (2) should tell user if refusing to remove connected range (or just remove connections)
+* (2) draggable image range boxes
+* (2) tune diff algorithm
+* (1) demo text has weird quote characters
+* (3) screen "hops" when color changes, when you type
+* (3) new feature: show multiple tabs, each with the same set of basic data (timepoints, artifacts, etc. but with different connections and ranges. . . so the basic data is shared but the markup is individual)
+* (2) some of the demo ranges are off
+* (1) make connections easier to click on
+* (1) popups visible on hover (but after 2s delay if possible)
+
+
+***
+
+
 X per-timepoint comparisons (use checkboxes in headers)
 
 * "files"
