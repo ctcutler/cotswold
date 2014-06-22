@@ -750,6 +750,7 @@ function render(scope) {
   htmlLayer
     .append("div")
     .attr("id", "addTimepointDiv")
+    .style("height", htmlLayer.style("height"))
     .on("mouseover", function (d) {
       d3.select("#addTimepointButton").style("visibility", "visible");
     })
