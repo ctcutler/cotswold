@@ -369,6 +369,14 @@ function getNodeTop(node) {
 }
 
 function updateArtifacts(artifact) {
+  // imageBoxes get added to the SVG object on a per-artifact basis. . . when
+  // the artifacts are removed there's nothing to clean the imageBoxes up
+  // so we pre-emptively clear the decks here. . . a better solution would be
+  // to handle image boxes outside of the context of artifacts (as we do with
+  // connections) so that we could create and remove them independently. 
+  svg.selectAll(".imageBox").remove();
+  popUpLayer.selectAll("[class*=Detail]").remove();
+
   artifact.each(function (artifact) { 
     // differentiate between images and text
     if ("imageSrc" in artifact) {
