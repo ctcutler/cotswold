@@ -3,10 +3,10 @@ X (2) new timepoint button only shows up in small area
 X (1) delete the first timepoint and the titles shift down by one
 X (1) image selection box is black
 X (1.5) image range box colors don't work
-* (1) new button doesn't remove image range boxes
-* (3) horizontal scrolling
-* (3) connections and images ranges don't scroll properly horizontally
+X (1) new button doesn't remove image range boxes
+X (3) horizontal scrolling
 * (3) make timepoints wider when images displayed there are wider
+* (3) connections and images ranges don't scroll properly horizontally when image overflows right most box
 * (3) image range box at very right side of screen has invisible popup (page doesn't scroll for it)
 
 * (1) can't kill final timepoint

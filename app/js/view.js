@@ -571,25 +571,40 @@ function clearFileInput(fileInputId) {
 
 var controllerScope;
 var svg;
+var svgLayer;
 var htmlLayer;
 var popUpLayer;
 var frostedGlass;
+
+// based on .timepoint width, padding, and htmlLayer children margin-left
+var TIMEPOINT_WIDTH = 430;
+var EXTRA_PADDING = 100;
 
 function render(scope) {
   if (scope) {
     controllerScope = scope;
   }
 
-  htmlLayer = d3.select("#htmlLayer");
+  var tpCount = controllerScope.timepoints.length;
+  var width = (((tpCount) * TIMEPOINT_WIDTH) + EXTRA_PADDING) + "px";
+  htmlLayer = d3.select("#htmlLayer")
+    .style("width", width);
+
+  svgLayer = d3.select("#svgLayer")
+    .style("width", htmlLayer.style("width"))
+    .style("height", htmlLayer.style("height"));
 
   svg = d3.select("#mainSvg")
+    .style("width", htmlLayer.style("width"))
     .style("height", htmlLayer.style("height"));
 
   popUpLayer = d3.select("#popUpLayer")
+    .style("width", htmlLayer.style("width"))
     .style("height", htmlLayer.style("height"));
 
   frostedGlass = d3.select("#frostedGlass")
     .style({
+      "width": htmlLayer.style("width"),
       "height": htmlLayer.style("height"),
       "opacity": scope.dialogVisible ? "0.7" : "0",
       "pointer-events": scope.dialogVisible ? "auto" : "none",
