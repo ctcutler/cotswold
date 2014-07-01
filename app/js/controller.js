@@ -539,7 +539,7 @@ function EditorController($scope, storage, render) {
     var range = $scope.getRangeById(rangeId);
     if (range) {
       range.note = note;
-      $scope.reloadAllNodes();
+      //$scope.reloadAllNodes();
     }
   }
 
