@@ -531,7 +531,7 @@ function EditorController($scope, storage, render) {
     var connection = $scope.getConnectionById(connectionId);
     if (connection) {
       connection.note = note;
-      $scope.reloadView();
+      //$scope.reloadView();
     }
   }
 
@@ -539,7 +539,7 @@ function EditorController($scope, storage, render) {
     var range = $scope.getRangeById(rangeId);
     if (range) {
       range.note = note;
-      $scope.reloadAllNodes();
+      //$scope.reloadAllNodes();
     }
   }
 

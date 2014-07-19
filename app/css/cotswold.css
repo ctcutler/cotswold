@@ -197,6 +197,10 @@ rect.color6 {
   float: right;
 }
 
+.imageArtifact {
+  max-width: 100%;
+}
+
 #svgLayer {
   position: absolute;
   pointer-events: none;
